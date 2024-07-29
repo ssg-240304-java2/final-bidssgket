@@ -6,8 +6,8 @@ spring:
     cache: false
   profiles:
     include:
-      - dev
-      - oauth
+#      - dev
+#      - oauth
       - local
       - local-oauth
   mvc:

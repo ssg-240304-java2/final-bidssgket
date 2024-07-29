@@ -7,9 +7,10 @@ build/
 
 ### YML ###
 
-resources/application-local.yml
-resources/application-dev.yml
-resources/application-oauth.yml
+src/main/resources/application-local.yml
+src/main/resources/application-local-oauth.yml
+src/main/resources/application-dev.yml
+src/main/resources/application-oauth.yml
 
 
 ### STS ###
