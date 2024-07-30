@@ -6,10 +6,10 @@ spring:
     cache: false
   profiles:
     include:
-#      - dev
-#      - oauth
-      - local
-      - local-oauth
+      - dev
+      - oauth
+#      - local
+#      - local-oauth
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
