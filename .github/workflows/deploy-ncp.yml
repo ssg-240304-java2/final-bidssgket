@@ -53,7 +53,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: NCP SSH Login and Docker Image pull and run
-        if: github.ref == 'refs/heads/main'  # main 브랜치에 대한 조건
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.NCP_HOST }}
