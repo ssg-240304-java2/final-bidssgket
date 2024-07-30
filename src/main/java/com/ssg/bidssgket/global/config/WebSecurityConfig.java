@@ -43,20 +43,14 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(authorizeRequest ->
                         authorizeRequest
-                                .requestMatchers("/api/login/**").permitAll()
-                                .requestMatchers("/api/token/reissue/**").permitAll()
-                                .requestMatchers("/login/oauth2/code/**").permitAll()
-                                .requestMatchers("/login/oauth2/redirect/**").permitAll()
-                                .requestMatchers("/login/**").permitAll()
-                                .requestMatchers("/test/**").permitAll()
+                                .requestMatchers("/**").permitAll()
                                 .requestMatchers("/favicon.ico").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/api-docs/**").permitAll()
-//                                .requestMatchers(new AntPathRequestMatcher("/api/token/**")).permitAll()
                                 .requestMatchers("/error/**").permitAll()
                                 .anyRequest().authenticated()
                 );
-//                .exceptionHandling(handling -> handling.authenticationEntryPoint(authEntryPointJwt));
+//                .exceptionHandling(handling -> handling.authenticationEntryPoint());
 
 
 //        http.addFilterBefore(new AuthTokenFilter(jwtUtils, customUserDetailsService, tokenService), UsernamePasswordAuthenticationFilter.class); // 여기서 jwt 인증
