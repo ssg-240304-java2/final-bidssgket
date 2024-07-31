@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/layout/default_layout}" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+
+<th:block layout:fragment="css">
+	<link rel="stylesheet" th:href="@{/user/assets/css/custom-style.css}">
+	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+</th:block>
+
+<th:block layout:fragment="script">
+	<script th:src="@{/admin/js/summernote.js}"></script>
+</th:block>
+
+<div layout:fragment="content">
+
+
+	<script th:inline="javascript">
+        // get editMode
+        const editMode = /*[[${editMode}]]*/ false;
+	</script>
+
+	<h1 class="mt-4">Upload Car info</h1>
+	<ol class="breadcrumb mb-4">
+		<li>Upload New Car</li>
+	</ol>
+
+	<!--/*@thymesVar id="ProductDto" type="com.sch.shift3.user.dto.ContentFeedDto"*/-->
+	<form name="uploadForm" action="" th:action="@{/admin/car/upload}" method="post" enctype="multipart/form-data">
+		<div class="card-body">
+			<div class="row mb-3">
+				<input type="text" hidden/>
+				<div class="col-8">
+					<label class="form-label" for="carName">자동차 이름 & 연식</label>
+					<input class="form-control" type="text" id="carName" name="carName"/>
+				</div>
+				<div class="col-8">
+					<label class="form-label" for="price">가격</label>
+					<input class="form-control" type="number" id="price" name="price"/>
+				</div>
+
+			</div>
+
+			<hr>
+
+			<div class="row mb-3">
+				<!--			썸네일 이미지 업로드-->
+				<label class="form-label" for="imgLink">썸네일 이미지 업로드</label>
+				<input id="imgLink" name="imgLink" type="file"/>
+			</div>
+
+			<div class="row mb-5">
+				<details>
+					<summary>썸네일 미리보기</summary>
+					<div>
+						<div class="card-group d-flex flex-wrap">
+							<div class="card">
+								<div class="img-container43">
+									<img src="" class="card-img-top rounded"
+									     alt="your-image-alt">
+								</div>
+								<div class="card-body">
+									<h5 class="card-title">썸네일 미리보기</h5>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</details>
+			</div>
+
+			<div class="move" style="text-align: right;">
+				<input type="submit" class="btn btn-primary my-status-button shadow " value="자동차 업로드">
+			</div>
+
+		</div>
+	</form>
+</div>
+
+</html>
