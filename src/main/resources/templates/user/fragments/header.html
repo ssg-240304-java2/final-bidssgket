@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- 다른 페이지에 포함시킬 영역을 th:fragment로 선언해준다.-->
+<head>
+    <link rel="stylesheet" type="text/css" href="/user/css/style.css">
+</head>
+<body>
+<div th:fragment="headerFragment" class="header">
+    <div class="header-top">
+        <div class="logo">
+            <a href="/">Bidssgket</a>
+        </div>
+    </div>
+    <div class="header-bottom">
+        <div class="header-links">
+            <a href="#">마이페이지</a>
+            <a href="#">알림</a>
+            <a href="/templates/login">로그인</a>
+        </div>
+        <div class="search-container">
+            <nav class="nav">
+                <div class="category-container">
+                    <a href="#" class="category-link">카테고리</a>
+                    <div class="dropdown-main">
+                        <div class="dropdown-main-content">
+                            <a href="#">카테고리1</a>
+                            <a href="#">카테고리2</a>
+                            <a href="#">카테고리3</a>
+                            <!-- Add more categories as needed -->
+                        </div>
+                    </div>
+                </div>
+                <div class="auction">
+                    <a href="#">경매</a>
+                </div>
+                <div class="product_regist">
+                    <a href="/product/regist">상품등록</a>
+                </div>
+            </nav>
+            <input type="text" placeholder="Search">
+        </div>
+    </div>
+</div>
+</body>
+</html>
