@@ -3,13 +3,13 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
-    <th:block th:replace="~{fragments/config::configFragment}"></th:block>
+    <th:block th:replace="~{user/fragments/config::configFragment}"></th:block>
     <title>layout</title>
     <link rel="stylesheet" type="text/css" href="/user/css/style.css">
 </head>
 <body>
-    <header th:replace="~{fragments/header::headerFragment}"></header>
+    <header th:replace="~{user/fragments/header::headerFragment}"></header>
     <main layout:fragment="content"></main>
-    <footer th:replace="~{fragments/footer::footerFragment}"></footer>
+    <footer th:replace="~{user/fragments/footer::footerFragment}"></footer>
 </body>
 </html>
