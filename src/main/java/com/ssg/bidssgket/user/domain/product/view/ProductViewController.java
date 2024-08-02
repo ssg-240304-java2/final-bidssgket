@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class ProductViewController {
-    @GetMapping("")
+    /*@GetMapping("")
     public String indexController() {
         return "index";
-    }
+    }*/
 }
