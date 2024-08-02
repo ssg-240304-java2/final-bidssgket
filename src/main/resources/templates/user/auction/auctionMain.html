@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/fragments/layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>Home</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="user/auction/css/main.css">
+  <!--    <link rel="stylesheet" href="user/css/style_bid_regist.css"> -->
+</head>
+<body layout:fragment="content">
+
+<div class="container mt-5">
+  <h2 class="auction-section-title">실시간 경매</h2>
+  <br>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card">
+        <img src="/user/images/pradabag.jpg" class="card-img-top" alt="상품 이미지">
+        <div class="card-body">
+          <h5 class="card-title">프라다 버킷백&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="heart-btn" onclick="toggleHeart(this)">
+              <img src="/user/images/empty_heart2.png" alt="관심 없음" class="heart-img">
+            </button>
+          </h5>
+          <p class="card-text">경매 종료: <span id="auction-end-1">2023-12-31 23:59:59</span></p>
+          <p class="card-text">현재 가격: <span id="current-price-1">4,803,000원</span></p>
+          <p class="card-text">경매 시작가: <span id="starting-price-1">4,000,000원</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <img src="/user/images/pradabag2.jpg" class="card-img-top" alt="상품 이미지">
+        <div class="card-body">
+          <h5 class="card-title">프라다 버킷백 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="heart-btn" onclick="toggleHeart(this)">
+              <img src="/user/images/empty_heart2.png" alt="관심 없음" class="heart-img">
+            </button>
+          </h5>
+          <p class="card-text">경매 종료: <span id="auction-end-3">2023-12-31 23:59:59</span></p>
+          <p class="card-text">현재 가격: <span id="current-price-3">4,803,000원</span></p>
+          <p class="card-text">경매 시작가: <span id="starting-price-3">4,000,000원</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <img src="/user/images/pradabag.jpg" class="card-img-top" alt="상품 이미지">
+        <div class="card-body">
+          <h5 class="card-title">프라다 버킷백 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="heart-btn" onclick="toggleHeart(this)">
+              <img src="/user/images/empty_heart2.png" alt="관심 없음" class="heart-img">
+            </button>
+          </h5>
+          <p class="card-text">경매 종료: <span id="auction-end-4">2023-12-31 23:59:59</span></p>
+          <p class="card-text">현재 가격: <span id="current-price-4">4,803,000원</span></p>
+          <p class="card-text">경매 시작가: <span id="starting-price-4">4,000,000원</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <img src="/user/images/pradabag.jpg" class="card-img-top" alt="상품 이미지">
+        <div class="card-body">
+          <h5 class="card-title">프라다 버킷백 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="heart-btn" onclick="toggleHeart(this)">
+              <img src="/user/images/empty_heart2.png" alt="관심 없음" class="heart-img">
+            </button>
+          </h5>
+          <p class="card-text">경매 종료: <span id="auction-end-5">2023-12-31 23:59:59</span></p>
+          <p class="card-text">현재 가격: <span id="current-price-5">4,803,000원</span></p>
+          <p class="card-text">경매 시작가: <span id="starting-price-5">4,000,000원</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<div class="container mt-5">
+  <h2 class="auction-section-title">경매 마감순</h2>
+  <br>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card">
+        <img src="/user/images/pradabag.jpg" class="card-img-top" alt="상품 이미지">
+        <div class="card-body">
+          <h5 class="card-title">프라다 버킷백 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h5>
+          <p class="card-text">경매 종료: <span id="auction-end-2">2023-12-31 23:59:59</span></p>
+          <p class="card-text">현재 가격: <span id="current-price-2">4,803,000원</span></p>
+          <p class="card-text">경매 시작가: <span id="starting-price-2">4,000,000원</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function toggleHeart(button) {
+    const emptyHeart = "/user/images/empty_heart2.png";
+    const filledHeart = "/user/images/heart.png";
+    const imgElement = button.querySelector('.heart-img');
+    const currentSrc = imgElement.getAttribute('src');
+
+    if (currentSrc === emptyHeart) {
+      imgElement.setAttribute('src', filledHeart);
+      imgElement.setAttribute('alt', '관심 있음');
+      console.log("하트가 채워짐");
+    } else {
+      imgElement.setAttribute('src', emptyHeart);
+      imgElement.setAttribute('alt', '관심 없음');
+    }
+  }
+</script>
+</body>
+</html>
