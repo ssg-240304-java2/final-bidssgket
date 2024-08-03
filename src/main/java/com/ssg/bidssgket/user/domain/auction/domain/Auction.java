@@ -21,13 +21,13 @@ public class Auction {
     private DateTime tenderDate;
     private Boolean bidSuccess;
     private Boolean tenderDeleted;
-    /*@ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberNo")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="productNo")
-    private Product product;*/
+    private Product product;
 
     @Builder
     private Auction(int minTenderPrice, int maxTenderPrice, DateTime tenderDate, Boolean bidSuccess, Boolean tenderDeleted) {
@@ -39,7 +39,7 @@ public class Auction {
     }
 
 /*    public static Auction createAuction(AuctionDto auctionDto, Member member, Product product){
-        return
+        return Auction.builder()
     }
 
     public void setProduct(Product product){
