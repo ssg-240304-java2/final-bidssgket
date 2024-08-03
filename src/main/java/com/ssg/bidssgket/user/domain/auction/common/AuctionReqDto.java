@@ -14,6 +14,4 @@ public class AuctionReqDto {
     private DateTime tenderDate;
     private Boolean bidSuccess;
     private Boolean tenderDeleted;
-    /*private Long userNo;
-    private Long productNo;*/
 }
