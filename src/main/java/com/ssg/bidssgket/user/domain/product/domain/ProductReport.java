@@ -1,5 +1,6 @@
 package com.ssg.bidssgket.user.domain.product.domain;
 
+import com.ssg.bidssgket.user.domain.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +16,15 @@ public class ProductReport {
     private int complainContent;
     private LocalDateTime complainDate;
 
-//    @ManyToOne
-//    @JoinColumn(name = "memberNo")
-//    private Memeber memeberNo;
+    @ManyToOne
+    @JoinColumn(name = "memberNo")
+    private Member memberNo;
+
+    @ManyToOne
+    @JoinColumn(name = "productNo")
+    private Product product;
+
+    public void setProductNo(Product productNo) {
+        this.product = productNo;
+    }
 }
