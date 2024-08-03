@@ -1,7 +1,6 @@
 package com.ssg.bidssgket.user.domain.member.domain;
 
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
