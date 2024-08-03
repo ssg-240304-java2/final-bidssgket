@@ -1,6 +1,6 @@
 package com.ssg.bidssgket.user.domain.auction.domain;
 
-import com.ssg.bidssgket.user.domain.auction.common.AuctionDto;
+import com.ssg.bidssgket.user.domain.auction.common.AuctionReqDto;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import jakarta.persistence.*;
@@ -24,30 +24,37 @@ public class Auction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberNo")
     private Member member;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="productNo")
     private Product product;
 
     @Builder
-    private Auction(int minTenderPrice, int maxTenderPrice, DateTime tenderDate, Boolean bidSuccess, Boolean tenderDeleted) {
+    public Auction(int bidNo, int minTenderPrice, int maxTenderPrice, DateTime tenderDate, Boolean bidSuccess, Boolean tenderDeleted, Member member, Product product) {
+        this.bidNo = bidNo;
         this.minTenderPrice = minTenderPrice;
         this.maxTenderPrice = maxTenderPrice;
         this.tenderDate = tenderDate;
         this.bidSuccess = bidSuccess;
         this.tenderDeleted = tenderDeleted;
+        this.member = member;
+        this.product = product;
     }
 
-/*    public static Auction createAuction(AuctionDto auctionDto, Member member, Product product){
+
+    public static Auction createAuction(AuctionReqDto auctionDto, Member member, Product product){
         return Auction.builder()
+                .minTenderPrice(auctionDto.getMinTenderPrice())
+                .maxTenderPrice(auctionDto.getMaxTenderPrice())
+                .tenderDate(auctionDto.getTenderDate())
+                .bidSuccess(auctionDto.getBidSuccess())
+                .tenderDeleted(auctionDto.getTenderDeleted())
+                .member(member)
+                .product(product)
+                .build();
     }
-
+/*
     public void setProduct(Product product){
         this.product = product;
     }*/
-
-
-
-
 
 }

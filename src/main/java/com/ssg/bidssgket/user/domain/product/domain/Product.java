@@ -46,12 +46,12 @@ public class Product {
         this.productImages.add(productImage);
     }
 
-    @OneToMany(mappedBy = "bidNo")
+    /*@OneToMany(mappedBy = "bidNo")
     private List<Auction> aucitons = new ArrayList<>();
 
-    /**
+    *//**
      * 양방향 연관관계, cascade 유의
-     */
+     *//*
     public void addAuction(Auction auction){
         if(auction.getProduct() != null){
             auction.getProduct().getAuctions().remove(auction);
@@ -76,5 +76,5 @@ public class Product {
     @OneToOne
     @JoinColumn(name = "saleOrderNo")
     private SaleOrder saleOrder;
-
+*/
 }

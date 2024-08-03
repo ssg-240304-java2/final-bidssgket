@@ -5,13 +5,13 @@ import org.joda.time.DateTime;
 
 @Data
 
-public class AuctionDto {
+public class AuctionReqDto {
     private int bidNo;
     private int minTenderPrice;
     private int maxTenderPrice;
     private DateTime tenderDate;
     private Boolean bidSuccess;
     private Boolean tenderDeleted;
-    private int userNo;
-    private int productNo;
+    /*private int userNo;
+    private int productNo;*/
 }
