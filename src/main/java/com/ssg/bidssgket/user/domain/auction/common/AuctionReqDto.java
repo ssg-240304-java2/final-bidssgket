@@ -1,17 +1,19 @@
 package com.ssg.bidssgket.user.domain.auction.common;
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.joda.time.DateTime;
 
-@Data
-
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AuctionReqDto {
-    private int bidNo;
+    private Long bidNo;
     private int minTenderPrice;
     private int maxTenderPrice;
     private DateTime tenderDate;
     private Boolean bidSuccess;
     private Boolean tenderDeleted;
-    /*private int userNo;
-    private int productNo;*/
+    /*private Long userNo;
+    private Long productNo;*/
 }

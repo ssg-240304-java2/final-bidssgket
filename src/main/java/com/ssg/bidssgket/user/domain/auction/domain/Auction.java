@@ -15,7 +15,7 @@ import org.joda.time.DateTime;
 public class Auction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int bidNo;
+    private Long bidNo;
     private int minTenderPrice;
     private int maxTenderPrice;
     private DateTime tenderDate;
@@ -29,8 +29,7 @@ public class Auction {
     private Product product;
 
     @Builder
-    public Auction(int bidNo, int minTenderPrice, int maxTenderPrice, DateTime tenderDate, Boolean bidSuccess, Boolean tenderDeleted, Member member, Product product) {
-        this.bidNo = bidNo;
+    public Auction(int minTenderPrice, int maxTenderPrice, DateTime tenderDate, Boolean bidSuccess, Boolean tenderDeleted, Member member, Product product) {
         this.minTenderPrice = minTenderPrice;
         this.maxTenderPrice = maxTenderPrice;
         this.tenderDate = tenderDate;
@@ -52,9 +51,7 @@ public class Auction {
                 .product(product)
                 .build();
     }
-/*
     public void setProduct(Product product){
         this.product = product;
-    }*/
-
+    }
 }
