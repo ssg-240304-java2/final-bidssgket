@@ -25,8 +25,9 @@ public class Product extends BaseTimeEntity {
     private Long productNo;
     private String productName;
     private String productDesc;
-    private Boolean imd_purchase;
-    private Boolean auction_selected;
+    private Boolean imdPurchase;
+    private Boolean auctionSelected;
+    private Boolean eventAuction;
     private Integer buynowPrice;
     private Integer auctionStartPrice;
     private Integer bidSuccessPrice;
@@ -68,13 +69,14 @@ public class Product extends BaseTimeEntity {
     private SaleOrder saleOrder;
 
     @Builder
-    private Product(String productName, Category category, String productDesc,Sales_status salesStatus,Boolean imd_purchase,Boolean auction_selected,Integer buynowPrice,Integer bidSuccessPrice ,Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
+    private Product(String productName, Category category, String productDesc,Sales_status salesStatus,Boolean imdPurchase,Boolean auctionSelected,Boolean eventAuction,Integer buynowPrice,Integer bidSuccessPrice ,Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
         this.productName = productName;
         this.category = category;
         this.salesStatus = salesStatus;
         this.productDesc = productDesc;
-        this.imd_purchase = imd_purchase;
-        this.auction_selected = auction_selected;
+        this.imdPurchase = imdPurchase;
+        this.auctionSelected = auctionSelected;
+        this.eventAuction = eventAuction;
         this.buynowPrice = buynowPrice;
         this.auctionStartPrice = auctionStartPrice;
         this.auctionStartTime = auctionStartTime;
@@ -89,8 +91,9 @@ public class Product extends BaseTimeEntity {
                 .category(Category.valueOf(productReqDto.getCategory()))
                 .salesStatus(Sales_status.valueOf(productReqDto.getSalesStatus()))
                 .productDesc(productReqDto.getProductDesc())
-                .imd_purchase(productReqDto.getImd_purchase())
-                .auction_selected(productReqDto.getAuction_selected())
+                .imdPurchase(productReqDto.getImdPurchase())
+                .auctionSelected(productReqDto.getAuctionSelected())
+                .eventAuction(productReqDto.getEventAuction())
                 .buynowPrice(productReqDto.getBuynowPrice())
                 .auctionStartPrice(productReqDto.getAuctionStartPrice())
                 .auctionStartTime(productReqDto.getAuctionStartTime())
@@ -113,12 +116,12 @@ public class Product extends BaseTimeEntity {
     }
 
     public void addReview(Review review){
-        review.setReview_no(this);
+        review.setReviewNo(this);
         this.review = review;
     }
 
     public void addWishlist(Wishlist wishlist){
-        wishlist.setWishlist_no(this);
+        wishlist.setWishlistNo(this);
         this.wishlist = wishlist;
     }
 
