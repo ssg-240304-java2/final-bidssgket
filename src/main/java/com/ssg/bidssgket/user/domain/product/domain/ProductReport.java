@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
-public class ProductReport {
+public class ProductReport{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long complainNo;
@@ -42,7 +42,11 @@ public class ProductReport {
                 .build();
     }
 
-    public void setProductNo(Product productNo) {
-        this.product = productNo;
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
     }
 }

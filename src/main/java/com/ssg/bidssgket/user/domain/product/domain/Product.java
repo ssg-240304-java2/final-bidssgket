@@ -1,5 +1,6 @@
 package com.ssg.bidssgket.user.domain.product.domain;
 
+import com.ssg.bidssgket.common.domain.BaseTimeEntity;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.member.domain.Review;
 import com.ssg.bidssgket.user.domain.member.domain.Wishlist;
@@ -17,17 +18,13 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product {
+public class Product extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productNo;
     private String productName;
-    @Enumerated(EnumType.STRING)
-    private Category category;
     private String productDesc;
-    @Enumerated(EnumType.STRING)
-    private Sales_status salesStatus;
     private Boolean imd_purchase;
     private Boolean auction_selected;
     private Integer buynowPrice;
@@ -35,6 +32,11 @@ public class Product {
     private Integer bidSuccessPrice;
     private LocalDateTime auctionStartTime;
     private LocalDateTime auctionEndTime;
+
+    @Enumerated(EnumType.STRING)
+    private Category category;
+    @Enumerated(EnumType.STRING)
+    private Sales_status salesStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberNo")
@@ -65,6 +67,38 @@ public class Product {
     @JoinColumn(name = "saleOrderNo")
     private SaleOrder saleOrder;
 
+    @Builder
+    private Product(String productName, Category category, String productDesc,Sales_status salesStatus,Boolean imd_purchase,Boolean auction_selected,Integer buynowPrice,Integer bidSuccessPrice ,Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
+        this.productName = productName;
+        this.category = category;
+        this.salesStatus = salesStatus;
+        this.productDesc = productDesc;
+        this.imd_purchase = imd_purchase;
+        this.auction_selected = auction_selected;
+        this.buynowPrice = buynowPrice;
+        this.auctionStartPrice = auctionStartPrice;
+        this.auctionStartTime = auctionStartTime;
+        this.auctionEndTime = auctionEndTime;
+        this.bidSuccessPrice = bidSuccessPrice;
+        this.member = member;
+    }
+
+    public static Product addProductBoth(ProductReqDto productReqDto,Member member){
+        return Product.builder()
+                .productName(productReqDto.getProductName())
+                .category(Category.valueOf(productReqDto.getCategory()))
+                .salesStatus(Sales_status.valueOf(productReqDto.getSalesStatus()))
+                .productDesc(productReqDto.getProductDesc())
+                .imd_purchase(productReqDto.getImd_purchase())
+                .auction_selected(productReqDto.getAuction_selected())
+                .buynowPrice(productReqDto.getBuynowPrice())
+                .auctionStartPrice(productReqDto.getAuctionStartPrice())
+                .auctionStartTime(productReqDto.getAuctionStartTime())
+                .auctionEndTime(productReqDto.getAuctionEndTime())
+                .bidSuccessPrice(productReqDto.getBidSuccessPrice())
+                .member(member)
+                .build();
+    }
 
     /**
      * 양방향 연관관계, cascade 유의
@@ -112,41 +146,8 @@ public class Product {
             productReport.getProduct().getProductImages().remove(productReport);
         }
 
-        productReport.setProductNo(this);
+        productReport.setProduct(this);
         this.productReports.add(productReport);
-    }
-
-    @Builder
-    private Product(String productName, Category category, String productDesc,Sales_status salesStatus,Boolean imd_purchase,Boolean auction_selected,Integer buynowPrice,Integer bidSuccessPrice ,Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
-        this.productName = productName;
-        this.category = category;
-        this.salesStatus = salesStatus;
-        this.productDesc = productDesc;
-        this.imd_purchase = imd_purchase;
-        this.auction_selected = auction_selected;
-        this.buynowPrice = buynowPrice;
-        this.auctionStartPrice = auctionStartPrice;
-        this.auctionStartTime = auctionStartTime;
-        this.auctionEndTime = auctionEndTime;
-        this.bidSuccessPrice = bidSuccessPrice;
-        this.member = member;
-    }
-
-    public static Product addProductBoth(ProductReqDto productReqDto,Member member){
-        return Product.builder()
-                .productName(productReqDto.getProductName())
-                .category(Category.valueOf(productReqDto.getCategory()))
-                .salesStatus(Sales_status.valueOf(productReqDto.getSalesStatus()))
-                .productDesc(productReqDto.getProductDesc())
-                .imd_purchase(productReqDto.getImd_purchase())
-                .auction_selected(productReqDto.getAuction_selected())
-                .buynowPrice(productReqDto.getBuynowPrice())
-                .auctionStartPrice(productReqDto.getAuctionStartPrice())
-                .auctionStartTime(productReqDto.getAuctionStartTime())
-                .auctionEndTime(productReqDto.getAuctionEndTime())
-                .bidSuccessPrice(productReqDto.getBidSuccessPrice())
-                .member(member)
-                .build();
     }
 
 }

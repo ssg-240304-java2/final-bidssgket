@@ -1,11 +1,14 @@
 package com.ssg.bidssgket.user.domain.product.view.dto.request;
 
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductReqDto {
     private Long productNo;
     private String productName;

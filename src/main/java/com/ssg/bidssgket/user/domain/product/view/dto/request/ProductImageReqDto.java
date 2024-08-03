@@ -1,8 +1,12 @@
 package com.ssg.bidssgket.user.domain.product.view.dto.request;
 
-import lombok.Data;
 
-@Data
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductImageReqDto {
     private Long productImgNo;
     private String productImg;
