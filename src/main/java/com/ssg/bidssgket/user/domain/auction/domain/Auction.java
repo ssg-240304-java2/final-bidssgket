@@ -29,7 +29,7 @@ public class Auction {
     private Product product;
 
     @Builder
-    public Auction(int minTenderPrice, int maxTenderPrice, DateTime tenderDate, Boolean bidSuccess, Boolean tenderDeleted, Member member, Product product) {
+    private Auction(int minTenderPrice, int maxTenderPrice, DateTime tenderDate, Boolean bidSuccess, Boolean tenderDeleted, Member member, Product product) {
         this.minTenderPrice = minTenderPrice;
         this.maxTenderPrice = maxTenderPrice;
         this.tenderDate = tenderDate;
