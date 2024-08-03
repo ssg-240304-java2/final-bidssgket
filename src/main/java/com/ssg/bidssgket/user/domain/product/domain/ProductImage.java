@@ -1,6 +1,8 @@
 package com.ssg.bidssgket.user.domain.product.domain;
 
+import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductImageReqDto;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,7 +21,24 @@ public class ProductImage {
     @JoinColumn(name = "productNo")
     private Product product;
 
+    @Builder
+    private ProductImage(String productImg, boolean productThumbnail, Product product)  {
+        this.productImg = productImg;
+        this.productThumbnail = productThumbnail;
+        this.product = product;
+
+    }
+
+    public static ProductImage addProductImage(ProductImageReqDto productImageReqDto, Product product) {
+        return ProductImage.builder()
+                .productImg(productImageReqDto.getProductImg())
+                .productThumbnail(productImageReqDto.isProductThumbnail())
+                .product(product)
+                .build();
+    }
+
     public void setProduct(Product product) {
         this.product = product;
     }
+
 }

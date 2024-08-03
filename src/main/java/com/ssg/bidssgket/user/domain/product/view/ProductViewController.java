@@ -12,11 +12,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Slf4j
 @Controller
-@RequestMapping
+@RequestMapping("/user/product")
 @RequiredArgsConstructor
 public class ProductViewController {
-    /*@GetMapping("")
-    public String indexController() {
-        return "index";
-    }*/
+    @GetMapping("/regist")
+    public String registController() {
+        return "/user/product/regist";
+    }
+
+    @GetMapping("/update")
+    public String updateController() {
+        return "/user/product/update";
+    }
+
+    @GetMapping("/bidFailed")
+    public String bidFailedController() {
+        return "/user/product/bidFailed";
+    }
+
+    @GetMapping("/bidSuccess")
+    public String bidSuccessController() {
+        return "/user/product/bidSuccess";
+    }
+
+    @GetMapping("/detailAuction")
+    public String detailAuctionController() {
+        return "/user/product/detailAuction";
+    }
+
+    @GetMapping("/detailBuyer")
+    public String detailBuyerController() {
+        return "/user/product/detailBuyer";
+    }
+
+    @GetMapping("/detailSeller")
+    public String detailSellerController() {
+        return "/user/product/detailSeller";
+    }
+
 }
