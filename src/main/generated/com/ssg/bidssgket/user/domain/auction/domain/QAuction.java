@@ -1,4 +1,4 @@
-package com.ssg.bidssgket.user.domain.auction.domain.entity;
+package com.ssg.bidssgket.user.domain.auction.domain;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -7,7 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.ssg.bidssgket.user.domain.auction.entity.Auction;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -16,7 +16,9 @@ import com.ssg.bidssgket.user.domain.auction.entity.Auction;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QAuction extends EntityPathBase<Auction> {
 
-    private static final long serialVersionUID = -314569058L;
+    private static final long serialVersionUID = -1264383651L;
+
+    private static final PathInits INITS = PathInits.DIRECT2;
 
     public static final QAuction auction = new QAuction("auction");
 
@@ -26,22 +28,36 @@ public class QAuction extends EntityPathBase<Auction> {
 
     public final NumberPath<Integer> maxTenderPrice = createNumber("maxTenderPrice", Integer.class);
 
+    public final com.ssg.bidssgket.user.domain.member.domain.QMember member;
+
     public final NumberPath<Integer> minTenderPrice = createNumber("minTenderPrice", Integer.class);
+
+    public final com.ssg.bidssgket.user.domain.product.domain.QProduct product;
 
     public final DateTimePath<org.joda.time.DateTime> tenderDate = createDateTime("tenderDate", org.joda.time.DateTime.class);
 
     public final BooleanPath tenderDeleted = createBoolean("tenderDeleted");
 
     public QAuction(String variable) {
-        super(Auction.class, forVariable(variable));
+        this(Auction.class, forVariable(variable), INITS);
     }
 
     public QAuction(Path<? extends Auction> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QAuction(PathMetadata metadata) {
-        super(Auction.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QAuction(PathMetadata metadata, PathInits inits) {
+        this(Auction.class, metadata, inits);
+    }
+
+    public QAuction(Class<? extends Auction> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.member = inits.isInitialized("member") ? new com.ssg.bidssgket.user.domain.member.domain.QMember(forProperty("member"), inits.get("member")) : null;
+        this.product = inits.isInitialized("product") ? new com.ssg.bidssgket.user.domain.product.domain.QProduct(forProperty("product"), inits.get("product")) : null;
     }
 
 }
