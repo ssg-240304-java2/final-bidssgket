@@ -55,7 +55,7 @@ public class Product extends BaseTimeEntity {
     @JoinColumn(name = "reviewNo")
     private Review review;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "wishlistNo")
     private Wishlist wishlist;
 
@@ -122,15 +122,6 @@ public class Product extends BaseTimeEntity {
         this.wishlist = wishlist;
     }
 
-    public void addPurchaseOrder(PurchaseOrder purchaseOrder){
-        purchaseOrder.setPurchaseOrderNo(this);
-        this.purchaseOrder = purchaseOrder;
-    }
-
-    public void addSaleOrder(SaleOrder saleOrder){
-        saleOrder.setSaleOrderNO(this);
-        this.saleOrder = saleOrder;
-    }
 
     public void addProductImage(ProductImage productImage){
         if(productImage.getProduct() != null){
