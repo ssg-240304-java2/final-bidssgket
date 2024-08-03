@@ -19,14 +19,14 @@ import java.time.LocalDateTime;
 public class BaseTimeAndDeleteEntity {
 
     @CreatedDate
-    @Column(updatable = false, nullable = false)
+    @Column(updatable=false, nullable=false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false)
+    @Column(nullable=false)
     private LocalDateTime updatedAt;
 
-    @Column(nullable = false)
+    @Column(nullable=false)
     private Boolean isDeleted = false;
 
     @PrePersist
