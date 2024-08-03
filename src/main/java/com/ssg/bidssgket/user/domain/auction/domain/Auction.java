@@ -40,13 +40,13 @@ public class Auction {
     }
 
 
-    public static Auction createAuction(AuctionReqDto auctionDto, Member member, Product product){
+    public static Auction createAuction(AuctionReqDto auctionReqDto, Member member, Product product){
         return Auction.builder()
-                .minTenderPrice(auctionDto.getMinTenderPrice())
-                .maxTenderPrice(auctionDto.getMaxTenderPrice())
-                .tenderDate(auctionDto.getTenderDate())
-                .bidSuccess(auctionDto.getBidSuccess())
-                .tenderDeleted(auctionDto.getTenderDeleted())
+                .minTenderPrice(auctionReqDto.getMinTenderPrice())
+                .maxTenderPrice(auctionReqDto.getMaxTenderPrice())
+                .tenderDate(auctionReqDto.getTenderDate())
+                .bidSuccess(auctionReqDto.getBidSuccess())
+                .tenderDeleted(auctionReqDto.getTenderDeleted())
                 .member(member)
                 .product(product)
                 .build();
