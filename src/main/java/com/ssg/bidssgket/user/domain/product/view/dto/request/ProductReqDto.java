@@ -15,8 +15,9 @@ public class ProductReqDto {
     private String category;
     private String productDesc;
     private String salesStatus;
-    private Boolean imd_purchase;
-    private Boolean auction_selected;
+    private Boolean imdPurchase;
+    private Boolean auctionSelected;
+    private Boolean eventAuction;
     private Integer buynowPrice;
     private Integer auctionStartPrice;
     private Integer bidSuccessPrice;
