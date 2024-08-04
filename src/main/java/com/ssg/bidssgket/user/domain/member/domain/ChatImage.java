@@ -32,7 +32,7 @@ public class ChatImage {
     }
 
     public void addChatContent(ChatContent chatContent) {
-        chatContent.setChatImageNo(this);
+        chatContent.setChatImage(this);
         this.chatContent = chatContent;
     }
 

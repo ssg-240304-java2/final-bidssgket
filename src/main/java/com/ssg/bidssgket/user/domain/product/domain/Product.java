@@ -26,7 +26,7 @@ public class Product extends BaseTimeEntity {
     private Boolean imdPurchase;
     private Boolean auctionSelected;
     private Boolean eventAuction;
-    private Integer buynowPrice;
+    private Integer buyNowPrice;
     private Integer auctionStartPrice;
     private Integer bidSuccessPrice;
     private LocalDateTime auctionStartTime;
@@ -50,15 +50,18 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Auction> auctions = new ArrayList<>();
 
-    @OneToOne(mappedBy = "review")
+    @OneToOne(mappedBy = "product")
     private Review review;
 
+    /**
+     * Product랑 WishList N:M 같은데 확인 부탁드립니다.
+     */
     @ManyToOne
-    @JoinColumn(name = "wishlistNo")
-    private WishList wishlist;
+    @JoinColumn(name = "wishListNo")
+    private WishList wishList;
 
     @Builder
-    private Product(String productName, Category category, String productDesc,Sales_status salesStatus,Boolean imdPurchase,Boolean auctionSelected,Boolean eventAuction,Integer buynowPrice,Integer bidSuccessPrice ,Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
+    private Product(String productName, Category category, String productDesc, Sales_status salesStatus, Boolean imdPurchase, Boolean auctionSelected, Boolean eventAuction, Integer buyNowPrice, Integer bidSuccessPrice , Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
         this.productName = productName;
         this.category = category;
         this.salesStatus = salesStatus;
@@ -66,7 +69,7 @@ public class Product extends BaseTimeEntity {
         this.imdPurchase = imdPurchase;
         this.auctionSelected = auctionSelected;
         this.eventAuction = eventAuction;
-        this.buynowPrice = buynowPrice;
+        this.buyNowPrice = buyNowPrice;
         this.auctionStartPrice = auctionStartPrice;
         this.auctionStartTime = auctionStartTime;
         this.auctionEndTime = auctionEndTime;
@@ -83,7 +86,7 @@ public class Product extends BaseTimeEntity {
                 .imdPurchase(productReqDto.getImdPurchase())
                 .auctionSelected(productReqDto.getAuctionSelected())
                 .eventAuction(productReqDto.getEventAuction())
-                .buynowPrice(productReqDto.getBuynowPrice())
+                .buyNowPrice(productReqDto.getBuyNowPrice())
                 .auctionStartPrice(productReqDto.getAuctionStartPrice())
                 .auctionStartTime(productReqDto.getAuctionStartTime())
                 .auctionEndTime(productReqDto.getAuctionEndTime())
@@ -105,13 +108,12 @@ public class Product extends BaseTimeEntity {
     }
 
     public void addReview(Review review){
-        review.setReviewNo(this);
+        review.setProduct(this);
         this.review = review;
     }
 
-    public void addWishlist(WishList wishlist){
-        wishlist.setWishListNo(this);
-        this.wishlist = wishlist;
+    public void setWishList(WishList wishlist){
+        this.wishList = wishlist;
     }
 
 

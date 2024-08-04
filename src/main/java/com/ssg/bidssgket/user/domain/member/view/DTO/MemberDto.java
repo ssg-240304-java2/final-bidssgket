@@ -14,7 +14,7 @@ public class MemberDto {
     private String pwd;
     private String phone;
     private String memberNickname;
-    private Integer buiscuit;
+    private Integer biscuit;
     private Boolean isDeleted;
     private Boolean isPenalty;
     private Address address;

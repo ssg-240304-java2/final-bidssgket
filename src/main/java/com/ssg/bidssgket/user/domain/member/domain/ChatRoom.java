@@ -18,14 +18,14 @@ public class ChatRoom {
     private Long chatroomNo;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "senderNo")
+    @JoinColumn(name = "memberNo")
     private Member sender;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receiverNo")
+    @JoinColumn(name = "memberNo")
     private Member receiver;
 
-    @OneToMany(mappedBy = "chatRoom",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
+    @OneToMany(mappedBy = "chatRoom", cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
     private List<ChatContent> chatContents = new ArrayList<>();
 
     @Builder
@@ -44,19 +44,19 @@ public class ChatRoom {
 
     }
 
-    public void setSenderNo(Member sender) {
+    public void setSender(Member sender) {
         this.sender = sender;
     }
 
-    public void setReceiverNo(Member receiver) {
+    public void setReceiver(Member receiver) {
         this.receiver = receiver;
     }
 
-    public void addchatContents(ChatContent chatContent) {
+    public void addChatContent(ChatContent chatContent) {
         if(chatContent.getChatRoom() != null){
             chatContent.getChatRoom().getChatContents().remove(chatContent);
         }
-        chatContent.setChatRoomNo(this);
+        chatContent.setChatRoom(this);
         this.chatContents.add(chatContent);
     }
 

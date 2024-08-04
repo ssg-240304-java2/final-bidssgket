@@ -17,11 +17,11 @@ public class Review {
     private Integer biscuitRating;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reviewerNo")
+    @JoinColumn(name = "memberNo")
     private Member reviewer;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reviewedNo")
+    @JoinColumn(name = "memberNo")
     private Member reviewee;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -47,15 +47,15 @@ public class Review {
                 .build();
     }
 
-    public void setReviewerNo(Member reviewer) {
+    public void setReviewer(Member reviewer) {
         this.reviewer = reviewer;
     }
 
-    public void setRevieweeNo(Member reviewee) {
+    public void setReviewee(Member reviewee) {
         this.reviewee = reviewee;
     }
 
-    public void setReviewNo(Product product) {
+    public void setProduct(Product product) {
         this.product = product;
     }
 }

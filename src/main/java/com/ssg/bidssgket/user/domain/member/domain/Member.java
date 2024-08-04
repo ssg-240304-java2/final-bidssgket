@@ -43,23 +43,23 @@ public class Member {
         }
     }
 
-    @OneToMany(mappedBy = "member",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE},orphanRemoval = true)
-    private List<WishList> wishLists =new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE},orphanRemoval = true)
+    private List<WishList> wishLists = new ArrayList<>();
 
-    @OneToOne(mappedBy = "reviewer",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true)
+    @OneToOne(mappedBy = "reviewer", cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true)
     private Review reviewer;
 
-    @OneToOne(mappedBy = "reviewee",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true)
+    @OneToOne(mappedBy = "reviewee", cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true)
     private Review reviewee;
 
-    @OneToOne(mappedBy = "sender",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true)
+    @OneToOne(mappedBy = "sender", cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true)
     private ChatRoom sender;
 
-    @OneToOne(mappedBy = "receiver",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true)
+    @OneToOne(mappedBy = "receiver", cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true)
     private ChatRoom receiver;
 
-    @OneToOne(mappedBy = "nickname",cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true)
-    private ChatContent nickname;
+    @OneToOne(mappedBy = "member", cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true)
+    private ChatContent chatContent;
 
 
     @Builder
@@ -82,7 +82,7 @@ public class Member {
                 .pwd(memberDto.getPwd())
                 .memberNickname(memberDto.getMemberNickname())
                 .phone(memberDto.getPhone())
-                .biscuit(memberDto.getBuiscuit())
+                .biscuit(memberDto.getBiscuit())
                 .address(memberDto.getAddress())
                 .isDeleted(memberDto.getIsDeleted())
                 .isPenalty(memberDto.getIsPenalty())
@@ -97,33 +97,33 @@ public class Member {
         if(wishList.getMember() != null){
             wishList.getMember().getWishLists().remove(wishList);
         }
-        wishList.setMemberNo(this);
+        wishList.setMember(this);
         this.wishLists.add(wishList);
     }
 
     public void addReviewer(Review reviewer){
-        reviewer.setReviewerNo(this);
+        reviewer.setReviewer(this);
         this.reviewer = reviewer;
     }
 
     public void addReviewee(Review reviewee){
-        reviewee.setRevieweeNo(this);
+        reviewee.setReviewee(this);
         this.reviewee = reviewee;
     }
 
     public void addSender(ChatRoom sender){
-        sender.setSenderNo(this);
+        sender.setSender(this);
         this.sender = sender;
     }
 
     public void addReceiver(ChatRoom receiver){
-        receiver.setReceiverNo(this);
+        receiver.setReceiver(this);
         this.receiver = receiver;
     }
 
-    public void addNickname(ChatContent nickname){
-        nickname.setNickname(this);
-        this.nickname = nickname;
+    public void addNickname(ChatContent chatContent){
+        chatContent.setMember(this);
+        this.chatContent = chatContent;
     }
 
 }
