@@ -3,9 +3,7 @@ package com.ssg.bidssgket.user.domain.product.domain;
 import com.ssg.bidssgket.common.domain.BaseTimeEntity;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.member.domain.Review;
-import com.ssg.bidssgket.user.domain.member.domain.Wishlist;
-import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
-import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
+import com.ssg.bidssgket.user.domain.member.domain.WishList;
 import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -50,23 +48,14 @@ public class Product extends BaseTimeEntity {
     private List<ProductReport> productReports = new ArrayList<>();
 
     @OneToMany(mappedBy = "product",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
-    private List<Auction> aucitons = new ArrayList<>();
+    private List<Auction> auctions = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "reviewNo")
+    @OneToOne(mappedBy = "review")
     private Review review;
 
     @ManyToOne
     @JoinColumn(name = "wishlistNo")
-    private Wishlist wishlist;
-
-    @OneToOne
-    @JoinColumn(name = "purchaseOrderNo")
-    private PurchaseOrder purchaseOrder;
-
-    @OneToOne
-    @JoinColumn(name = "saleOrderNo")
-    private SaleOrder saleOrder;
+    private WishList wishlist;
 
     @Builder
     private Product(String productName, Category category, String productDesc,Sales_status salesStatus,Boolean imdPurchase,Boolean auctionSelected,Boolean eventAuction,Integer buynowPrice,Integer bidSuccessPrice ,Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
@@ -108,11 +97,11 @@ public class Product extends BaseTimeEntity {
      */
     public void addAuction(Auction auction){
         if(auction.getProduct() != null){
-            auction.getProduct().getAucitons().remove(auction);
+            auction.getProduct().getAuctions().remove(auction);
         }
 
         auction.setProduct(this);
-        this.aucitons.add(auction);
+        this.auctions.add(auction);
     }
 
     public void addReview(Review review){
@@ -120,8 +109,8 @@ public class Product extends BaseTimeEntity {
         this.review = review;
     }
 
-    public void addWishlist(Wishlist wishlist){
-        wishlist.setWishlistNo(this);
+    public void addWishlist(WishList wishlist){
+        wishlist.setWishListNo(this);
         this.wishlist = wishlist;
     }
 
