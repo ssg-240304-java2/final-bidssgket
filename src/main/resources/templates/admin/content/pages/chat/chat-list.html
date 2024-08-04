@@ -17,7 +17,7 @@
 
 	</style>
 
-	<h1 class="mt-4">주문 목록</h1>
+	<h1 class="mt-4">채팅 목록</h1>
 <!--	<ol class="breadcrumb mb-4">-->
 <!--		<li class="breadcrumb-item active">회원 목록</li>-->
 <!--	</ol>-->
@@ -27,7 +27,7 @@
 			<div class="row">
 					<div class="row">
 						<div class="wrapper" >
-							<table id="orderListSpace"  class="table table-bordered">
+							<table id="chatListSpace"  class="table table-bordered">
 
 							</table>
 						</div>
@@ -41,44 +41,36 @@
 
 									$.ajax({
 										type: "GET",
-										url: "/admin/api/payment/list?page="+page, //여기 api 따
+										url: "/admin/api/chat/list?page="+page, //여기 api 따
 										// dataType: "json",
-										success: function (orderList) {
+										success: function (chatList) {
 											const option = {
 												maximumFractionDigits: 4
 											};
 
-											let orderListSpace = $("#orderListSpace");
-											orderListSpace.empty();
-											makePagenation(orderList);
+											let chatListSpace = $("#chatListSpace");
+											chatListSpace.empty();
+											makePagenation(chatList);
 
-											console.log(orderList);
+											console.log(chatList);
 
-											orderListSpace.append(
+											chatListSpace.append(
 													`
 													<tr>
-														<th scope="col">주문번호</th>
-														<th scope="col">거래유형</th>
-														<th scope="col">주문상태</th>
-														<th scope="col">등록일</th>
-														<th scope="col">수정일</th>
-														<th scope="col">삭제여부</th>
-														<th scope="col">결제번호</th>
+														<th scope="col">대화봥 번호</th>
+														<th scope="col">수신자</th>
+														<th scope="col">발신자</th>
 													</tr>
 													`
 											)
-											orderList.content.forEach(function(payment){
-												orderListSpace.append(
+											chatList.content.forEach(function(chat){
+												chatListSpace.append(
 														`
 														<tr>
-															<a href="/admin/user/info${payment.paymentNo}" style="color: black">
-																<th scope="col">${payment.paymentNo}</th>
-																<th scope="col">${payment.paymentType}</th>
-																<th scope="col">${payment.amount}</th>
-																<th scope="col">${payment.paymentStatus}</th>
-																<th scope="col">${payment.createdAt}</th>
-																<th scope="col">${payment.isDeleted}</th>
-																<th scope="col">${payment.userName}</th>
+															<a href="/admin/user/info${chat.roomNo}" style="color: black">
+																<th scope="col">${chat.roomNo}</th>
+																<th scope="col">${chat.sender}</th>
+																<th scope="col">${chat.receiver}</th>
 															</a>
 														</tr>
 														`

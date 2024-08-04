@@ -27,7 +27,7 @@
 			<div class="row">
 					<div class="row">
 						<div class="wrapper" >
-							<table id="paymentListSpace">
+							<table id="paymentListSpace"  class="table table-bordered">
 
 							</table>
 						</div>
@@ -48,13 +48,13 @@
 												maximumFractionDigits: 4
 											};
 
-											let userListSpace = $("#paymentListSpace");
-											userListSpace.empty();
+											let paymentListSpace = $("#paymentListSpace");
+											paymentListSpace.empty();
 											makePagenation(paymentList);
 
 											console.log(paymentList);
 
-											userListSpace.append(
+											paymentListSpace.append(
 													`
 													<tr>
 														<th scope="col">결제번호</th>
@@ -68,20 +68,18 @@
 													`
 											)
 											paymentList.content.forEach(function(payment){
-												userListSpace.append(
+												paymentListSpace.append(
 														`
 														<tr>
-															<th scope="col">${payment.paymentNo}</th>
-															<th scope="col">${payment.paymentType}</th>
-															<th scope="col">${payment.amount}</th>
-															<th scope="col">${payment.paymentStatus}</th>
-															<th scope="col">${payment.createdAt}</th>
-															<th scope="col">${payment.isDeleted}</th>
-															<th scope="col">${payment.userName}</th>
-															<th>
-																<!--<a th:href="@{/admin/user/report/{complainNo}(complainNo = ${payment.paymentNo})}">확인하기</a>-->
-																<a href="/admin/user/info${payment.paymentNo}">확인하기</a>
-															</th>
+															<a href="/admin/user/info${payment.paymentNo}" style="color: black">
+																<th scope="col">${payment.paymentNo}</th>
+																<th scope="col">${payment.paymentType}</th>
+																<th scope="col">${payment.amount}</th>
+																<th scope="col">${payment.paymentStatus}</th>
+																<th scope="col">${payment.createdAt}</th>
+																<th scope="col">${payment.isDeleted}</th>
+																<th scope="col">${payment.userName}</th>
+															</a>
 														</tr>
 														`
 												);

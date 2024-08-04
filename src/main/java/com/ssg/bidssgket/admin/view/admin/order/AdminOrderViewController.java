@@ -14,7 +14,7 @@ public class AdminOrderViewController {
 
 
     /**
-     * 결제 목록 조회 페이지
+     * 주문 목록 조회 페이지
      */
     @GetMapping("/list")
     public String userListPage() {
@@ -25,7 +25,7 @@ public class AdminOrderViewController {
 
 
     /**
-     * 결제 상세 조회 페이지
+     * 주문 상세 조회 페이지
      */
     @GetMapping("/info/{}")
     public String userInfoPage() {

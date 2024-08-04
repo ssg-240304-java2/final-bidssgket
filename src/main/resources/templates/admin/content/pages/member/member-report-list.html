@@ -17,9 +17,9 @@
 
 	</style>
 
-	<h1 class="mt-4">주문 목록</h1>
+	<h1 class="mt-4">회원 신고 목록</h1>
 <!--	<ol class="breadcrumb mb-4">-->
-<!--		<li class="breadcrumb-item active">회원 목록</li>-->
+<!--		<li class="breadcrumb-item active">회원 신고 목록</li>-->
 <!--	</ol>-->
 
 	<div class="section">
@@ -27,7 +27,7 @@
 			<div class="row">
 					<div class="row">
 						<div class="wrapper" >
-							<table id="orderListSpace"  class="table table-bordered">
+							<table id="memberReportListSpace" class="table table-bordered">
 
 							</table>
 						</div>
@@ -41,44 +41,82 @@
 
 									$.ajax({
 										type: "GET",
-										url: "/admin/api/payment/list?page="+page, //여기 api 따
+										url: "/admin/api/user/report/list?page="+page, //여기 api 따
 										// dataType: "json",
-										success: function (orderList) {
+										success: function (memberReportList) {
 											const option = {
 												maximumFractionDigits: 4
 											};
 
-											let orderListSpace = $("#orderListSpace");
-											orderListSpace.empty();
-											makePagenation(orderList);
+											let userRepo											const option = {
+												maximumFractionDigits: 4
+											};
 
-											console.log(orderList);
+											let memberReportListSpace = $("#memberReportListSpace");
+											memberReportListSpace.empty();
+											makePagenation(memberReportList);
 
-											orderListSpace.append(
+											console.log(memberReportList);
+
+											memberReportListSpace.append(
 													`
 													<tr>
-														<th scope="col">주문번호</th>
-														<th scope="col">거래유형</th>
-														<th scope="col">주문상태</th>
-														<th scope="col">등록일</th>
-														<th scope="col">수정일</th>
-														<th scope="col">삭제여부</th>
-														<th scope="col">결제번호</th>
+														<th scope="col">신고번호</th>
+														<th scope="col">신고내용</th>
+														<th scope="col">피신고자 회원번호</th>
+														<th scope="col">피신고자 이름</th>
+														<th scope="col">신고자 회원번호</th>
+														<th scope="col">신고자 이름</th>
 													</tr>
 													`
 											)
-											orderList.content.forEach(function(payment){
-												orderListSpace.append(
+											memberReportList.content.forEach(function(member){
+												memberReportListSpace.append(
 														`
 														<tr>
-															<a href="/admin/user/info${payment.paymentNo}" style="color: black">
-																<th scope="col">${payment.paymentNo}</th>
-																<th scope="col">${payment.paymentType}</th>
-																<th scope="col">${payment.amount}</th>
-																<th scope="col">${payment.paymentStatus}</th>
-																<th scope="col">${payment.createdAt}</th>
-																<th scope="col">${payment.isDeleted}</th>
-																<th scope="col">${payment.userName}</th>
+															<a href="/admin/user/report/info/${member.complainNo}" style="color: black">
+																<th scope="col">${member.complainNo}</th>
+																<th scope="col">${member.complainContent}</th>
+																<th scope="col">${member.reportedMemberNo}</th>
+																<th scope="col">${member.reportedMemberName}</th>
+																<th scope="col">${member.memberNo}</th>
+																<th scope="col">${member.memberName}</th>
+															</a>
+														</tr>
+														`
+												);
+
+											})
+
+											rtListSpace = $("#memberReportListSpace");
+											memberReportListSpace.empty();
+											makePagenation(memberReportList);
+
+											console.log(memberReportList);
+
+											memberReportListSpace.append(
+													`
+													<tr>
+														<th scope="col">신고번호</th>
+														<th scope="col">신고내용</th>
+														<th scope="col">피신고자 회원번호</th>
+														<th scope="col">피신고자 이름</th>
+														<th scope="col">신고자 회원번호</th>
+														<th scope="col">신고자 이름</th>
+													</tr>
+													`
+											)
+											memberReportList.content.forEach(function(member){
+												memberReportListSpace.append(
+														`
+														<tr>
+															<a href="/admin/user/report/info/${member.complainNo}" style="color: black">
+																<th scope="col">${member.complainNo}</th>
+																<th scope="col">${member.complainContent}</th>
+																<th scope="col">${member.reportedMemberNo}</th>
+																<th scope="col">${member.reportedMemberName}</th>
+																<th scope="col">${member.memberNo}</th>
+																<th scope="col">${member.memberName}</th>
 															</a>
 														</tr>
 														`
@@ -88,7 +126,7 @@
 
 										},
 										error: function () {
-											// alert("현재 유저가 존재하지 않습니다!");
+											// alert("현재 신고된 유저가 존재하지 않습니다!");
 										}
 									})
 								}
