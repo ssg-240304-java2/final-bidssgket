@@ -25,7 +25,7 @@ public class Review {
     private Member reviewee;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "productNo") //mappedBy쓰기
+    @JoinColumn(name = "productNo")
     private Product product;
 
     @Builder
@@ -55,7 +55,7 @@ public class Review {
         this.reviewee = reviewee;
     }
 
-    public void setProductNo(Product product) {
+    public void setReviewNo(Product product) {
         this.product = product;
     }
 }

@@ -3,6 +3,10 @@ package com.ssg.bidssgket.user.domain.member.domain;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import jakarta.persistence.*;
 import lombok.*;
+import org.apache.ibatis.annotations.One;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,20 +22,20 @@ public class WishList {
     @JoinColumn(name = "memberNo")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "productNo")
-    private Product product;
+    private List<Product> products = new ArrayList<>();
 
     @Builder
-    public WishList(Member member, Product product) {
+    public WishList(Member member, List<Product> products) {
         this.member = member;
-        this.product = product;
+        this.products = products;
     }
 
-    public static WishList createWishList(Member member, Product product) {
+    public static WishList createWishList(Member member, List<Product> products) {
         return WishList.builder()
                 .member(member)
-                .product(product)
+                .products(products)
                 .build();
     }
 
@@ -39,8 +43,8 @@ public class WishList {
         this.member = member;
     }
 
-    public void setProductNo(Product product) {
-        this.product = product;
+    public void setWishListNo(List<Product> products) {
+        this.products = products;
     }
 
 }
