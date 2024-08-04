@@ -3,9 +3,7 @@ package com.ssg.bidssgket.user.domain.product.domain;
 import com.ssg.bidssgket.common.domain.BaseTimeEntity;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.member.domain.Review;
-import com.ssg.bidssgket.user.domain.member.domain.Wishlist;
-import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
-import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
+import com.ssg.bidssgket.user.domain.member.domain.WishList;
 import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,7 +26,7 @@ public class Product extends BaseTimeEntity {
     private Boolean imdPurchase;
     private Boolean auctionSelected;
     private Boolean eventAuction;
-    private Integer buynowPrice;
+    private Integer buyNowPrice;
     private Integer auctionStartPrice;
     private Integer bidSuccessPrice;
     private LocalDateTime auctionStartTime;
@@ -50,26 +48,20 @@ public class Product extends BaseTimeEntity {
     private List<ProductReport> productReports = new ArrayList<>();
 
     @OneToMany(mappedBy = "product",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
-    private List<Auction> aucitons = new ArrayList<>();
+    private List<Auction> auctions = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "reviewNo")
+    @OneToOne(mappedBy = "product")
     private Review review;
 
+    /**
+     * Product랑 WishList N:M 같은데 확인 부탁드립니다.
+     */
     @ManyToOne
-    @JoinColumn(name = "wishlistNo")
-    private Wishlist wishlist;
-
-    @OneToOne
-    @JoinColumn(name = "purchaseOrderNo")
-    private PurchaseOrder purchaseOrder;
-
-    @OneToOne
-    @JoinColumn(name = "saleOrderNo")
-    private SaleOrder saleOrder;
+    @JoinColumn(name = "wishListNo")
+    private WishList wishList;
 
     @Builder
-    private Product(String productName, Category category, String productDesc,Sales_status salesStatus,Boolean imdPurchase,Boolean auctionSelected,Boolean eventAuction,Integer buynowPrice,Integer bidSuccessPrice ,Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
+    private Product(String productName, Category category, String productDesc, Sales_status salesStatus, Boolean imdPurchase, Boolean auctionSelected, Boolean eventAuction, Integer buyNowPrice, Integer bidSuccessPrice , Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
         this.productName = productName;
         this.category = category;
         this.salesStatus = salesStatus;
@@ -77,7 +69,7 @@ public class Product extends BaseTimeEntity {
         this.imdPurchase = imdPurchase;
         this.auctionSelected = auctionSelected;
         this.eventAuction = eventAuction;
-        this.buynowPrice = buynowPrice;
+        this.buyNowPrice = buyNowPrice;
         this.auctionStartPrice = auctionStartPrice;
         this.auctionStartTime = auctionStartTime;
         this.auctionEndTime = auctionEndTime;
@@ -94,7 +86,7 @@ public class Product extends BaseTimeEntity {
                 .imdPurchase(productReqDto.getImdPurchase())
                 .auctionSelected(productReqDto.getAuctionSelected())
                 .eventAuction(productReqDto.getEventAuction())
-                .buynowPrice(productReqDto.getBuynowPrice())
+                .buyNowPrice(productReqDto.getBuyNowPrice())
                 .auctionStartPrice(productReqDto.getAuctionStartPrice())
                 .auctionStartTime(productReqDto.getAuctionStartTime())
                 .auctionEndTime(productReqDto.getAuctionEndTime())
@@ -108,21 +100,20 @@ public class Product extends BaseTimeEntity {
      */
     public void addAuction(Auction auction){
         if(auction.getProduct() != null){
-            auction.getProduct().getAucitons().remove(auction);
+            auction.getProduct().getAuctions().remove(auction);
         }
 
         auction.setProduct(this);
-        this.aucitons.add(auction);
+        this.auctions.add(auction);
     }
 
     public void addReview(Review review){
-        review.setReviewNo(this);
+        review.setProduct(this);
         this.review = review;
     }
 
-    public void addWishlist(Wishlist wishlist){
-        wishlist.setWishlistNo(this);
-        this.wishlist = wishlist;
+    public void setWishList(WishList wishlist){
+        this.wishList = wishlist;
     }
 
 

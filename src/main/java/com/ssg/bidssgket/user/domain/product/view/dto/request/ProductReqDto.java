@@ -18,7 +18,7 @@ public class ProductReqDto {
     private Boolean imdPurchase;
     private Boolean auctionSelected;
     private Boolean eventAuction;
-    private Integer buynowPrice;
+    private Integer buyNowPrice;
     private Integer auctionStartPrice;
     private Integer bidSuccessPrice;
     private LocalDateTime auctionStartTime;

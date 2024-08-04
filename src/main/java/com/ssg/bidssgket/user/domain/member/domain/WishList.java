@@ -3,7 +3,6 @@ package com.ssg.bidssgket.user.domain.member.domain;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.ibatis.annotations.One;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,29 +21,35 @@ public class WishList {
     @JoinColumn(name = "memberNo")
     private Member member;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "productNo")
+    /**
+     * Product랑 WishList N:M 같은데 확인 부탁드립니다.
+     */
+    @OneToMany(mappedBy = "wishList", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 
     @Builder
-    public WishList(Member member, List<Product> products) {
+    public WishList(Member member) {
         this.member = member;
-        this.products = products;
     }
 
     public static WishList createWishList(Member member, List<Product> products) {
         return WishList.builder()
                 .member(member)
-                .products(products)
                 .build();
     }
 
-    public void setMemberNo(Member member) {
+    public void setMember(Member member) {
         this.member = member;
     }
 
-    public void setWishListNo(List<Product> products) {
-        this.products = products;
+    public void addProduct(Product product) {
+        if(product.getWishList() != null){
+            product.getWishList().getProducts().remove(product);
+        }
+
+        product.setWishList(this);
+        this.products.add(product);
     }
+
 
 }

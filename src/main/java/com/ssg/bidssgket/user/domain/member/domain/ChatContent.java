@@ -19,8 +19,8 @@ public class ChatContent {
     private Time time; // DateTimeEntity createdAt, updatedAt
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberNickname")
-    private Member nickname;
+    @JoinColumn(name = "memberNo")
+    private Member member;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatImageNo")
@@ -31,10 +31,10 @@ public class ChatContent {
     private ChatRoom chatRoom;
 
     @Builder
-    private ChatContent(String contents, Time time, Member nickname, ChatImage chatImage, ChatRoom chatRoom) {
+    private ChatContent(String contents, Time time, Member member, ChatImage chatImage, ChatRoom chatRoom) {
         this.contents = contents;
         this.time = time;
-        this.nickname = nickname;
+        this.member = member;
         this.chatImage = chatImage;
         this.chatRoom = chatRoom;
     }
@@ -43,21 +43,21 @@ public class ChatContent {
         return ChatContent.builder()
                 .contents(chatContentDto.getContents())
                 .time(chatContentDto.getTime())
-                .nickname(member)
+                .member(member)
                 .chatImage(chatImage)
                 .chatRoom(chatRoom)
                 .build();
     }
 
-    public void setNickname(Member nickname) {
-        this.nickname = nickname;
+    public void setMember(Member nickname) {
+        this.member = nickname;
     }
 
-    public void setChatRoomNo(ChatRoom chatRoom) {
+    public void setChatRoom(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
     }
 
-    public void setChatImageNo(ChatImage chatImage) {
+    public void setChatImage(ChatImage chatImage) {
         this.chatImage = chatImage;
     }
 
