@@ -1,4 +1,4 @@
-package com.ssg.bidssgket.admin.view.admin.user;
+package com.ssg.bidssgket.admin.view.admin.member;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/admin/user")
-public class AdminUserViewController {
+@RequestMapping("/admin/member")
+public class AdminMemberViewController {
 
 
     /**
@@ -18,9 +18,9 @@ public class AdminUserViewController {
      */
     @GetMapping("/list")
     public String userListPage() {
-        log.info("===== user list page =====");
+        log.info("===== member list page =====");
 
-        return "admin/content/pages/user/user-list";
+        return "admin/content/pages/member/member-list";
     }
 
 
@@ -29,20 +29,20 @@ public class AdminUserViewController {
      */
     @GetMapping("/info/{userNo}")
     public String userInfoPage() {
-        log.info("===== user info page =====");
+        log.info("===== member info page =====");
 
-        return "admin/content/pages/user/user-list";
+        return "admin/content/pages/member/member-info";
     }
 
 
     /**
      * 회원 신고 목록 조회 페이지
      */
-    @GetMapping("/user/report/list")
+    @GetMapping("/report/list")
     public String userReportListPage() {
-        log.info("===== user report list page =====");
+        log.info("===== member report list page =====");
 
-        return "admin/content/pages/user/user-report-list";
+        return "admin/content/pages/member/member-report-list";
     }
 
 
@@ -51,9 +51,9 @@ public class AdminUserViewController {
      */
     @GetMapping("/report/info/{complainNo}")
     public String userReportInfoPage() {
-        log.info("===== user report info page =====");
+        log.info("===== member report info page =====");
 
-        return "admin/content/pages/user/user-report-list";
+        return "admin/content/pages/member/member-report-info";
     }
 
 

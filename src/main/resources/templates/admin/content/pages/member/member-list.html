@@ -27,7 +27,7 @@
 			<div class="row">
 					<div class="row">
 						<div class="wrapper" >
-							<table id="userListSpace">
+							<table id="memberListSpace" class="table table-bordered">
 
 							</table>
 						</div>
@@ -43,24 +43,23 @@
 										type: "GET",
 										url: "/admin/api/user/list?page="+page, //여기 api 따
 										// dataType: "json",
-										success: function (userList) {
+										success: function (memberList) {
 											const option = {
 												maximumFractionDigits: 4
 											};
 
-											let userListSpace = $("#userListSpace");
-											userListSpace.empty();
-											makePagenation(userList);
+											let memberListSpace = $("#memberListSpace");
+											memberListSpace.empty();
+											makePagenation(memberList);
 
-											console.log(userList);
+											console.log(memberList);
 
-											userListSpace.append(
+											memberListSpace.append(
 													`
 													<tr>
 														<th scope="col">회원번호</th>
-														<th scope="col">아이디</th>
 														<th scope="col">이름</th>
-														<th scope="col">닉네임</th>
+														<th scope="col">아이디</th>
 														<th scope="col">휴대폰번호</th>
 														<th scope="col">주소</th>
 														<th scope="col">비스킷</th>
@@ -69,23 +68,20 @@
 													</tr>
 													`
 											)
-											userList.content.forEach(function(user){
-												userListSpace.append(
+											memberList.content.forEach(function(member){
+												memberListSpace.append(
 														`
 														<tr>
-															<th scope="col">${user.userNo}</th>
-															<th scope="col">${user.userId}</th>
-															<th scope="col">${user.userPw}</th>
-															<th scope="col">${user.userNickname}</th>
-															<th scope="col">${user.phoneNum}</th>
-															<th scope="col">${user.address}</th>
-															<th scope="col">${user.bisket}</th>
-															<th scope="col">${user.isDeleted}</th>
-															<th scope="col">${user.isPenalty}</th>
-															<th>
-<!--																<a th:href="@{/admin/user/report/{complainNo}(complainNo = ${user.complainNo})}">확인하기</a>-->
-																<a href="/admin/user/info${user.userNo}">확인하기</a>
-															</th>
+															<a href="/admin/user/info${member.memberNo}" style="color: black">
+																<th scope="col">${member.memberNo}</th>
+																<th scope="col">${member.memberName}</th>
+																<th scope="col">${member.id}</th>
+																<th scope="col">${member.phone}</th>
+																<th scope="col">${member.address}</th>
+																<th scope="col">${member.biscuit}</th>
+																<th scope="col">${member.isDeleted}</th>
+																<th scope="col">${member.isPenalty}</th>
+															</a>
 														</tr>
 														`
 												);
