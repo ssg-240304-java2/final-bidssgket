@@ -17,7 +17,7 @@
 
 	</style>
 
-	<h1 class="mt-4">주문 목록</h1>
+	<h1 class="mt-4">회원 상세</h1>
 <!--	<ol class="breadcrumb mb-4">-->
 <!--		<li class="breadcrumb-item active">회원 목록</li>-->
 <!--	</ol>-->
@@ -27,7 +27,7 @@
 			<div class="row">
 					<div class="row">
 						<div class="wrapper" >
-							<table id="orderListSpace"  class="table table-bordered">
+							<table id="userListSpace">
 
 							</table>
 						</div>
@@ -41,45 +41,51 @@
 
 									$.ajax({
 										type: "GET",
-										url: "/admin/api/payment/list?page="+page, //여기 api 따
+										url: "/admin/api/user/list?page="+page, //여기 api 따
 										// dataType: "json",
-										success: function (orderList) {
+										success: function (userList) {
 											const option = {
 												maximumFractionDigits: 4
 											};
 
-											let orderListSpace = $("#orderListSpace");
-											orderListSpace.empty();
-											makePagenation(orderList);
+											let userListSpace = $("#userListSpace");
+											userListSpace.empty();
+											makePagenation(userList);
 
-											console.log(orderList);
+											console.log(userList);
 
-											orderListSpace.append(
+											userListSpace.append(
 													`
 													<tr>
-														<th scope="col">주문번호</th>
-														<th scope="col">거래유형</th>
-														<th scope="col">주문상태</th>
-														<th scope="col">등록일</th>
-														<th scope="col">수정일</th>
-														<th scope="col">삭제여부</th>
-														<th scope="col">결제번호</th>
+														<th scope="col">회원번호</th>
+														<th scope="col">아이디</th>
+														<th scope="col">이름</th>
+														<th scope="col">닉네임</th>
+														<th scope="col">휴대폰번호</th>
+														<th scope="col">주소</th>
+														<th scope="col">비스킷</th>
+														<th scope="col">탈퇴여부</th>
+														<th scope="col">패널티여부</th>
 													</tr>
 													`
 											)
-											orderList.content.forEach(function(payment){
-												orderListSpace.append(
+											userList.content.forEach(function(user){
+												userListSpace.append(
 														`
 														<tr>
-															<a href="/admin/user/info${payment.paymentNo}" style="color: black">
-																<th scope="col">${payment.paymentNo}</th>
-																<th scope="col">${payment.paymentType}</th>
-																<th scope="col">${payment.amount}</th>
-																<th scope="col">${payment.paymentStatus}</th>
-																<th scope="col">${payment.createdAt}</th>
-																<th scope="col">${payment.isDeleted}</th>
-																<th scope="col">${payment.userName}</th>
-															</a>
+															<th scope="col">${user.userNo}</th>
+															<th scope="col">${user.userId}</th>
+															<th scope="col">${user.userPw}</th>
+															<th scope="col">${user.userNickname}</th>
+															<th scope="col">${user.phoneNum}</th>
+															<th scope="col">${user.address}</th>
+															<th scope="col">${user.bisket}</th>
+															<th scope="col">${user.isDeleted}</th>
+															<th scope="col">${user.isPenalty}</th>
+															<th>
+<!--																<a th:href="@{/admin/user/report/{complainNo}(complainNo = ${user.complainNo})}">확인하기</a>-->
+																<a href="/admin/user/info${user.userNo}">확인하기</a>
+															</th>
 														</tr>
 														`
 												);
