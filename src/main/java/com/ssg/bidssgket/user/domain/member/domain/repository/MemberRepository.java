@@ -1,4 +1,10 @@
 package com.ssg.bidssgket.user.domain.member.domain.repository;
 
-public interface MemberRepository {
+import com.ssg.bidssgket.user.domain.member.domain.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface MemberRepository extends JpaRepository<Member, Long> {
+    public Optional<Member> findByName(String name);
 }
