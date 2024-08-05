@@ -17,11 +17,11 @@ public class Review {
     private Integer biscuitRating;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberNo")
+    @JoinColumn(name = "memberNo", insertable = false, updatable = false)
     private Member reviewer;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberNo")
+    @JoinColumn(name = "memberNo", insertable = false, updatable = false)
     private Member reviewee;
 
     @OneToOne(fetch = FetchType.LAZY)

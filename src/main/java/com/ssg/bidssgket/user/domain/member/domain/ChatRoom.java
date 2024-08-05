@@ -18,11 +18,11 @@ public class ChatRoom {
     private Long chatroomNo;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberNo")
+    @JoinColumn(name = "memberNo", insertable = false, updatable = false)
     private Member sender;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberNo")
+    @JoinColumn(name = "memberNo", insertable = false, updatable = false)
     private Member receiver;
 
     @OneToMany(mappedBy = "chatRoom", cascade = {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
