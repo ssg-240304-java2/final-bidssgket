@@ -26,10 +26,11 @@ public class Member {
     private String memberName; // 사용자 이름
     private String id; // 사용자 아이디
     private String pwd; // 사용자 비밀번호
-    private String phone; // 핸드폰 번호
+    private String email;
+    private String role;
     private String memberNickname;
-//    private String provider;
-//    private String providerId;
+    private String provider;
+    private String providerId;
     private Integer biscuit; // 비스킷 온도
     private boolean isDeleted; // 탈퇴 여부
     private boolean isPenalty; // 패널티 여부
@@ -91,12 +92,15 @@ public class Member {
 
 
     @Builder
-    private Member(String memberName, String id, String pwd, String memberNickname, String phone,Integer biscuit, Address address,Boolean isDeleted,Boolean isPenalty) {
+    private Member(String memberName, String id, String pwd, String memberNickname,String email,String role,String provider,String providerId,Integer biscuit, Address address,Boolean isDeleted,Boolean isPenalty) {
         this.memberName = memberName;
         this.id = id;
         this.pwd = pwd;
         this.memberNickname= memberNickname;
-        this.phone = phone;
+        this.email = email;
+        this.role = role;
+        this.provider = provider;
+        this.providerId = providerId;
         this.biscuit = biscuit;
         this.address = address;
         this.isDeleted = isDeleted;
@@ -109,7 +113,6 @@ public class Member {
                 .id(memberDto.getId())
                 .pwd(memberDto.getPwd())
                 .memberNickname(memberDto.getMemberNickname())
-                .phone(memberDto.getPhone())
                 .biscuit(memberDto.getBiscuit())
                 .address(memberDto.getAddress())
                 .isDeleted(memberDto.getIsDeleted())
@@ -178,7 +181,7 @@ public class Member {
     }
 
     public void addPay(Pay pay){
-        pay.setPay(this);
+        pay.setMember(this);
         this.pay = pay;
     }
 
