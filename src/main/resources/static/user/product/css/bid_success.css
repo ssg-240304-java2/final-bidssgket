@@ -1,0 +1,63 @@
+h3, h4 {
+    color: #333;
+}
+
+h3 {
+    margin-bottom: 15px;
+}
+
+h4 {
+    margin-bottom: 20px;
+}
+
+.carousel-item img {
+    height: 300px;
+    object-fit: cover;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+}
+
+.table tbody td {
+    background-color: #ffffff;
+}
+
+.btn-primary, .btn-secondary {
+    width: 120px;
+    height: 40px;
+    font-size: 14px;
+}
+.buy-now-section h3, .auction-start-section h3 {
+    font-size: 20px;
+    }
+    
+    .chart-table {
+    height: 300px;
+    overflow-y: auto;
+    }
+    
+    /* New CSS to position auction type next to the title */
+    .auction-header {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    }
+    
+    .auction-header select {
+    margin-right: 10px;
+    width: 150px; 
+    height: 35px; 
+    font-size: 14px; 
+    }
+
+    .btn-primary.mt-2{
+        background-color: #AB2729;
+        border: none;
+    }
+
+
+    .btn-secondary.mt-2{
+        background-color: #21b15b;
+        border: none;
+    }

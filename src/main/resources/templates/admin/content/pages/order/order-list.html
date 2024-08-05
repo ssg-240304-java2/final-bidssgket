@@ -27,7 +27,7 @@
 			<div class="row">
 					<div class="row">
 						<div class="wrapper" >
-							<table id="paymentListSpace">
+							<table id="orderListSpace"  class="table table-bordered">
 
 							</table>
 						</div>
@@ -43,18 +43,18 @@
 										type: "GET",
 										url: "/admin/api/payment/list?page="+page, //여기 api 따
 										// dataType: "json",
-										success: function (paymentList) {
+										success: function (orderList) {
 											const option = {
 												maximumFractionDigits: 4
 											};
 
-											let userListSpace = $("#paymentListSpace");
-											userListSpace.empty();
-											makePagenation(paymentList);
+											let orderListSpace = $("#orderListSpace");
+											orderListSpace.empty();
+											makePagenation(orderList);
 
-											console.log(paymentList);
+											console.log(orderList);
 
-											userListSpace.append(
+											orderListSpace.append(
 													`
 													<tr>
 														<th scope="col">주문번호</th>
@@ -67,21 +67,19 @@
 													</tr>
 													`
 											)
-											paymentList.content.forEach(function(payment){
-												userListSpace.append(
+											orderList.content.forEach(function(payment){
+												orderListSpace.append(
 														`
 														<tr>
-															<th scope="col">${payment.paymentNo}</th>
-															<th scope="col">${payment.paymentType}</th>
-															<th scope="col">${payment.amount}</th>
-															<th scope="col">${payment.paymentStatus}</th>
-															<th scope="col">${payment.createdAt}</th>
-															<th scope="col">${payment.isDeleted}</th>
-															<th scope="col">${payment.userName}</th>
-															<th>
-																<!--<a th:href="@{/admin/user/report/{complainNo}(complainNo = ${payment.paymentNo})}">확인하기</a>-->
-																<a href="/admin/user/info${payment.paymentNo}">확인하기</a>
-															</th>
+															<a href="/admin/user/info${payment.paymentNo}" style="color: black">
+																<th scope="col">${payment.paymentNo}</th>
+																<th scope="col">${payment.paymentType}</th>
+																<th scope="col">${payment.amount}</th>
+																<th scope="col">${payment.paymentStatus}</th>
+																<th scope="col">${payment.createdAt}</th>
+																<th scope="col">${payment.isDeleted}</th>
+																<th scope="col">${payment.userName}</th>
+															</a>
 														</tr>
 														`
 												);

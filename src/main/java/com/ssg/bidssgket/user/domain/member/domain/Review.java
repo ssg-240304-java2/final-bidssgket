@@ -1,23 +1,61 @@
 package com.ssg.bidssgket.user.domain.member.domain;
 
+import com.ssg.bidssgket.user.domain.member.view.DTO.ReviewDto;
+import com.ssg.bidssgket.user.domain.product.domain.Product;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer review_no;
+    private Long reviewNo;
     private String comment;
-    private Integer biscuit_rating;
+    private Integer biscuitRating;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberNo")
-    private Member member;
+    private Member reviewer;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberNo")
+    private Member reviewee;
 
-    // 리뷰 작성자와 리뷰 대상자의 공통 상품 컬럼?
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "productNo")
+    private Product product;
+
+    @Builder
+    private Review(String comment, Integer biscuitRating,Member reviewer, Member reviewee, Product product) {
+        this.comment = comment;
+        this.biscuitRating = biscuitRating;
+        this.reviewer = reviewer;
+        this.reviewee = reviewee;
+        this.product = product;
+    }
+
+    public static Review createReview(ReviewDto reviewDto,Member member, Product product) {
+        return Review.builder()
+                .comment(reviewDto.getComment())
+                .biscuitRating(reviewDto.getBiscuitRating())
+                .reviewer(member)
+                .reviewee(member)
+                .product(product)
+                .build();
+    }
+
+    public void setReviewer(Member reviewer) {
+        this.reviewer = reviewer;
+    }
+
+    public void setReviewee(Member reviewee) {
+        this.reviewee = reviewee;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 }
