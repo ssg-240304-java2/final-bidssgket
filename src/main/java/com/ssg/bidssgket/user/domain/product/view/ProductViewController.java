@@ -1,11 +1,18 @@
 package com.ssg.bidssgket.user.domain.product.view;
 
+import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
+import com.ssg.bidssgket.user.domain.product.domain.Product;
+import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 여기는 view
@@ -17,9 +24,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class ProductViewController {
 
-    @GetMapping("/regist")
-    public String registController() {
-        return "/user/product/regist";
+    private final ProductService productService;
+
+    @GetMapping("/register")
+    public String registController(Model model) {
+        model.addAttribute("registProductReqDto", new RegistProductReqDto());
+        return "/user/product/register";
+    }
+
+    @PostMapping("/register")
+    public String registProduct(@ModelAttribute RegistProductReqDto registProductReqDto) {
+        productService.registProduct(registProductReqDto);
+        return "redirect:/user/product/list";
     }
 
     @GetMapping("/update")
