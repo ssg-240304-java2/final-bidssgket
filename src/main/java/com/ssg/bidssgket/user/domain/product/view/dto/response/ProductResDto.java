@@ -1,11 +1,14 @@
 package com.ssg.bidssgket.user.domain.product.view.dto.response;
 
 import com.ssg.bidssgket.user.domain.product.domain.Product;
+import com.ssg.bidssgket.user.domain.product.domain.ProductImage;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,6 +26,7 @@ public class ProductResDto {
     private Integer bidSuccessPrice;
     private LocalDateTime auctionStartTime;
     private LocalDateTime auctionEndTime;
+    private List<String> imageUrls;
 
     public ProductResDto(Product product) {
         this.productNo = product.getProductNo();
@@ -38,5 +42,8 @@ public class ProductResDto {
         this.bidSuccessPrice = product.getBidSuccessPrice();
         this.auctionStartTime = product.getAuctionStartTime();
         this.auctionEndTime = product.getAuctionEndTime();
+        this.imageUrls = product.getProductImages().stream()
+                .map(ProductImage::getProductImg)
+                .collect(Collectors.toList());
     }
 }

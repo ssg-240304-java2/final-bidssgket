@@ -8,11 +8,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * 여기는 view
@@ -28,13 +28,14 @@ public class ProductViewController {
 
     @GetMapping("/register")
     public String registController(Model model) {
-        model.addAttribute("registProductReqDto", new RegistProductReqDto());
+        model.addAttribute("registProductReqDto",RegistProductReqDto.builder().build());
         return "/user/product/register";
     }
 
     @PostMapping("/register")
-    public String registProduct(@ModelAttribute RegistProductReqDto registProductReqDto) {
-        productService.registProduct(registProductReqDto);
+    public String registProduct(@ModelAttribute RegistProductReqDto registProductReqDto,
+                                @RequestParam("prodcutImages")List<MultipartFile> prodcutImages) {
+        productService.registProduct(registProductReqDto, prodcutImages);
         return "redirect:/user/product/list";
     }
 

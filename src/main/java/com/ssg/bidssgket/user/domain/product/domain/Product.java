@@ -61,9 +61,6 @@ public class Product extends BaseTimeEntity {
     @OneToOne(mappedBy = "product")
     private Review review;
 
-    /**
-     * Product랑 WishList N:M 같은데 확인 부탁드립니다.
-     */
     @ManyToOne
     @JoinColumn(name = "wishListNo")
     private WishList wishList;

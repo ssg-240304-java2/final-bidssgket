@@ -20,7 +20,7 @@
     <h2 class="title">상품 등록</h2>
     <hr class="title-underline">
   </div>
-    <form th:action="@{/products/register}" th:object="${productReqDto}" method="post" enctype="multipart/form-data">
+    <form th:action="@{/user/product/register}" th:object="${registProductReqDto}" method="post" enctype="multipart/form-data">
   <div class="row mb-4">
     <div class="col-md-6">
       <div id="thumbnailContainer" class="d-flex flex-wrap mb-3"></div>
@@ -50,7 +50,7 @@
     <div class="col-md-6">
       <div class="mb-3">
         <label for="productDesc" class="form-label">내용</label>
-        <textarea class="form-control" id="productDesc" rows="6" placeholder="상품에 대한 내용을 자세히 써주세요. (ex. 구매시점, 상품 상태등을 작성해주시면 구매자가 상품을 쉽게 파악할 수 있어요.)"></textarea>
+        <textarea class="form-control" id="productDesc" th:field="*{productDesc}" rows="6" placeholder="상품에 대한 내용을 자세히 써주세요. (ex. 구매시점, 상품 상태등을 작성해주시면 구매자가 상품을 쉽게 파악할 수 있어요.)"></textarea>
       </div>
       <div class="row mb-3">
         <div class="col-md-6">

@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * 여기는 RestController
@@ -23,8 +26,9 @@ public class ProductApiController {
     private final ProductService productService;
 
     @PostMapping("/register")
-    public ResponseEntity<ProductApiResDto> registProduct(@ModelAttribute RegistProductReqDto registProductReqDto) {
-        Product registProduct = productService.registProduct(registProductReqDto);
+    public ResponseEntity<ProductApiResDto> registProduct(@ModelAttribute RegistProductReqDto registProductReqDto,
+                                                          @RequestParam("productImages") List<MultipartFile> productImages) {
+        Product registProduct = productService.registProduct(registProductReqDto, productImages);
         ProductApiResDto productApiResDto = new ProductApiResDto(registProduct);
         return ResponseEntity.ok(productApiResDto);
     }
