@@ -18,28 +18,46 @@ import java.util.List;
 public class Pay extends BaseTimeAndDeleteEntity {
 
     @Id
-    private int memberNo; // 회원 번호 [PK]
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long payNo; // 페이 번호 [PK]
 
-    @MapsId
-    @OneToOne
-    @JoinColumn(name = "member_no")
-    private Member member; // 회원 번호 [FK]를 PK로 사용
-
-    @Column(name = "pay_balance", nullable = false)
+    @Column(name = "payBalance", nullable = false)
     private int payBalance; // 비스킷 페이 잔액
 
-    @OneToMany(mappedBy = "pay", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PayChange> payChanges = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "memberNo", nullable = false)
+    private Member member; // 회원 번호 [FK]
+
+    @OneToMany(mappedBy = "pay", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, orphanRemoval = true)
+    private final List<PayChange> payChangeList = new ArrayList<>();
 
     @Builder
     public Pay(Member member, int payBalance) {
         this.member = member;
-        this.memberNo = member.getMemberNo();
         this.payBalance = payBalance;
     }
 
+    public static Pay addPay(int payBalance, Member member) {
+        return Pay.builder()
+                .payBalance(payBalance)
+                .member(member)
+                .build();
+    }
+
+    /***
+     * 회원 정보 설정 메서드
+     * @param member 회원 정보
+     */
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    /***
+     * 비스킷 페이 변경 내역 추가
+     * @param payChange 비스킷 페이 변경 내역
+     */
     public void addPayChange(PayChange payChange) {
         payChange.setPay(this);
-        this.payChanges.add(payChange);
+        this.payChangeList.add(payChange);
     }
 }

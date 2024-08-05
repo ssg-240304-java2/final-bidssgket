@@ -4,6 +4,8 @@ import com.ssg.bidssgket.common.domain.BaseTimeEntity;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.member.domain.Review;
 import com.ssg.bidssgket.user.domain.member.domain.WishList;
+import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
+import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
 import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -51,6 +53,12 @@ public class Product extends BaseTimeEntity {
     private List<Auction> auctions = new ArrayList<>();
 
     @OneToOne(mappedBy = "product")
+    private SaleOrder saleOrder;
+
+    @OneToOne(mappedBy = "product")
+    private PurchaseOrder purchaseOrder;
+
+    @OneToOne(mappedBy = "product")
     private Review review;
 
     /**
@@ -77,7 +85,7 @@ public class Product extends BaseTimeEntity {
         this.member = member;
     }
 
-    public static Product addProductBoth(ProductReqDto productReqDto,Member member){
+    public static Product registProductBoth(ProductReqDto productReqDto, Member member){
         return Product.builder()
                 .productName(productReqDto.getProductName())
                 .category(Category.valueOf(productReqDto.getCategory()))
@@ -116,6 +124,9 @@ public class Product extends BaseTimeEntity {
         this.wishList = wishlist;
     }
 
+    public void setMember(Member member){
+        this.member = member;
+    }
 
     public void addProductImage(ProductImage productImage){
         if(productImage.getProduct() != null){

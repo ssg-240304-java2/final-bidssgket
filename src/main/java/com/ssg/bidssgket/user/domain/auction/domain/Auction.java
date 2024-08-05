@@ -54,4 +54,7 @@ public class Auction {
     public void setProduct(Product product){
         this.product = product;
     }
+    public void setMember(Member member){
+        this.member = member;
+    }
 }
