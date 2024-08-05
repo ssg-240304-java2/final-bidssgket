@@ -26,7 +26,6 @@ public class BaseTimeAndDeleteEntity {
     @Column(nullable=false)
     private LocalDateTime updatedAt;
 
-    @Column(nullable=false)
     private Boolean isDeleted = false;
 
     @PrePersist

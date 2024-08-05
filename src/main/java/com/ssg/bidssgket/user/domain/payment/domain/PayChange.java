@@ -17,7 +17,7 @@ public class PayChange {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private int payChangeNo; // 비스킷 페이 잔액 변경 내역 번호 [PK]
+    private Long payChangeNo; // 비스킷 페이 잔액 변경 내역 번호 [PK]
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -33,34 +33,54 @@ public class PayChange {
     private LocalDateTime createdAt; // 등록일
 
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "member_no", nullable=false)
-    private Pay pay; // 결제 [FK]
+    @JoinColumn(name = "payNo", nullable=false)
+    private Pay pay; // 페이 [FK]
 
     @Builder
-    public PayChange(PayChangeType payChangeType, int changeAmount, int initialBalance, Pay pay) {
+    public PayChange(PayChangeType payChangeType, int payChangeAmount, int balance, Pay pay) {
         this.payChangeType = payChangeType;
-        this.payChangeAmount = changeAmount;
-        setBalance(initialBalance);
+        this.payChangeAmount = payChangeAmount;
+        this.balance = balance;
         this.pay = pay;
         this.createdAt = LocalDateTime.now();
     }
 
-    public void setBalance(int initialBalance) {
-        if (payChangeType == PayChangeType.DEPOSIT) {
-            this.balance = initialBalance + payChangeAmount;
-        } else if (payChangeType == PayChangeType.WITHDRAWAL) {
-            if (payChangeAmount > initialBalance) {
-                throw new IllegalArgumentException("잔액이 부족합니다.");
-            } else {
-                this.balance = initialBalance - payChangeAmount;
-            }
-        }
+    public static PayChange addPayChange(PayChangeType payChangeType, int payChangeAmount, int initialBalance, Pay pay) {
+        int updatedBalance = calculateBalance(payChangeType, payChangeAmount, initialBalance);
+
+        return PayChange.builder()
+                .payChangeType(payChangeType)
+                .payChangeAmount(payChangeAmount)
+                .balance(updatedBalance)
+                .pay(pay)
+                .build();
     }
 
+    /***
+     * 잔액 계산 메서드
+     * @param payChangeType 비스킷 페이 잔액 변동 유형 (입금/출금)
+     * @param payChangeAmount 비스킷 페이 잔액 변동 금액
+     * @param initialBalance 비스킷 페이 초기 잔액
+     * @return 업데이트 후 잔액 or 초기 잔액
+     */
+    private static int calculateBalance(PayChangeType payChangeType, int payChangeAmount, int initialBalance) {
+        if (payChangeType == PayChangeType.DEPOSIT) {
+            return initialBalance + payChangeAmount;
+        } else if (payChangeType == PayChangeType.WITHDRAWAL) {
+            return initialBalance - payChangeAmount;
+        }
+
+        return initialBalance;
+    }
+
+    /***
+     * 페이 정보 설정 메서드
+     * @param pay 페이 정보
+     */
     public void setPay(Pay pay) {
         this.pay = pay;
-        if (!pay.getPayChanges().contains(this)) {
-            pay.getPayChanges().add(this);
+        if (!pay.getPayChangeList().contains(this)) {
+            pay.getPayChangeList().add(this);
         }
     }
 }
