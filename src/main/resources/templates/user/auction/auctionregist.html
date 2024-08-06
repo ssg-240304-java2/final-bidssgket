@@ -2,20 +2,18 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{/fragments/layout}">
+      layout:decorate="~{/user/fragments/layout}">
 <head>
     <meta charset="UTF-8">
     <title>경매 입찰 등록</title>
-    <link rel="stylesheet" href="/user/css/regist.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/user/auction/css/auctionregist.css">
+
     <script>
         function validateBids() {
             const minBidInput = document.getElementById('min-bid');
             const maxBidInput = document.getElementById('max-bid');
             const submitBtn = document.querySelector('.submit-btn');
             const errorMessage = document.getElementById('error-message');
-            console.log(minBidInput);
-            console.log(maxBidInput);
 
             function validateMaxBid() {
                 const minBidValue = parseFloat(minBidInput.value) || 0;
@@ -37,6 +35,8 @@
                 if (!minBidInput.checkValidity() || !maxBidInput.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
+                } else {
+                    document.getElementById('auction-form').submit();
                 }
             });
 
@@ -56,24 +56,40 @@
         </div>
         <div class="form-details">
             <h2 class="item-title">상품글 제목</h2>
-            <div class="form-group">
-                <label for="bidder-name">입찰자 명</label>
-                <input type="text" id="bidder-name" value="hell**" readonly>
-            </div>
-            <div class="form-group">
-                <label for="min-bid">최소 입찰가</label>
-                <input type="number" id="min-bid" placeholder="최소 입찰가 입력" value="3490" min="3490">
-                <p class="hint">3,490원 이상 입찰되어야 합니다.</p>
-            </div>
-            <div class="form-group">
-                <label for="max-bid">최대 입찰가</label>
-                <input type="number" id="max-bid" placeholder="최대 입찰가 입력">
-                <p class="hint" id="error-message" style="color: red;"></p>
-            </div>
-            <div class="form-actions">
-                <button type="button" class="btn submit-btn">입찰 등록</button>
-                <button type="button" class="btn cancel-btn">취소</button>
-            </div>
+            <form id="auction-form" action="#" th:action="@{/auctionregist}" th:object="${auctionReqDto}" method="post">
+                <div class="form-group">
+                    <label for="bidder-name">입찰자 명</label>
+                    <input type="text" id="bidder-name" value="hell**" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="product_no">상품 번호</label>
+                    <input type="text" id="product_no" th:field="*{productNo}" placeholder="상품 번호 입력" required>
+                </div>
+                <div class="form-group">
+                    <label for="auction_start_price">경매 시작가</label>
+                    <input type="number" id="auction_start_price" th:field="*{auctionStartPrice}" placeholder="경매 시작가 입력" required>
+                </div>
+                <div class="form-group">
+                    <label for="buy_now_price">즉시 구매가</label>
+                    <input type="number" id="buy_now_price" th:field="*{buyNowPrice}" placeholder="즉시 구매가 입력" required>
+                </div>
+                <div class="form-group">
+                    <label for="auction_start_time">경매 시작 시간</label>
+                    <input type="datetime-local" id="auction_start_time" th:field="*{auctionStartTime}" required>
+                </div>
+                <div class="form-group">
+                    <label for="auction_end_time">경매 종료 시간</label>
+                    <input type="datetime-local" id="auction_end_time" th:field="*{auctionEndTime}" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" th:field="*{email}" value="daeunissaranghae@gmail.com" required readonly>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn submit-btn">입찰 등록</button>
+                    <button type="button" class="btn cancel-btn">취소</button>
+                </div>
+            </form>
             <p class="disclaimer">입찰을 선택하면, 낙찰자가 될 경우 이 상품을 구매하기로 약정하는 것입니다.</p>
         </div>
     </div>
