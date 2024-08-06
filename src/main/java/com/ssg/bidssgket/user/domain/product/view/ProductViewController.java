@@ -2,17 +2,14 @@ package com.ssg.bidssgket.user.domain.product.view;
 
 import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
-import com.ssg.bidssgket.user.domain.product.domain.Product;
-import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * 여기는 view
@@ -28,14 +25,18 @@ public class ProductViewController {
 
     @GetMapping("/register")
     public String registController(Model model) {
-        model.addAttribute("registProductReqDto", new RegistProductReqDto());
-        return "/user/product/register";
+        model.addAttribute("registProductReqDto",RegistProductReqDto.builder().build());
+        return "user/product/register";
     }
 
     @PostMapping("/register")
-    public String registProduct(@ModelAttribute RegistProductReqDto registProductReqDto) {
-        productService.registProduct(registProductReqDto);
-        return "redirect:/user/product/list";
+    public String registProduct(@ModelAttribute RegistProductReqDto registProductReqDto,
+                                @RequestParam("productImages")List<MultipartFile> productImages) {
+        log.info("Received Product Registration Data: {}", registProductReqDto);
+        log.info("Received {} Product Images", productImages.size());
+        productService.registProduct(registProductReqDto, productImages);
+        // fileDto -> entity로 바꿔서 DB에 파일 저장
+        return "redirect:/user/index";
     }
 
     @GetMapping("/update")
