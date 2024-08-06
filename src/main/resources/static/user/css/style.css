@@ -14,7 +14,7 @@ body, html {
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100%;
 }
 
 .contents {
@@ -70,6 +70,10 @@ body {
     font-size: large;
     margin-right: 20px;
 }
+.dropdown-main a {
+    font-size: medium;
+    font-weight: normal;
+}
 
 .nav a:hover {
     background-color: #fff;
@@ -107,16 +111,6 @@ body {
 }
 
 .footer {
-    /*background-color: #000;
-    display: block;
-    align-items: center;
-    justify-content: center;
-    height: 10%;
-    position: absolute;
-    bottom: -100%;
-    width: 100%;
-    padding: 0 2%;
-    text-align: center;*/
     background-color: #000;
     display: flex;
     align-items: center;
@@ -173,4 +167,5 @@ body {
 .category-container:hover .dropdown-main {
     display: block;
 }
+
 
