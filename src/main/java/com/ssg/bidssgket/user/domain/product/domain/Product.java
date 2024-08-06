@@ -3,7 +3,7 @@ package com.ssg.bidssgket.user.domain.product.domain;
 import com.ssg.bidssgket.common.domain.BaseTimeEntity;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.member.domain.Review;
-import com.ssg.bidssgket.user.domain.member.domain.WishList;
+import com.ssg.bidssgket.user.domain.member.domain.Wish;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
 import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
 import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
@@ -61,10 +61,6 @@ public class Product extends BaseTimeEntity {
     @OneToOne(mappedBy = "product")
     private Review review;
 
-    @ManyToOne
-    @JoinColumn(name = "wishListNo")
-    private WishList wishList;
-
     @Builder
     private Product(String productName, Category category, String productDesc, Sales_status salesStatus, Boolean imdPurchase, Boolean auctionSelected, Boolean eventAuction, Integer buyNowPrice, Integer bidSuccessPrice , Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
         this.productName = productName;
@@ -115,10 +111,6 @@ public class Product extends BaseTimeEntity {
     public void addReview(Review review){
         review.setProduct(this);
         this.review = review;
-    }
-
-    public void setWishList(WishList wishlist){
-        this.wishList = wishlist;
     }
 
     public void setMember(Member member){
