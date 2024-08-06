@@ -51,7 +51,7 @@ public class Member implements UserDetails {
     private Address address; // 주소
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-    private List<WishList> wishLists = new ArrayList<>();
+    private List<Wish> wishList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
@@ -123,12 +123,12 @@ public class Member implements UserDetails {
      * 양방향 연관관계, cascade 유의
      */
 
-    public void addWishList(WishList wishList) {
-        if (wishList.getMember() != null) {
-            wishList.getMember().getWishLists().remove(wishList);
+    public void addWish(Wish wish) {
+        if (wish.getMember() != null) {
+            wish.getMember().getWishList().remove(wish);
         }
-        wishList.setMember(this);
-        this.wishLists.add(wishList);
+        wish.setMember(this);
+        this.wishList.add(wish);
     }
 
     public void addProduct(Product product) {
