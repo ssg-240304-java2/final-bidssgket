@@ -26,7 +26,7 @@ public class ProductResDto {
     private Integer bidSuccessPrice;
     private LocalDateTime auctionStartTime;
     private LocalDateTime auctionEndTime;
-    private List<String> imageUrls;
+    private List<String> productImages;
 
     public ProductResDto(Product product) {
         this.productNo = product.getProductNo();
@@ -42,7 +42,7 @@ public class ProductResDto {
         this.bidSuccessPrice = product.getBidSuccessPrice();
         this.auctionStartTime = product.getAuctionStartTime();
         this.auctionEndTime = product.getAuctionEndTime();
-        this.imageUrls = product.getProductImages().stream()
+        this.productImages = product.getProductImages().stream()
                 .map(ProductImage::getProductImg)
                 .collect(Collectors.toList());
     }
