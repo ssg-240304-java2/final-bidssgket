@@ -29,20 +29,20 @@
     object-fit: cover;
 }
 
-.heart-btn {
+.wishheartbtn {
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
     outline: none;
 }
-.heart-img {
+.wishheart {
     width: 1.25rem;
     height: 1.25rem;
     object-fit: contain;
-    margin-left: 115px;
+    margin-left: 50px;
 }
-.heart-btn:focus {
+.wishheartbtn:focus {
     outline: none;
 }
 .mt-5{
