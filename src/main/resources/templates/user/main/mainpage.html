@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/fragments/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/user/css/homepage.css">
+    <title>경매 탭 네비게이션</title>
+</head>
+<body layout:fragment="content">
+<div id="carouselExampleIndicators" class="carousel slide carousel-banner" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="/user/images/kreambanner1.png" class="d-block w-100" alt="First slide">
+        </div>
+        <div class="carousel-item">
+            <img src="/user/images/kreambanner2.png" class="d-block w-100" alt="Second slide">
+        </div>
+        <div class="carousel-item">
+            <img src="/user/images/adbanner.png" class="d-block w-100" alt="Third slide">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+<section class="category-section container mt-5">
+    <div class="category-card">
+        <a href="/category/tradingcards.html">
+            <img src="/user/images/잡화.png" alt="트레이딩 카드">
+            <div class="card-category-title">트레이딩 카드</div>
+        </a>
+    </div>
+    <div class="category-card">
+        <a href="/category/uniforms.html">
+            <img src="/user/images/잡화.png" alt="유니폼">
+            <div class="card-category-title">유니폼</div>
+        </a>
+    </div>
+    <div class="category-card">
+        <a href="/category/shoes.html">
+            <img src="/user/images/잡화.png" alt="신발">
+            <div class="card-category-title">신발</div>
+        </a>
+    </div>
+    <div class="category-card">
+        <a href="/category/arttoys.html">
+            <img src="/user/images/잡화.png" alt="아트토이">
+            <div class="card-category-title">아트토이</div>
+        </a>
+    </div>
+    <div class="category-card">
+        <a href="/category/watches.html">
+            <img src="/user/images/잡화.png" alt="시계">
+            <div class="card-category-title">시계</div>
+        </a>
+    </div>
+    <div class="category-card">
+        <a href="/category/bags.html">
+            <img src="/user/images/잡화.png" alt="가방">
+            <div class="card-category-title">가방</div>
+        </a>
+    </div>
+    <div class="category-card">
+        <a href="/category/cameras.html">
+            <img src="/user/images/잡화.png" alt="카메라">
+            <div class="card-category-title">카메라</div>
+        </a>
+    </div>
+    <div class="category-card">
+        <a href="/category/interior.html">
+            <img src="/user/images/잡화.png" alt="인테리어">
+            <div class="card-category-title">인테리어</div>
+        </a>
+    </div>
+    <div class="category-card">
+        <a href="/category/auction.html">
+            <img src="/user/images/잡화.png" alt="경매">
+            <div class="card-category-title">경매</div>
+        </a>
+    </div>
+    <div class="category-card">
+        <a href="/category/all.html">
+            <img src="/user/images/잡화.png" alt="전체">
+            <div class="card-category-title">전체</div>
+        </a>
+    </div>
+</section>
+<main class="container mt-5">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="realtime-tab" data-bs-toggle="tab" data-bs-target="#realtime" type="button" role="tab" aria-controls="realtime" aria-selected="true">실시간 경매</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="closing-soon-tab" data-bs-toggle="tab" data-bs-target="#closing-soon" type="button" role="tab" aria-controls="closing-soon" aria-selected="false">마감 임박순</button>
+        </li>
+    </ul>
+    <br>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="realtime" role="tabpanel" aria-labelledby="realtime-tab">
+            <div class="row row-cols-1 row-cols-md-5 g-4">
+                <div class="col">
+                    <div class="card h-100">
+                        <div id="carouselExample0" class="carousel slide carousel-product" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="이미지 1">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="이미지 2">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="이미지 3">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample0" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample0" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">프라다 버킷백
+                                <button class="wishheartbtn" onclick="toggleHeart(this)">
+                                    <img src="/user/main/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                </button>
+                            </h5>
+                            <p class="card-text">경매 종료: <span id="auction-end-1">2023-12-31 23:59:59</span></p>
+                            <p class="card-text">현재 가격: <span id="current-price-1">4,803,000원</span></p>
+                            <p class="card-text">경매 시작가: <span id="starting-price-1">4,000,000원</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div id="carouselExample1" class="carousel slide carousel-product" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="/user/main/images/pradabag2.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/main/images/pradabag2.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/main/images/pradabag2.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample1" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample1" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">프라다 버킷백
+                                <button class="wishheartbtn" onclick="toggleHeart(this)">
+                                    <img src="/user/main/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                </button>
+                            </h5>
+                            <p class="card-text">경매 종료: <span id="auction-end-32">2023-12-31 23:59:59</span></p>
+                            <p class="card-text">현재 가격: <span id="current-price-32">4,803,000원</span></p>
+                            <p class="card-text">경매 시작가: <span id="starting-price-32">4,000,000원</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div id="carouselExample2" class="carousel slide carousel-product" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample2" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample2" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">프라다 버킷백
+                                <button class="wishheartbtn" onclick="toggleHeart(this)">
+                                    <img src="/user/main/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                </button>
+                            </h5>
+                            <p class="card-text">경매 종료: <span id="auction-end-44">2023-12-31 23:59:59</span></p>
+                            <p class="card-text">현재 가격: <span id="current-price-44">4,803,000원</span></p>
+                            <p class="card-text">경매 시작가: <span id="starting-price-44">4,000,000원</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div id="carouselExample3" class="carousel slide carousel-product" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample3" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample3" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">프라다 버킷백
+                                <button class="wishheartbtn" onclick="toggleHeart(this)">
+                                    <img src="/user/main/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                </button>
+                            </h5>
+                            <p class="card-text">경매 종료: <span id="auction-end-55">2023-12-31 23:59:59</span></p>
+                            <p class="card-text">현재 가격: <span id="current-price-55">4,803,000원</span></p>
+                            <p class="card-text">경매 시작가: <span id="starting-price-55">4,000,000원</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade show" id="closing-soon" role="tabpanel" aria-labelledby="closing-soon-tab">
+            <div class="row row-cols-1 row-cols-md-5 g-4">
+                <div class="col">
+                    <div class="card h-100">
+                        <div id="carouselExample0" class="carousel slide carousel-product" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="이미지 1">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="이미지 2">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="이미지 3">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample0" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample0" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">프라다 버킷백
+                                <button class="wishheartbtn" onclick="toggleHeart(this)">
+                                    <img src="/user/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                </button>
+                            </h5>
+                            <p class="card-text">경매 종료: <span id="auction-end-1">2023-12-31 23:59:59</span></p>
+                            <p class="card-text">현재 가격: <span id="current-price-1">4,803,000원</span></p>
+                            <p class="card-text">경매 시작가: <span id="starting-price-1">4,000,000원</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div id="carouselExample1" class="carousel slide carousel-product" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="/user/images/pradabag2.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/images/pradabag2.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/images/pradabag2.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample1" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample1" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">프라다 버킷백
+                                <button class="wishheartbtn" onclick="toggleHeart(this)">
+                                    <img src="/user/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                </button>
+                            </h5>
+                            <p class="card-text">경매 종료: <span id="auction-end-32">2023-12-31 23:59:59</span></p>
+                            <p class="card-text">현재 가격: <span id="current-price-32">4,803,000원</span></p>
+                            <p class="card-text">경매 시작가: <span id="starting-price-32">4,000,000원</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div id="carouselExample2" class="carousel slide carousel-product" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="/user/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample2" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample2" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">프라다 버킷백
+                                <button class="wishheartbtn" onclick="toggleHeart(this)">
+                                    <img src="/user/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                </button>
+                            </h5>
+                            <p class="card-text">경매 종료: <span id="auction-end-44">2023-12-31 23:59:59</span></p>
+                            <p class="card-text">현재 가격: <span id="current-price-44">4,803,000원</span></p>
+                            <p class="card-text">경매 시작가: <span id="starting-price-44">4,000,000원</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div id="carouselExample3" class="carousel slide carousel-product" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="/user/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="상품 이미지">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample3" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample3" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">프라다 버킷백
+                                <button class="wishheartbtn" onclick="toggleHeart(this)">
+                                    <img src="/user/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                </button>
+                            </h5>
+                            <p class="card-text">경매 종료: <span id="auction-end-55">2023-12-31 23:59:59</span></p>
+                            <p class="card-text">현재 가격: <span id="current-price-55">4,803,000원</span></p>
+                            <p class="card-text">경매 시작가: <span id="starting-price-55">4,000,000원</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div id="carouselExample4" class="carousel slide carousel-product" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="/user/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="이미지 1">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="이미지 2">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="이미지 3">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample4" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample4" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">프라다 버킷백
+                                <button class="wishheartbtn" onclick="toggleHeart(this)">
+                                    <img src="/user/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                </button>
+                            </h5>
+                            <p class="card-text">경매 종료: <span id="auction-end-1">2023-12-31 23:59:59</span></p>
+                            <p class="card-text">현재 가격: <span id="current-price-1">4,803,000원</span></p>
+                            <p class="card-text">경매 시작가: <span id="starting-price-1">4,000,000원</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+</main>
+
+<!-- Bootstrap JS (for tab functionality) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleHeart(button) {
+        const emptyHeart = "/user/images/empty_heart2.png";
+        const filledHeart = "/user/images/heart.png";
+        const imgElement = button.querySelector('.wishheart');
+        const currentSrc = imgElement.getAttribute('src');
+
+        if (currentSrc === emptyHeart) {
+            imgElement.setAttribute('src', filledHeart);
+            imgElement.setAttribute('alt', '관심 있음');
+            console.log("하트가 채워짐");
+        } else {
+            imgElement.setAttribute('src', emptyHeart);
+            imgElement.setAttribute('alt', '관심 없음');
+        }
+    }
+</script>
+</body>
+</html>

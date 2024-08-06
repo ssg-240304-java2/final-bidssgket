@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/fragments/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>경매 입찰 등록</title>
+    <link rel="stylesheet" href="/user/css/regist.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        function validateBids() {
+            const minBidInput = document.getElementById('min-bid');
+            const maxBidInput = document.getElementById('max-bid');
+            const submitBtn = document.querySelector('.submit-btn');
+            const errorMessage = document.getElementById('error-message');
+            console.log(minBidInput);
+            console.log(maxBidInput);
+
+            function validateMaxBid() {
+                const minBidValue = parseFloat(minBidInput.value) || 0;
+                const maxBidValue = parseFloat(maxBidInput.value) || 0;
+
+                if (maxBidValue <= minBidValue) {
+                    maxBidInput.setCustomValidity('최대 입찰가는 최소 입찰가보다 커야 합니다.');
+                    errorMessage.textContent = '최대 입찰가는 최소 입찰가보다 커야 합니다.';
+                } else {
+                    maxBidInput.setCustomValidity('');
+                    errorMessage.textContent = '';
+                }
+            }
+
+            minBidInput.addEventListener('input', validateMaxBid);
+            maxBidInput.addEventListener('input', validateMaxBid);
+
+            submitBtn.addEventListener('click', function(event) {
+                if (!minBidInput.checkValidity() || !maxBidInput.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            });
+
+            validateMaxBid();
+        }
+
+        document.addEventListener('DOMContentLoaded', validateBids);
+    </script>
+</head>
+<body layout:fragment="content">
+<div class="auction-form-container">
+    <h1 class="form-title">경매 입찰 등록</h1>
+    <div class="form-header-line"></div>
+    <div class="form-content">
+        <div class="image-container">
+            <img src="https://via.placeholder.com/400x400" class="image-placeholder" alt="상품 이미지">
+        </div>
+        <div class="form-details">
+            <h2 class="item-title">상품글 제목</h2>
+            <div class="form-group">
+                <label for="bidder-name">입찰자 명</label>
+                <input type="text" id="bidder-name" value="hell**" readonly>
+            </div>
+            <div class="form-group">
+                <label for="min-bid">최소 입찰가</label>
+                <input type="number" id="min-bid" placeholder="최소 입찰가 입력" value="3490" min="3490">
+                <p class="hint">3,490원 이상 입찰되어야 합니다.</p>
+            </div>
+            <div class="form-group">
+                <label for="max-bid">최대 입찰가</label>
+                <input type="number" id="max-bid" placeholder="최대 입찰가 입력">
+                <p class="hint" id="error-message" style="color: red;"></p>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn submit-btn">입찰 등록</button>
+                <button type="button" class="btn cancel-btn">취소</button>
+            </div>
+            <p class="disclaimer">입찰을 선택하면, 낙찰자가 될 경우 이 상품을 구매하기로 약정하는 것입니다.</p>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

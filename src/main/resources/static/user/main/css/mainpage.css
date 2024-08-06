@@ -1,0 +1,90 @@
+.nav-tabs .nav-link:hover,
+.nav-tabs .nav-link:focus {
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
+}
+.nav-tabs .nav-link {
+    color: #495057;
+}
+.nav-tabs .nav-link.active {
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    color: #000000;
+    font-weight: bold;
+    border-bottom: 3px solid #000;
+    font-size: larger;
+}
+.card {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: none;
+    transition: transform 0.2s;
+}
+.carousel-inner img {
+    height: 250px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.wishheartbtn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+}
+.wishheart {
+    width: 1.25rem;
+    height: 1.25rem;
+    object-fit: contain;
+    margin-left: 50px;
+}
+.wishheartbtn:focus {
+    outline: none;
+}
+.mt-5{
+    margin-top: 1rem !important;
+}
+
+.carousel-banner img {
+    margin-top: 10px;
+    height: 490px;
+    width: 100%;
+    object-fit: contain;
+}
+.category-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+}
+.category-card {
+    width: 18%;
+    min-width: 140px;
+    height: 80px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+.category-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.category-card .card-category-title {
+    margin: 5px 0;
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 5px;
+    z-index: 10;
+    color: black;
+}
+
+
