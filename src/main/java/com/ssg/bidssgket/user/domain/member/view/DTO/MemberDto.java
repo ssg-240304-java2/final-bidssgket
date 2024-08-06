@@ -8,15 +8,16 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberDto {
-    private Long memberNo;
     private String memberName;
-    private String id;
+    private String memberId;
     private String pwd;
-    private String phone;
+    private String email;
+    private String role;
     private String memberNickname;
     private Integer biscuit;
     private Boolean isDeleted;
     private Boolean isPenalty;
     private Address address;
+
 
 }

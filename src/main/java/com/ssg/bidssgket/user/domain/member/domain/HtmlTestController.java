@@ -5,13 +5,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HtmlTestController {
-    @GetMapping("")
+    @GetMapping("/")
     public String indexController() {
         return "index";
     }
 
-    @GetMapping("/templates/login")
-    public String loginController() {
-        return "user/member/login";
+    @GetMapping("/login")
+    public String home() {
+        return "/user/member/login";
+    }
+
+    @GetMapping("/private")
+    public String privatePage() {
+        return "user/member/review_buyer.private";
+    }
+
+    @GetMapping("/admin")
+    public String adminPage() {
+        return "user/member/review_seller.admin";
     }
 }

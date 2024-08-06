@@ -1,13 +1,174 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-layout:decorate="~{/fragments/layout}">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/fragments/layout}">
 <head>
-
+  <meta charset="UTF-8">
+  <title>회원 정보</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    header {
+      background-color: #f8f9fa;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    header nav a {
+      margin-left: 1rem;
+      color: #333;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .search-container {
+      display: flex;
+      align-items: center;
+    }
+    .search-container input {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .info-container {
+      width: 90%;
+      max-width: 900px; /* 최대 너비 설정 */
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      font-size: 1.2rem; /* 기본 폰트 크기 증가 */
+    }
+    .info-header {
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #000;
+      padding-bottom: 0.5rem;
+    }
+    .info-header h1 {
+      margin: 0;
+      font-size: 2.5rem; /* 제목 크기 증가 */
+      color: #000;
+    }
+    .info-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .form-group label {
+      font-weight: bold;
+      color: #000;
+      font-size: 1.2rem; /* 레이블 크기 증가 */
+    }
+    .form-group input,
+    .form-group textarea {
+      padding: 1rem; /* 패딩 증가 */
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1.2rem; /* 폰트 크기 증가 */
+      box-sizing: border-box;
+    }
+    .info-form textarea {
+      resize: vertical;
+    }
+    .form-actions {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+    .form-actions button {
+      padding: 0.75rem 1.5rem; /* 버튼 크기 증가 */
+      border: none;
+      border-radius: 4px;
+      font-size: 1.2rem; /* 버튼 폰트 크기 증가 */
+      cursor: pointer;
+      color: #fff;
+      background-color: #000;
+      transition: background-color 0.3s ease;
+    }
+    .form-actions button:hover {
+      background-color: #333;
+    }
+    .cancel-button {
+      background-color: #666;
+    }
+    .cancel-button:hover {
+      background-color: #444;
+    }
+  </style>
 </head>
+<body>
 
-<body layout:fragment="content">
+<div class="info-container">
+  <div class="info-header">
+    <br><br>
+    <h1>회원 정보</h1>
+  </div>
+  <section class="info-section">
+    <form action="#" method="post" class="info-form">
+      <br>
+      <div class="form-group">
+        <label for="username">사용자 이름</label>
+        <input type="text" id="username" name="username" value="홍길동" readonly>
+      </div>
+      <div class="form-group">
+        <label for="id">아이디</label>
+        <input type="text" id="id" name="id" value="홍길동" readonly>
+      </div>
+      <div class="form-group">
+        <label for="nickname">닉네임</label>
+        <input type="text" id="nickname" name="nickname" value="홍홍홍" readonly>
+      </div>
+      <div class="form-group">
+        <label for="bisket">비스킷 온도</label>
+        <input type="number" id="bisket" name="bisket" value="hong@example.com" readonly>
+      </div>
+      <div class="form-group">
+        <label for="phone">전화번호</label>
+        <input type="tel" id="phone" name="phone" value="010-1234-5678" readonly>
+      </div>
+      <div class="form-group">
+        <label for="address">주소</label>
+        <textarea id="address" name="address" rows="4" readonly>서울특별시 강남구 역삼동</textarea>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="edit-button">정보 수정</button>
+        <button type="button" class="cancel-button">계정 탈퇴</button>
+      </div>
+    </form>
+  </section>
+</div>
 
+<!-- Optional JavaScript for form interactions -->
+<script>
+  document.querySelector('.edit-button').addEventListener('click', function() {
+    const inputs = document.querySelectorAll('.info-form input, .info-form textarea');
+    inputs.forEach(input => input.removeAttribute('readonly'));
+    this.style.display = 'none';
+    document.querySelector('.cancel-button').style.display = 'inline-block';
+  });
 
+  document.querySelector('.cancel-button').addEventListener('click', function() {
+    const inputs = document.querySelectorAll('.info-form input, .info-form textarea');
+    inputs.forEach(input => input.setAttribute('readonly', 'true'));
+    this.style.display = 'none';
+    document.querySelector('.edit-button').style.display = 'inline-block';
+  });
+</script>
 </body>
 </html>
