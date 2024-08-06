@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WishListDto {
-    private Long wishProductNo;
+public class WishDto {
+    private Long wishNo;
     private Member member;
     private Product product;
 }
