@@ -1,4 +1,4 @@
-package com.ssg.bidssgket.user.domain.member.domain.repository;//package com.ssg.bidssgket.user.domain.member.domain.repository;
+//package com.ssg.bidssgket.user.domain.member.domain.repository;
 //
 //import com.ssg.bidssgket.user.domain.member.domain.Member;
 //import org.springframework.data.jpa.repository.JpaRepository;

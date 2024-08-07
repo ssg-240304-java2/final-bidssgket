@@ -2,6 +2,8 @@ package com.ssg.bidssgket.user.domain.product.view;
 
 import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
+import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
+import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -36,11 +38,15 @@ public class ProductViewController {
         log.info("Received {} Product Images", productImages.size());
         productService.registProduct(registProductReqDto, productImages);
         // fileDto -> entity로 바꿔서 DB에 파일 저장
-        return "redirect:/user/index";
+        return "redirect:/user/main/mainpage";
     }
 
-    @GetMapping("/update")
-    public String updateController() {
+    @GetMapping("/update/{productNo}")
+    public String updatePageController(Model model, @PathVariable("productNo") int productNo) {
+        log.info("productNo: {}", productNo);
+        ProductResDto product = productService.findProductByNo(productNo);
+        model.addAttribute("product", product);
+        System.out.println("product = " + product.getProductName());
         return "/user/product/update";
     }
 
