@@ -75,6 +75,8 @@ dependencies {
     // @Value 빈등록
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
+    // modelmapper
+    implementation 'org.modelmapper:modelmapper:3.1.1'
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
