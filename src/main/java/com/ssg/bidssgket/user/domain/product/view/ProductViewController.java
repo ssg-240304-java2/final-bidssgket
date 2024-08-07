@@ -36,11 +36,12 @@ public class ProductViewController {
         log.info("Received {} Product Images", productImages.size());
         productService.registProduct(registProductReqDto, productImages);
         // fileDto -> entity로 바꿔서 DB에 파일 저장
-        return "redirect:/user/index";
+        return "redirect:/user/main/mainpage";
     }
 
-    @GetMapping("/update")
-    public String updateController() {
+    @GetMapping("/update/{productNo}")
+    public String updateController(Model model, @PathVariable("productNo") int productNo) {
+        log.info("productNo: {}", productNo);
         return "/user/product/update";
     }
 

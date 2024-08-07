@@ -17,7 +17,7 @@ public class HtmlTestController {
 
     @GetMapping("/private")
     public String privatePage() {
-        return "user/member/review_buyer.private";
+        return "user/main/mainpage";
     }
 
     @GetMapping("/admin")
