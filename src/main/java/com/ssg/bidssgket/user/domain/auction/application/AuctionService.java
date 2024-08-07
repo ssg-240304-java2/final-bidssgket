@@ -5,7 +5,9 @@ import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionReqDto;
 import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionResponseDto;
 import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
+import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
+import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,19 +19,24 @@ public class AuctionService {
 
     @Autowired
     private AuctionRepository auctionRepository;
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
-    public List<Member> getMembersByEmail(String email) {
-        return auctionRepository.findMemberByEmail(email);
+    public Product getProductById(Long productNo) {
+        return productRepository.findProductByProductNo(productNo);
     }
-
-    public List<Product> getProductsById(Long productNo) {
-        return auctionRepository.findProductById(productNo);
+    public Member getMemberByEmail(String email) {
+        System.out.println("email = " + email);
+        return memberRepository.findByEmail(email);
     }
 
     public int getMinBid(Long productNo) {
-        List<Auction> auctions = auctionRepository.findByProductProductNoOrderByMinTenderPriceDesc(productNo);
+        List<Auction> auctions = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
+        System.out.println("auctions = " + auctions);
         if (auctions.isEmpty()) {
-            Product product = auctionRepository.findProductById(productNo).get(0);
+            Product product = getProductById(productNo);
             return (int) (product.getAuctionStartPrice() * 1.2);
         } else {
             return (int) (auctions.get(0).getMinTenderPrice() * 1.2);
@@ -37,25 +44,23 @@ public class AuctionService {
     }
 
     public void registerAuction(AuctionReqDto auctionReqDto, String email) {
-        List<Member> members = getMembersByEmail(email);
-        System.out.println("members = " + members);
-        if (members.isEmpty()) {
+        Member member = getMemberByEmail(email);
+        if (member == null) {
             throw new IllegalArgumentException("No member found with the given email");
         }
-        Member member = members.get(0);
 
-        List<Product> products = getProductsById(auctionReqDto.getProductNo());
-        if (products.isEmpty()) {
+        Product product = getProductById(auctionReqDto.getProductNo());
+        if (product == null) {
             throw new IllegalArgumentException("No product found with the given product number");
         }
-        Product product = products.get(0);
 
         Auction auction = Auction.createAuction(auctionReqDto, member, product);
+        System.out.println("auction = " + auction);
         auctionRepository.save(auction);
     }
 
     public List<AuctionResponseDto> getAuctionsByProductNo(Long productNo) {
-        return auctionRepository.findByProductProductNoOrderByMinTenderPriceDesc(productNo)
+        return auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo)
                 .stream()
                 .map(auction -> new AuctionResponseDto(
                         auction.getBidNo(),
@@ -69,4 +74,6 @@ public class AuctionService {
                 ))
                 .collect(Collectors.toList());
     }
+
+
 }

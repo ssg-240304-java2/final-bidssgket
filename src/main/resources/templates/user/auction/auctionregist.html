@@ -10,8 +10,8 @@
 
     <script>
         function validateBids() {
-            const minBidInput = document.getElementById('min-bid');
-            const maxBidInput = document.getElementById('max-bid');
+            const minBidInput = document.getElementById('minTenderPrice');
+            const maxBidInput = document.getElementById('maxTenderPrice');
             const submitBtn = document.querySelector('.submit-btn');
             const errorMessage = document.getElementById('error-message');
 
@@ -35,6 +35,10 @@
                 if (!minBidInput.checkValidity() || !maxBidInput.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
+                } else {
+                    const maxBidField = document.getElementById('maxTenderPriceField');
+                    maxBidField.value = maxBidInput.value;
+                    document.getElementById('auctionForm').submit();
                 }
             });
 
@@ -59,23 +63,39 @@
                 <input type="text" id="bidder-name" th:value="${member.memberNickname}" readonly>
             </div>
             <div class="form-group">
-                <label for="min-bid">최소 입찰가</label>
-                <input type="number" id="min-bid" th:attr="value=${minBid},min=${minBid}" placeholder="최소 입찰가 입력">
+                <label for="minTenderPrice">최소 입찰가</label>
+                <input type="number" id="minTenderPrice" th:attr="value=${minBid},min=${minBid}" placeholder="최소 입찰가 입력">
                 <p class="hint" th:text="${minBid} + '원 이상 입찰되어야 합니다.'">3490원 이상 입찰되어야 합니다.</p>
             </div>
             <div class="form-group">
-                <label for="max-bid">최대 입찰가</label>
-                <input type="number" id="max-bid" placeholder="최대 입찰가 입력">
+                <label for="maxTenderPrice">최대 입찰가</label>
+                <input type="number" id="maxTenderPrice" placeholder="최대 입찰가 입력">
                 <p class="hint" id="error-message" style="color: red;"></p>
             </div>
             <div class="form-actions">
-                <button type="button" class="btn submit-btn">입찰 등록</button>
+                <form action="/auction/auctionregist" method="post" id="auctionForm">
+                    <input type="hidden" name="minTenderPrice" id="minTenderPriceField" th:value="${minBid}" />
+                    <input type="hidden" name="maxTenderPrice" id="maxTenderPriceField" />
+                    <button type="button" class="btn submit-btn">입찰 등록</button>
+                </form>
                 <button type="button" class="btn cancel-btn">취소</button>
             </div>
             <p class="disclaimer">입찰을 선택하면, 낙찰자가 될 경우 이 상품을 구매하기로 약정하는 것입니다.</p>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('successMessage')) {
+            alert(urlParams.get('successMessage'));
+            window.location.href = '/user/product/detailAuction';
+        } else if (urlParams.has('errorMessage')) {
+            alert(urlParams.get('errorMessage'));
+        }
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
