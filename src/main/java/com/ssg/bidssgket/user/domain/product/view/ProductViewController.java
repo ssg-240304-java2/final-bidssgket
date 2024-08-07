@@ -2,6 +2,8 @@ package com.ssg.bidssgket.user.domain.product.view;
 
 import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
+import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
+import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -40,8 +42,11 @@ public class ProductViewController {
     }
 
     @GetMapping("/update/{productNo}")
-    public String updateController(Model model, @PathVariable("productNo") int productNo) {
+    public String updatePageController(Model model, @PathVariable("productNo") int productNo) {
         log.info("productNo: {}", productNo);
+        ProductResDto product = productService.findProductByNo(productNo);
+        model.addAttribute("product", product);
+        System.out.println("product = " + product.getProductName());
         return "/user/product/update";
     }
 
