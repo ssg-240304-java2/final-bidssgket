@@ -47,8 +47,18 @@ public class ProductViewController {
         ProductResDto product = productService.findProductByNo(productNo);
         model.addAttribute("product", product);
         System.out.println("product = " + product.getProductName());
-        return "/user/product/update";
+        return "user/product/update";
     }
+
+    @PostMapping("/update/{productNo}")
+    public String updateProduct(@PathVariable("productNo") Long productNo,
+                                @ModelAttribute ProductReqDto productReqDto,
+                                @RequestParam(value = "productImages", required = false) List<MultipartFile> productImages) {
+        log.info("Received Product Update Data: {}", productReqDto);
+        productService.updateProduct(productReqDto, productImages);
+        return "redirect:/user/main/mainpage";
+    }
+
 
     @GetMapping("/bidFailed")
     public String bidFailedController() {

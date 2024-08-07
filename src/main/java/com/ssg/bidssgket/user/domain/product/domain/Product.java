@@ -43,7 +43,7 @@ public class Product extends BaseTimeEntity {
     @JoinColumn(name = "memberNo")
     private Member member;
 
-    @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<ProductImage> productImages = new ArrayList<ProductImage>();
 
     @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE}, orphanRemoval = true)
@@ -82,7 +82,7 @@ public class Product extends BaseTimeEntity {
         return Product.builder()
                 .productName(productReqDto.getProductName())
                 .category(Category.valueOf(productReqDto.getCategory()))
-                .salesStatus(Sales_status.valueOf(productReqDto.getSalesStatus()))
+                .salesStatus(productReqDto.getSalesStatus())
                 .productDesc(productReqDto.getProductDesc())
                 .imdPurchase(productReqDto.getImdPurchase())
                 .auctionSelected(productReqDto.getAuctionSelected())
@@ -134,4 +134,79 @@ public class Product extends BaseTimeEntity {
         this.productReports.add(productReport);
     }
 
+    public void setProductNo(Long productNo) {
+        this.productNo = productNo;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public void setProductDesc(String productDesc) {
+        this.productDesc = productDesc;
+    }
+
+    public void setImdPurchase(Boolean imdPurchase) {
+        this.imdPurchase = imdPurchase;
+    }
+
+    public void setAuctionSelected(Boolean auctionSelected) {
+        this.auctionSelected = auctionSelected;
+    }
+
+    public void setEventAuction(Boolean eventAuction) {
+        this.eventAuction = eventAuction;
+    }
+
+    public void setBuyNowPrice(Integer buyNowPrice) {
+        this.buyNowPrice = buyNowPrice;
+    }
+
+    public void setAuctionStartPrice(Integer auctionStartPrice) {
+        this.auctionStartPrice = auctionStartPrice;
+    }
+
+    public void setBidSuccessPrice(Integer bidSuccessPrice) {
+        this.bidSuccessPrice = bidSuccessPrice;
+    }
+
+    public void setAuctionStartTime(LocalDateTime auctionStartTime) {
+        this.auctionStartTime = auctionStartTime;
+    }
+
+    public void setAuctionEndTime(LocalDateTime auctionEndTime) {
+        this.auctionEndTime = auctionEndTime;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setSalesStatus(Sales_status salesStatus) {
+        this.salesStatus = salesStatus;
+    }
+
+    public void setProductImages(List<ProductImage> productImages) {
+        this.productImages = productImages;
+    }
+
+    public void setProductReports(List<ProductReport> productReports) {
+        this.productReports = productReports;
+    }
+
+    public void setAuctions(List<Auction> auctions) {
+        this.auctions = auctions;
+    }
+
+    public void setSaleOrder(SaleOrder saleOrder) {
+        this.saleOrder = saleOrder;
+    }
+
+    public void setPurchaseOrder(PurchaseOrder purchaseOrder) {
+        this.purchaseOrder = purchaseOrder;
+    }
+
+    public void setReview(Review review) {
+        this.review = review;
+    }
 }

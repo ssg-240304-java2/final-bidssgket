@@ -13,7 +13,6 @@ import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,12 +22,12 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final FileService fileService;
 
+    @Transactional
     public Product registProduct(RegistProductReqDto registProductReqDto, List<MultipartFile> productImages) {
         Product product = Product.builder()
                 .productName(registProductReqDto.getProductName())
@@ -69,4 +68,41 @@ public class ProductService {
         log.info("productResDto:{}", productResDto.getProductName());
         return productResDto;
     }
+
+    @Transactional
+    public void updateProduct(ProductReqDto updateProduct, List<MultipartFile> productImages) {
+        Product foundProduct = productRepository.findById(updateProduct.getProductNo())
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with productNo: " + updateProduct.getProductNo()));
+
+        // Update product fields
+        foundProduct.setProductName(updateProduct.getProductName());
+        foundProduct.setSalesStatus(updateProduct.getSalesStatus());
+        foundProduct.setProductDesc(updateProduct.getProductDesc());
+        foundProduct.setImdPurchase(updateProduct.getImdPurchase());
+        foundProduct.setAuctionSelected(updateProduct.getAuctionSelected());
+        foundProduct.setEventAuction(updateProduct.getEventAuction());
+        foundProduct.setBuyNowPrice(updateProduct.getBuyNowPrice());
+        foundProduct.setAuctionStartPrice(updateProduct.getAuctionStartPrice());
+        foundProduct.setAuctionStartTime(updateProduct.getAuctionStartTime());
+        // Save updated product
+        productRepository.save(foundProduct);
+
+        // Process product images
+        if (productImages != null && !productImages.isEmpty()) {
+            // Clear existing images if needed
+            productImageRepository.deleteById(foundProduct.getProductNo());
+
+            // Upload new images and save
+            List<FileDto> fileDtos = fileService.uploadFiles(productImages, "product-images");
+            for (FileDto fileDto : fileDtos) {
+                ProductImage productImage = ProductImage.builder()
+                        .productImg(fileDto.getUploadFileUrl())
+                        .productThumbnail(false) // Set thumbnail status if needed
+                        .product(foundProduct)
+                        .build();
+                productImageRepository.save(productImage);
+            }
+        }
+    }
 }
+

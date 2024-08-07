@@ -19,85 +19,97 @@
                 <h2 class="title">상품 수정</h2>
                 <hr class="title-underline">
             </div>
+            <form id="updateForm" method="post" onsubmit="return validateForm()" enctype="multipart/form-data">
             <div class="row mb-4">
                 <div class="col-md-6">
                     <div id="thumbnailContainer" class="d-flex flex-wrap mb-3"></div>
                     <div class="thumbnail text-center mb-3" id="thumbnailUploadArea">
-                        <i id="thumbnailIcon" class="fas fa-image fa-5x text-muted"></i>
-                        <img id="thumbnail" src="#" alt="이미지 미리보기" style="display: none;" class="img-fluid rounded">
-                        <input class="form-control" type="file" id="productImages" accept="image/*" multiple style="display: none;">
+                        <img id="thumbnail" th:each="images : ${product.productImages}" th:src="${images}" alt="이미지 미리보기" style="display: grid;" class="img-fluid rounded">
+                        <input class="form-control" type="file" id="productImages" name="productImages" accept="image/*" multiple style="display: none;">
                     </div>
                     <div class="mb-3">
                         <label for="productImages" class="form-label">사진 업로드</label>
                         <button id="uploadButton" class="btn btn-primary"><i class="fas fa-upload"></i> 사진 선택</button>
                     </div>
                     <div class="mb-3">
-                        <label for="title" class="form-label">제목</label>
-                        <input type="text" class="form-control" id="title" placeholder="제목(상품명)을 입력해주세요." style="width: 100%;">
+                        <label for="productName" class="form-label">제목</label>
+                        <input type="text" class="form-control" id="productName" name="productName" th:field="${product.productName}" style="width: 100%;">
                     </div>
                     <div class="mb-3">
                         <label for="status" class="form-label">판매 상태</label>
-                        <select class="form-select" id="status">
-                            <option selected>판매 상태를 선택해주세요</option>
-                            <option value="1">판매중</option>
-                            <option value="2">판매완료</option>
-                            <option value="3">예약중</option>
+                        <select class="form-select" id="status" name="salesStatus" th:value="${product.salesStatus}">
+                            <option value="selling" th:selected="${product.salesStatus == 'selling'}">판매중</option>
+                            <option value="sale_completed" th:selected="${product.salesStatus == 'sale_completed'}">판매완료</option>
+                            <option value="trading" th:selected="${product.salesStatus == 'trading'}">예약중</option>
+                            <option value="sale_pause" th:selected="${product.salesStatus == 'sale_pause'}">판매중지</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="category" class="form-label">카테고리</label>
-                        <select class="form-select" id="category" disabled>
-                            <option selected>카테고리를 선택해주세요</option>
-                            <option value="1">카테고리 1</option>
-                            <option value="2">카테고리 2</option>
-                            <option value="3">카테고리 3</option>
+                        <select class="form-select" id="category" name="category" disabled>
+                            <option selected th:if="${product.category == 'tradingCard'}" >트레이딩 카드</option>
+                            <option selected th:if="${product.category == 'uniform'}">유니폼</option>
+                            <option selected th:if="${product.category == 'shoes'}">신발</option>
+                            <option selected th:if="${product.category == 'artToy'}">아트토이</option>
+                            <option selected th:if="${product.category == 'watch'}">시계</option>
+                            <option selected th:if="${product.category == 'bag'}">가방</option>
+                            <option selected th:if="${product.category == 'camera'}">카메라</option>
+                            <option selected th:if="${product.category == 'interior'}">인테리어</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="description" class="form-label">내용</label>
-                        <textarea class="form-control" id="description" rows="6" placeholder="상품에 대한 내용을 자세히 써주세요. (ex. 구매시점, 상품 상태등을 작성해주시면 구매자가 상품을 쉽게 파악할 수 있어요.)"></textarea>
+                        <textarea class="form-control" id="description" name="productDesc" rows="6" th:field="${product.productDesc}"></textarea>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="instantSale">
-                                <label class="form-check-label" for="instantSale">즉시 판매</label>
+                                <input class="form-check-input" type="checkbox" id="instantSale" name="imdPurchase" th:field="${product.imdPurchase}">
+                                <label class="form-check-label" for="instantSale" >즉시 판매</label>
                             </div>
                             <div class="mb-3">
                                 <label for="instantPrice" class="form-label">즉시 판매가</label>
-                                <input type="text" class="form-control" id="instantPrice" placeholder="즉시 판매가격을 입력하세요.">
+                                <input type="text" class="form-control" id="instantPrice" name="buyNowPrice" th:value="${product.buyNowPrice}" oninput="formatNumber(this)">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="auction">
+                                <input class="form-check-input" type="checkbox" id="auction" name="auctionStartPrice"  th:field="${product.auctionSelected}">
                                 <label class="form-check-label" for="auction">경매</label>
                             </div>
                             <div class="mb-3">
                                 <label for="auctionStartPrice" class="form-label">경매 시작가</label>
-                                <input type="text" class="form-control" id="auctionStartPrice" placeholder="경매 시작 가격을 입력하세요.">
+                                <input type="text" class="form-control" id="auctionStartPrice" name="auctionStartPrice" th:value="${product.auctionStartPrice}" oninput="formatNumber(this)">
                             </div>
                         </div>
                     </div>
                     <div class="mb-3" reead>
                         <label for="dateRange" class="form-label">기간 선택</label>
                         <div class="d-flex">
-                            <input type="date" class="form-control me-2" id="startDate" placeholder="시작 날짜">
-                            <input type="date" class="form-control" id="endDate" placeholder="종료 날짜">
+                            <input type="date" class="form-control me-2" id="startDate" name="auctionStartTime" th:value="${product.auctionStartTime}">
+                            <input type="date" class="form-control" id="endDate" name="auctionEndTime" th:value="${product.auctionEndTime}">
                         </div>
+                    </div>
+                    <div class="text-end">
+                        <button class="btn btn-primary" type="submit" onclick="submitForm()">수정하기</button>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12 text-end">
-                    <button class="btn btn-primary">수정하기</button>
-                </div>
-            </div>
+            </form>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
+
+            function submitForm() {
+                var form = document.getElementById('productForm');
+                var productNo = [[${product.productNo}]];
+                form.action = '/update/' + parseInt(productNo);
+                form.submit();
+            }
+
+
             document.getElementById('uploadButton').addEventListener('click', function() {
                 document.getElementById('productImages').click();
             });
@@ -121,6 +133,52 @@
                     reader.readAsDataURL(files[i]);
                 }
             });
+
+
+
+            // function validateForm() {
+            //     const auctionStartTime = document.getElementById('auctionStartTime').value;
+            //     const auctionEndTime = document.getElementById('auctionEndTime').value;
+            //
+            //     if (!auctionStartTime || !auctionEndTime) {
+            //         alert('날짜와 시간을 모두 입력해주세요!');
+            //         return false;
+            //     }
+            //
+            //     if (new Date.now() >= new Date(auctionEndTime)) {
+            //         alert('경매 종료 시간을 다시 확인해주세요!');
+            //         return false;
+            //     }
+            //
+            //     return true;
+            // }
+
+            function validateForm() {
+                const form = document.getElementById('productForm');
+                const inputs = form.querySelectorAll('input, select, textarea');
+                const auctionStartTime = document.getElementById('auctionStartTime').value;
+                const auctionEndTime = document.getElementById('auctionEndTime').value;
+                let valid = true;
+
+                inputs.forEach(input => {
+                    if (!input.value) {
+                        valid = false;
+                        input.classList.add('is-invalid'); // Bootstrap의 'is-invalid' 클래스를 추가하여 빨간 테두리 표시
+                    } else {
+                        input.classList.remove('is-invalid'); // 유효한 입력은 빨간 테두리 제거
+                    }
+                });
+
+                if (!valid) {
+                    alert('모든 필드를 입력해 주세요.');
+                }
+                if (new Date.now() >= new Date(auctionEndTime)) {
+                    alert('경매 종료 시간을 다시 확인해주세요!');
+                    return false;
+                }
+
+                return valid; // 모든 필드가 유효하면 폼 제출
+            }
         </script>
     </main>
 </body>

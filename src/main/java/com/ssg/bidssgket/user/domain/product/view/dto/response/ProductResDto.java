@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductResDto {
+    private Long productNo;
     private String productName;
     private String category;
     private String productDesc;
@@ -30,6 +31,7 @@ public class ProductResDto {
 
     @Builder
     public ProductResDto(Product product) {
+        this.productNo = product.getProductNo();
         this.productName = product.getProductName();
         this.category = product.getCategory().name();
         this.productDesc = product.getProductDesc();
