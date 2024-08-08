@@ -10,9 +10,7 @@ import java.util.UUID;
 
 @Embeddable
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Setter
 public class Address {
     private String addrUUID;
     private String zipcode;
@@ -22,5 +20,15 @@ public class Address {
     private void setAddrUUID(){
         UUID uuid = UUID.randomUUID();
         this.addrUUID = uuid.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "addrUUID='" + addrUUID + '\'' +
+                ", zipcode='" + zipcode + '\'' +
+                ", street='" + street + '\'' +
+                ", city='" + city + '\'' +
+                '}';
     }
 }
