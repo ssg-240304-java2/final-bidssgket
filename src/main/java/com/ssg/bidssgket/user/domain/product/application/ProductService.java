@@ -9,24 +9,26 @@ import com.ssg.bidssgket.user.domain.product.domain.ProductImage;
 import com.ssg.bidssgket.user.domain.product.domain.Sales_status;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductImageRepository;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
+import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
+import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final FileService fileService;
 
-    @Transactional
     public Product registProduct(RegistProductReqDto registProductReqDto, List<MultipartFile> productImages) {
         Product product = Product.builder()
                 .productName(registProductReqDto.getProductName())
@@ -55,5 +57,16 @@ public class ProductService {
             productImageRepository.save(productImage);
         }
         return product;
+    }
+
+    public ProductResDto findProductByNo(int productNo) {
+        Product product = productRepository.findById((long) productNo).orElseThrow(IllegalAccessError::new);
+        log.info("ProductByNo:{}", productNo);
+        log.info("product:{}", productNo);
+        ProductResDto productResDto = ProductResDto.builder()
+                .product(product)
+                .build();
+        log.info("productResDto:{}", productResDto.getProductName());
+        return productResDto;
     }
 }

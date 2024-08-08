@@ -90,16 +90,6 @@ public class Member implements UserDetails {
     @OneToOne(mappedBy = "reviewee", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private Review reviewee;
 
-    @OneToOne(mappedBy = "sender", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-    private ChatRoom sender;
-
-    @OneToOne(mappedBy = "receiver", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-    private ChatRoom receiver;
-
-    @OneToOne(mappedBy = "member", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-    private ChatContent chatContent;
-
-
     @Builder
     private Member(String memberName, String memberId, String pwd, String memberNickname, String email, Role role, Integer biscuit, Address address, Boolean isDeleted, Boolean isPenalty) {
         this.memberName = memberName;
@@ -211,21 +201,6 @@ public class Member implements UserDetails {
     public void addReviewee(Review reviewee) {
         reviewee.setReviewee(this);
         this.reviewee = reviewee;
-    }
-
-    public void addSender(ChatRoom sender) {
-        sender.setSender(this);
-        this.sender = sender;
-    }
-
-    public void addReceiver(ChatRoom receiver) {
-        receiver.setReceiver(this);
-        this.receiver = receiver;
-    }
-
-    public void addNickname(ChatContent chatContent) {
-        chatContent.setMember(this);
-        this.chatContent = chatContent;
     }
 
     @Override

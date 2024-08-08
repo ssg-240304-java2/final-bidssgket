@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<!-- 다른 페이지에 포함시킬 영역을 th:fragment로 선언해준다.-->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head>
     <link rel="stylesheet" type="text/css" href="/user/css/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div th:fragment="headerFragment" class="header">
+<div th:fragment="headerFragment" class="header" style="max-width: 1440px;">
     <div class="header-top">
         <div class="logo">
-            <a href="/user/main/mainpage">Bidssgket</a>
+            <a href="/">Bidssgket</a>
         </div>
     </div>
     <div class="header-bottom">
         <div class="header-links">
-            <a href="#">마이페이지</a>
+            <a href="/user/order/mypage">마이페이지</a>
             <a href="#">알림</a>
-            <a href="/login">로그인</a>
+            <!-- 로그인 상태에 따라 링크 표시 -->
+            <a id="login-link" href="/login">로그인</a>
+            <a id="logout-link" href="/logout" style="display: none;">로그아웃</a>
         </div>
         <div class="search-container">
             <nav class="nav">
@@ -24,27 +24,37 @@
                     <a href="#" class="category-link">카테고리</a>
                     <div class="dropdown-main">
                         <div class="dropdown-main-content">
-                            <a href="#">트레이딩 카드</a>
-                            <a href="#">유니폼</a>
-                            <a href="#">신발</a>
-                            <a href="#">아트토이</a>
-                            <a href="#">시계</a>
-                            <a href="#">가방</a>
-                            <a href="#">카메라</a>
-                            <a href="#">인테리어</a>
+                            <a href="#">카테고리1</a>
+                            <a href="#">카테고리2</a>
+                            <a href="#">카테고리3</a>
+                            <!-- Add more categories as needed -->
                         </div>
                     </div>
                 </div>
                 <div class="auction">
-                    <a href="/user/auction/auctionpage">경매</a>
+                    <a href="#">경매</a>
                 </div>
                 <div class="product_regist">
-                    <a href="/user/product/register">상품등록</a>
+                    <a href="/user/product/regist">상품등록</a>
                 </div>
             </nav>
             <input type="text" placeholder="Search">
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded',function (){
+            var isAuthenticated = '[[${session.member}]]';
+            var loginLink = document.getElementById('login-link');
+            var logoutLink = document.getElementById('logout-link');
+            if (isAuthenticated) {
+                loginLink.style.display = 'none';
+                logoutLink.style.display = 'inline';
+            } else {
+                loginLink.style.display = 'inline';
+                logoutLink.style.display = 'none';
+            }
+        });
+    </script>
 </div>
 </body>
 </html>

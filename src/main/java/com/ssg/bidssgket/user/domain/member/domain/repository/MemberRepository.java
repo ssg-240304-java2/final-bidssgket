@@ -1,3 +1,4 @@
+
 package com.ssg.bidssgket.user.domain.member.domain.repository;
 
 import com.ssg.bidssgket.user.domain.member.domain.Member;
