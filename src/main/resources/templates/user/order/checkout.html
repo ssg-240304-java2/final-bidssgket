@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/fragments/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 | 비스킷 페이 충전</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .input-bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-gray">
+<main class="contents" layout:fragment="content">
+    <div class="container mx-auto flex" style="max-width: 1440px;">
+        <aside class="w-52 p-4" style="max-width: 210px;">
+            <a href="/user/order/mypage" class="block">
+                <h2 class="text-2xl font-bold mb-4 transform hover:scale-105 transition-transform duration-300">마이 페이지</h2>
+            </a>
+            <ul class="space-y-2">
+                <li>
+                    <a href="/user/order/mypage" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">쇼핑 정보</a>
+                </li>
+                <li>
+                    <a href="/user/order/purchases/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">구매 내역</a>
+                </li>
+                <li>
+                    <a href="/user/order/sales/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">판매 내역</a>
+                </li>
+                <li>
+                    <a href="/user/payment/info" class="block text-left w-full font-bold text-black transform hover:scale-105 transition-transform duration-300">결제</a>
+                </li>
+                <li>
+                    <a href="#" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">채팅</a>
+                </li>
+            </ul>
+        </aside>
+        <section class="flex-1 p-4" style="max-width: 1230px;">
+            <div class="max-w-4xl mx-auto bg-white p-6 mt-10 shadow-md rounded-md">
+                <div class="border-b pb-8 mb-4">
+                    <h1 class="text-2xl font-semibold mb-4">상품 정보</h1>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <img src="https://placehold.co/100x100" alt="Product image of 나이키 에어 줌 알파플라이 넥스트%3 블루프린트" class="w-25 h-25">
+                            <div>
+                                <a href="#" class="text-lg font-semibold text-black hover:text-blue-700">나이키 에어 줌 알파플라이 넥스트%3 블루프린트</a>
+                                <p class="text-lg text-gray-500">260</p>
+                            </div>
+                        </div>
+                        <table>
+                            <tr>
+                                <td class="text-lg font-semibold text-right">결제 금액</td>
+                            </tr>
+                            <tr>
+                                <td class="text-lg font-bold text-right">300,000원</td>
+                            </tr>
+                            <tr>
+                                <td class="text-sm text-red-500 text-right">결제 만료일</td>
+                            </tr>
+                            <tr>
+                                <td class="text-sm text-red-500 text-right">2024년 7월 31일 12시 00분</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="border-b pb-4">
+                    <h1 class="text-2xl font-semibold mb-4">배송 정보</h1>
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <div class="text-gray-900 mb-2">
+                                <span class="text-gray-400 mr-10">받는 분</span>
+                                <span>홍길동</span>
+                            </div>
+                            <div class="text-gray-900 mb-2">
+                                <span class="text-gray-400 mr-11">연락처</span>
+                                <span>010-1234-1644</span>
+                            </div>
+                            <div class="text-gray-900 mb-2">
+                                <span class="text-gray-400 mr-6">배송 주소</span>
+                                <span>(06166) 서울특별시 강남구 삼성로 534 SAC아트홀 6층</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <div class="text-right text-gray-400">
+                                <a href="#">새 주소 추가</a>
+                            </div>
+                            <br>
+                            <div class="text-gray-400">
+                                <button class="border border-gray-400 rounded px-2 py-1 text-gray-600">변경</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center mt-4">
+                        <input type="text" class="border w-full p-3 rounded" placeholder="문 앞에 놔주세요."/>
+                        <button class="p-3">
+                            <i class="fas fa-chevron-right text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="border-b pt-4 pb-4 mb-4">
+                    <h1 class="text-2xl font-bold mb-4">비스킷 페이</h1>
+                    <div class="mb-2 text-lg">보유 잔액</div>
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="text-2xl font-bold text-gray-800">1,000,000원</div>
+                    </div>
+                    <div class="input-wrapper flex justify-between">
+                        <input type="text" id="amount-input" class="text-1xl text-right" style="width: 760px;"
+                               placeholder="사용할 금액을 입력해 주세요.">
+                        <button class="ml-4 text-white bg-green-500 hover:bg-green-600 font-semibold px-1 py-2 rounded-md" style="width: 80px;">전액 사용</button>
+                    </div>
+                </div>
+                <div class="text-center mt-6">
+                    <button class="bg-green-500 text-white text-lg px-8 py-4 rounded hover:bg-green-600">300,000원 결제하기</button>
+                </div>
+            </div>
+
+            <!-- 충전 금액 포맷팅 및 숫자 제한 -->
+            <script>
+                function formatNumber(value) {
+                    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                }
+
+                function moveCursorToLeftOfSuffix(input) {
+                    const value = input.value;
+                    const suffix = '원';
+                    if (value.endsWith(suffix)) {
+                        const cursorPosition = value.length - suffix.length;
+                        input.setSelectionRange(cursorPosition, cursorPosition);
+                    }
+                }
+
+                document.getElementById('amount-input').addEventListener('input', function (e) {
+                    let value = e.target.value.replace(/[^0-9]/g, ''); // 숫자가 아닌 문자 제거
+                    if (value) {
+                        e.target.value = formatNumber(value) + '원'; // 숫자 포맷팅 및 "원" 추가
+                        e.target.classList.add('input-bold'); // 숫자가 입력되면 굵게 표시
+                        moveCursorToLeftOfSuffix(e.target);
+                    } else {
+                        e.target.value = ''; // 입력값이 없으면 빈 문자열로 설정
+                        e.target.classList.remove('input-bold'); // 숫자가 없으면 굵게 표시 제거
+                    }
+                });
+
+                document.getElementById('amount-input').addEventListener('keydown', function (e) {
+                    const suffix = '원';
+                    if (e.key === 'ArrowRight') {
+                        const value = e.target.value;
+                        if (value.endsWith(suffix)) {
+                            const cursorPosition = e.target.selectionStart;
+                            if (cursorPosition >= value.length - suffix.length) {
+                                e.preventDefault();
+                                moveCursorToLeftOfSuffix(e.target);
+                            }
+                        }
+                    }
+                });
+
+                document.getElementById('amount-input').addEventListener('mouseup', function (e) {
+                    setTimeout(() => {
+                        moveCursorToLeftOfSuffix(e.target);
+                    }, 0);
+                });
+            </script>
+        </section>
+    </div>
+</main>
+</body>
+</html>
