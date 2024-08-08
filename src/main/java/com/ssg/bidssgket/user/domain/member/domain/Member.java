@@ -9,6 +9,7 @@ import com.ssg.bidssgket.user.domain.payment.domain.Pay;
 import com.ssg.bidssgket.user.domain.payment.domain.Payment;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,25 +31,34 @@ public class Member implements UserDetails {
     private String memberName; // 사용자 이름
     private String memberId; // 사용자 아이디
     private String pwd; // 사용자 비밀번호
+
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-    private String role;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private Role role;
+
     @Column(name = "memberNickname", unique = true)
     private String memberNickname;
-    //    private String provider;
-//    private String providerId;
+
     @ColumnDefault("50")
     @Column(name = "biscuit")
     private Integer biscuit; // 비스킷 온도
+
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private boolean isDeleted; // 탈퇴 여부
+
     @ColumnDefault("false")
     @Column(name = "is_penalty")
     private boolean isPenalty; // 패널티 여부
 
     @Embedded
     private Address address; // 주소
+
+//    private String provider;
+//    private String providerId;
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Wish> wishList = new ArrayList<>();
@@ -91,7 +101,7 @@ public class Member implements UserDetails {
 
 
     @Builder
-    private Member(String memberName, String memberId, String pwd, String memberNickname, String email, String role, String provider, String providerId, Integer biscuit, Address address, Boolean isDeleted, Boolean isPenalty) {
+    private Member(String memberName, String memberId, String pwd, String memberNickname, String email, Role role, Integer biscuit, Address address, Boolean isDeleted, Boolean isPenalty) {
         this.memberName = memberName;
         this.memberId = memberId;
         this.pwd = pwd;
@@ -117,6 +127,15 @@ public class Member implements UserDetails {
                 .isDeleted(memberDto.getIsDeleted())
                 .isPenalty(memberDto.getIsPenalty())
                 .build();
+    }
+
+    public String getRoleKey() {
+        return this.role.getKey();
+    }
+
+    public Member update(String memberNickname) {
+        this.memberNickname = memberNickname;
+        return this;
     }
 
     /**
@@ -207,11 +226,6 @@ public class Member implements UserDetails {
     public void addNickname(ChatContent chatContent) {
         chatContent.setMember(this);
         this.chatContent = chatContent;
-    }
-
-    public Member update(String memberNickname) {
-        this.memberNickname = memberNickname;
-        return this;
     }
 
     @Override
