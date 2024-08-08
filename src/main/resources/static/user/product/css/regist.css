@@ -76,3 +76,13 @@ textarea {
     height: 300px;
     object-fit: cover;
 }
+
+/* 버튼 호버 스타일 */
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.mt-3 {
+    margin-top: 0.5rem;
+}

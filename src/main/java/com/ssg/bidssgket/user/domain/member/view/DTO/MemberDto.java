@@ -1,6 +1,7 @@
 package com.ssg.bidssgket.user.domain.member.view.DTO;
 
 import com.ssg.bidssgket.user.domain.member.domain.Address;
+import com.ssg.bidssgket.user.domain.member.domain.Role;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ public class MemberDto {
     private String memberId;
     private String pwd;
     private String email;
-    private String role;
+    private Role role;
     private String memberNickname;
     private Integer biscuit;
     private Boolean isDeleted;

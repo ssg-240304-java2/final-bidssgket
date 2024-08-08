@@ -91,7 +91,6 @@ public class Product extends BaseTimeEntity {
                 .auctionStartPrice(productReqDto.getAuctionStartPrice())
                 .auctionStartTime(productReqDto.getAuctionStartTime())
                 .auctionEndTime(productReqDto.getAuctionEndTime())
-                .bidSuccessPrice(productReqDto.getBidSuccessPrice())
                 .member(member)
                 .build();
     }
