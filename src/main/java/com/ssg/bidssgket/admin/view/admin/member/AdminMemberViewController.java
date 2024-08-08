@@ -35,26 +35,6 @@ public class AdminMemberViewController {
     }
 
 
-    /**
-     * 회원 신고 목록 조회 페이지
-     */
-    @GetMapping("/report/list")
-    public String userReportListPage() {
-        log.info("===== member report list page =====");
-
-        return "admin/content/pages/member/member-report-list";
-    }
-
-
-    /**
-     * 회원 신고 상세 조회 페이지
-     */
-    @GetMapping("/report/info/{complainNo}")
-    public String userReportInfoPage() {
-        log.info("===== member report info page =====");
-
-        return "admin/content/pages/member/member-report-info";
-    }
 
 
 

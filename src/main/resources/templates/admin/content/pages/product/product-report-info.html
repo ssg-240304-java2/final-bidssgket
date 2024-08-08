@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/layout/default_layout}" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+
+<th:block layout:fragment="css">
+	<link href="//cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" rel="stylesheet"/>
+</th:block>
+
+<th:block layout:fragment="script">
+
+	<script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+
+</th:block>
+
+<div layout:fragment="content">
+	<style>
+
+	</style>
+
+	<h1 class="mt-4">회원 상세</h1>
+<!--	<ol class="breadcrumb mb-4">-->
+<!--		<li class="breadcrumb-item active">회원 목록</li>-->
+<!--	</ol>-->
+
+	<div class="section">
+		<div class="container">
+			<div class="row">
+				<div class="row">
+					<div class="wrapper" >
+						<table id="userListSpace">
+
+						</table>
+					</div>
+				</div>
+				<br>
+				<br>
+				<br>
+			</div>
+		</div>
+	</div>
+
+
+</div>
+
+</html>
+

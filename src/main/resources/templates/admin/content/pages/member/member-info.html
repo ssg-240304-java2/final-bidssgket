@@ -27,9 +27,31 @@
 			<div class="row">
 					<div class="row">
 						<div class="wrapper" >
-							<table id="userListSpace">
+							<h2>회원정보</h2>
+							<table id="userInfoSpace" class="table table-bordered">
 
 							</table>
+
+							<br>
+							<br>
+							<hr>
+							<br>
+							<br>
+							<h2>구매한 물품</h2>
+							<table id="purchaseListSpace" class="table table-bordered">
+
+							</table>
+
+							<br>
+							<br>
+							<hr>
+							<br>
+							<br>
+							<h2>판매한 물품</h2>
+							<table id="saleListSpace" class="table table-bordered">
+
+							</table>
+
 						</div>
 					</div>
 					<br>
@@ -37,106 +59,146 @@
 					<div class="row" style="width: 100%; text-align: center">
 						<div class="pagination" id="pagination">
 							<script>
-								function clickPage(page){
+								function clickPage(){
 
 									$.ajax({
 										type: "GET",
-										url: "/admin/api/user/list?page="+page, //여기 api 따
+										url: "/admin/api/user/list",
 										// dataType: "json",
-										success: function (userList) {
-											const option = {
-												maximumFractionDigits: 4
-											};
+										success: function (member) {
 
-											let userListSpace = $("#userListSpace");
-											userListSpace.empty();
-											makePagenation(userList);
+											let userInfoSpace = $("#userInfoSpace");
+											userInfoSpace.empty();
+											console.log(member);
 
-											console.log(userList);
-
-											userListSpace.append(
+											userInfoSpace.append(
 													`
 													<tr>
 														<th scope="col">회원번호</th>
-														<th scope="col">아이디</th>
 														<th scope="col">이름</th>
+														<th scope="col">아이디</th>
+														<th scope="col">이메일</th>
 														<th scope="col">닉네임</th>
-														<th scope="col">휴대폰번호</th>
+														<th scope="col">타입</th>
+														<th scope="col">권한</th>
 														<th scope="col">주소</th>
 														<th scope="col">비스킷</th>
 														<th scope="col">탈퇴여부</th>
 														<th scope="col">패널티여부</th>
 													</tr>
+													<tr>
+														<th scope="col">${member.memberNo}</th>
+														<th scope="col">${member.memberName}</th>
+														<th scope="col">${member.id}</th>
+														<th scope="col">${member.email}</th>
+														<th scope="col">${member.memberNickname}</th>
+														<th scope="col">${member.provider}</th>
+														<th scope="col">${member.address}</th>
+														<th scope="col">${member.biscuit}</th>
+														<th scope="col">${member.isDeleted}</th>
+														<th scope="col">${member.isPenalty}</th>
+													</tr>
 													`
 											)
-											userList.content.forEach(function(user){
-												userListSpace.append(
+
+											/* 여기에 구매한 목록*/
+											let purchaseListSpace = $("#purchaseListSpace");
+											purchaseListSpace.empty();
+
+											purchaseListSpace.append(
+													`
+													<tr>
+														<th scope="col">상품번호</th>
+														<th scope="col">상품명</th>
+														<th scope="col">카테고리</th>
+														<th scope="col">판매상태</th>
+														<th scope="col">즉시구매설정여부</th>
+														<th scope="col">즉시구매가격</th>
+														<th scope="col">경매설정여부</th>
+														<th scope="col">경매시작일</th>
+														<th scope="col">경매마감일</th>
+														<th scope="col">상품등록일</th>
+														<th scope="col">판매자 회원번호</th>
+													</tr>
+													`
+											)
+
+											member.purchaseList.content.forEach(function(product){
+												purchaseListSpace.append(
 														`
 														<tr>
-															<th scope="col">${user.userNo}</th>
-															<th scope="col">${user.userId}</th>
-															<th scope="col">${user.userPw}</th>
-															<th scope="col">${user.userNickname}</th>
-															<th scope="col">${user.phoneNum}</th>
-															<th scope="col">${user.address}</th>
-															<th scope="col">${user.bisket}</th>
-															<th scope="col">${user.isDeleted}</th>
-															<th scope="col">${user.isPenalty}</th>
-															<th>
-<!--																<a th:href="@{/admin/user/report/{complainNo}(complainNo = ${user.complainNo})}">확인하기</a>-->
-																<a href="/admin/user/info${user.userNo}">확인하기</a>
-															</th>
+															<a href="/admin/user/info${product.productNo}" style="color: black">
+																<th scope="col">${product.productNo}</th>
+																<th scope="col">${product.productName}</th>
+																<th scope="col">${product.category}</th>
+																<th scope="col">${product.salesStatus}</th>
+																<th scope="col">${product.imdPurchase}</th>
+																<th scope="col">${product.buyNowPrice}</th>
+																<th scope="col">${product.auctionSelected}</th>
+																<th scope="col">${product.auctionStartTime}</th>
+																<th scope="col">${product.auctionEndTime}</th>
+																<th scope="col">${product.createdAt}</th>
+																<th scope="col">${product.memberNo}</th>
+															</a>
 														</tr>
 														`
 												);
 
 											})
 
+											/* 여기에 판매한 목록*/
+											let saleListSpace = $("#saleListSpace");
+											saleListSpace.empty();
+
+											saleListSpace.append(
+													`
+													<tr>
+														<th scope="col">상품번호</th>
+														<th scope="col">상품명</th>
+														<th scope="col">카테고리</th>
+														<th scope="col">판매상태</th>
+														<th scope="col">즉시구매설정여부</th>
+														<th scope="col">즉시구매가격</th>
+														<th scope="col">경매설정여부</th>
+														<th scope="col">경매시작일</th>
+														<th scope="col">경매마감일</th>
+														<th scope="col">상품등록일</th>
+														<th scope="col">판매자 회원번호</th>
+													</tr>
+													`
+											)
+
+											member.saleList.content.forEach(function(product){
+												saleListSpace.append(
+														`
+														<tr>
+															<a href="/admin/user/info${product.productNo}" style="color: black">
+																<th scope="col">${product.productNo}</th>
+																<th scope="col">${product.productName}</th>
+																<th scope="col">${product.category}</th>
+																<th scope="col">${product.salesStatus}</th>
+																<th scope="col">${product.imdPurchase}</th>
+																<th scope="col">${product.buyNowPrice}</th>
+																<th scope="col">${product.auctionSelected}</th>
+																<th scope="col">${product.auctionStartTime}</th>
+																<th scope="col">${product.auctionEndTime}</th>
+																<th scope="col">${product.createdAt}</th>
+																<th scope="col">${product.memberNo}</th>
+															</a>
+														</tr>
+														`
+												);
+
+											})
 										},
 										error: function () {
 											// alert("현재 유저가 존재하지 않습니다!");
 										}
 									})
+
+
 								}
 
-
-								function makePagenation(page){
-									let pagination = $("#pagination");
-									pagination.empty();
-
-									let curr = page.number; // 0 부터임
-
-									console.log("curr : " +curr);
-									let endPage = Math.ceil((curr+1) / 10.0) * 10; // 1~10
-									let startPage = endPage - 9; // 1~10
-
-									console.log("start : " +startPage);
-									console.log("end : " +endPage);
-
-									if(endPage > page.totalPages-1){ // totalPage는 1부터 셈(Page는 0부터 시작이니 1 빼기)
-										endPage = page.totalPages;
-									}
-
-									if(curr > 0){ // 이전버튼(<<) &laquo
-										pagination.append(`<a onclick="clickPage(${curr-1}); return false;" href="javascript:void(0)" >&lt;</a>`)
-									}
-
-									for(let i = startPage; i <= endPage; i++){
-										if(curr == i-1){ // active 설정
-											pagination.append(`<a class="active" onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
-										}
-										else{
-											pagination.append(`<a onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
-										}
-									}
-
-									if(curr + 1 < page.totalPages){ // 이후버튼(>>) &raquo
-										pagination.append(`<a onclick="clickPage(${curr+1}); return false;" href="javascript:void(0)">&gt;</a>`)
-									}
-
-									window.scrollTo(0,0); // 맨 위로 이동
-
-								}
 
 								// 처음 들어올 때
 								$(document).ready(function (){

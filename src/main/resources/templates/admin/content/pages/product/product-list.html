@@ -75,14 +75,18 @@
 												productListSpace.append(
 														`
 														<tr>
-															<a href="/admin/user/info${payment.paymentNo}" style="color: black">
-																<th scope="col">${payment.paymentNo}</th>
-																<th scope="col">${payment.paymentType}</th>
-																<th scope="col">${payment.amount}</th>
-																<th scope="col">${payment.paymentStatus}</th>
-																<th scope="col">${payment.createdAt}</th>
-																<th scope="col">${payment.isDeleted}</th>
-																<th scope="col">${payment.userName}</th>
+															<a href="/admin/user/info${product.productNo}" style="color: black">
+																<th scope="col">${product.productNo}</th>
+																<th scope="col">${product.productName}</th>
+																<th scope="col">${product.category}</th>
+																<th scope="col">${product.salesStatus}</th>
+																<th scope="col">${product.imdPurchase}</th>
+																<th scope="col">${product.buyNowPrice}</th>
+																<th scope="col">${product.auctionSelected}</th>
+																<th scope="col">${product.auctionStartTime}</th>
+																<th scope="col">${product.auctionEndTime}</th>
+																<th scope="col">${product.createdAt}</th>
+																<th scope="col">${product.memberNo}</th>
 															</a>
 														</tr>
 														`
