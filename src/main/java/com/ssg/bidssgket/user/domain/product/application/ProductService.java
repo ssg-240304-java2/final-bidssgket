@@ -6,7 +6,7 @@ import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto
 import com.ssg.bidssgket.user.domain.product.domain.Category;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.ProductImage;
-import com.ssg.bidssgket.user.domain.product.domain.Sales_status;
+import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductImageRepository;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
@@ -32,7 +32,7 @@ public class ProductService {
         Product product = Product.builder()
                 .productName(registProductReqDto.getProductName())
                 .category(Category.valueOf(registProductReqDto.getCategory()))
-                .salesStatus(Sales_status.selling)
+                .salesStatus(SalesStatus.selling)
                 .productDesc(registProductReqDto.getProductDesc())
                 .imdPurchase(registProductReqDto.getImdPurchase())
                 .auctionSelected(registProductReqDto.getAuctionSelected())
@@ -58,19 +58,21 @@ public class ProductService {
         return product;
     }
 
-    public ProductResDto findProductByNo(int productNo) {
-        Product product = productRepository.findById((long) productNo).orElseThrow(IllegalAccessError::new);
+    public ProductResDto findProductByNo(Long productNo) {
+       // ProductImage productImage = productImageRepository.findByProductImage_ProductNo(productNo);
+        Product product = productRepository.findById(productNo).get();
         log.info("ProductByNo:{}", productNo);
         log.info("product:{}", productNo);
         ProductResDto productResDto = ProductResDto.builder()
                 .product(product)
                 .build();
         log.info("productResDto:{}", productResDto.getProductName());
+        log.info("productResDto:{}", productResDto.getProductImages());
         return productResDto;
     }
 
     @Transactional
-    public void updateProduct(ProductReqDto updateProduct, List<MultipartFile> productImages) {
+    public void updateProduct(ProductReqDto updateProduct,List<MultipartFile> productImages, List<Long> deletedImageIds) {
         Product foundProduct = productRepository.findById(updateProduct.getProductNo())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with productNo: " + updateProduct.getProductNo()));
 
@@ -83,26 +85,29 @@ public class ProductService {
         foundProduct.setEventAuction(updateProduct.getEventAuction());
         foundProduct.setBuyNowPrice(updateProduct.getBuyNowPrice());
         foundProduct.setAuctionStartPrice(updateProduct.getAuctionStartPrice());
-        foundProduct.setAuctionStartTime(updateProduct.getAuctionStartTime());
-        // Save updated product
+        foundProduct.setAuctionEndTime(updateProduct.getAuctionEndTime());
+
+        List<FileDto> fileDtos = fileService.uploadFiles(productImages, "product-images");
+        for (FileDto fileDto : fileDtos) {
+            ProductImage productImage = ProductImage.builder()
+                    .productImg(fileDto.getUploadFileUrl())
+                    .productThumbnail(false) // 필요에 따라 썸네일 여부 설정
+                    .product(foundProduct)
+                    .build();
+            productImageRepository.save(productImage);
+        }
+
+        // 업데이트된 제품 저장
         productRepository.save(foundProduct);
 
-        // Process product images
-        if (productImages != null && !productImages.isEmpty()) {
-            // Clear existing images if needed
-            productImageRepository.deleteById(foundProduct.getProductNo());
+    }
 
-            // Upload new images and save
-            List<FileDto> fileDtos = fileService.uploadFiles(productImages, "product-images");
-            for (FileDto fileDto : fileDtos) {
-                ProductImage productImage = ProductImage.builder()
-                        .productImg(fileDto.getUploadFileUrl())
-                        .productThumbnail(false) // Set thumbnail status if needed
-                        .product(foundProduct)
-                        .build();
-                productImageRepository.save(productImage);
-            }
-        }
+    @Transactional
+    public void deleteImage(Long deleteImageId) {
+        ProductImage productImage = productImageRepository.findById(deleteImageId)
+                .orElseThrow(() -> new IllegalArgumentException("ProductImage not found with id: " + deleteImageId));
+        productImageRepository.deleteById(deleteImageId);
+        productImageRepository.flush();
     }
 }
 

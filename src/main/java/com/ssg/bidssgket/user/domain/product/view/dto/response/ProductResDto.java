@@ -27,7 +27,7 @@ public class ProductResDto {
     private Integer auctionStartPrice;
     private LocalDateTime auctionStartTime;
     private LocalDateTime auctionEndTime;
-    private List<String> productImages;
+    private List<ProductImage> productImages;
 
     @Builder
     public ProductResDto(Product product) {
@@ -43,12 +43,30 @@ public class ProductResDto {
         this.auctionStartPrice = product.getAuctionStartPrice();
         this.auctionStartTime = product.getAuctionStartTime();
         this.auctionEndTime = product.getAuctionEndTime();
-        this.productImages = product.getProductImages().stream()
-                .map(ProductImage::getProductImg)
-                .collect(Collectors.toList());
+        this.productImages = product.getProductImages();
     }
+
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductResDto{" +
+                "productNo=" + productNo +
+                ", productName='" + productName + '\'' +
+                ", category='" + category + '\'' +
+                ", productDesc='" + productDesc + '\'' +
+                ", salesStatus='" + salesStatus + '\'' +
+                ", imdPurchase=" + imdPurchase +
+                ", auctionSelected=" + auctionSelected +
+                ", eventAuction=" + eventAuction +
+                ", buyNowPrice=" + buyNowPrice +
+                ", auctionStartPrice=" + auctionStartPrice +
+                ", auctionStartTime=" + auctionStartTime +
+                ", auctionEndTime=" + auctionEndTime +
+                ", productImages=" + productImages +
+                '}';
     }
 }

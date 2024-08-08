@@ -3,10 +3,9 @@ package com.ssg.bidssgket.user.domain.product.domain;
 import com.ssg.bidssgket.common.domain.BaseTimeEntity;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.member.domain.Review;
-import com.ssg.bidssgket.user.domain.member.domain.Wish;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
 import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
-import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
+import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto;
 import jakarta.persistence.*;
 import lombok.*;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
@@ -37,7 +36,7 @@ public class Product extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Category category;
     @Enumerated(EnumType.STRING)
-    private Sales_status salesStatus;
+    private SalesStatus salesStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberNo")
@@ -52,17 +51,20 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Auction> auctions = new ArrayList<>();
 
-    @OneToOne(mappedBy = "product")
+    @ManyToOne
+    @JoinColumn(name = "productNo", insertable = false, updatable = false)
     private SaleOrder saleOrder;
 
-    @OneToOne(mappedBy = "product")
+    @ManyToOne
+    @JoinColumn(name = "productNo", insertable = false, updatable = false)
     private PurchaseOrder purchaseOrder;
 
-    @OneToOne(mappedBy = "product")
+    @ManyToOne
+    @JoinColumn(name = "productNo", insertable = false, updatable = false)
     private Review review;
 
     @Builder
-    private Product(String productName, Category category, String productDesc, Sales_status salesStatus, Boolean imdPurchase, Boolean auctionSelected, Boolean eventAuction, Integer buyNowPrice, Integer bidSuccessPrice , Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
+    private Product(String productName, Category category, String productDesc, SalesStatus salesStatus, Boolean imdPurchase, Boolean auctionSelected, Boolean eventAuction, Integer buyNowPrice, Integer bidSuccessPrice , Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
         this.productName = productName;
         this.category = category;
         this.salesStatus = salesStatus;
@@ -78,11 +80,11 @@ public class Product extends BaseTimeEntity {
         this.member = member;
     }
 
-    public static Product registProductBoth(ProductReqDto productReqDto, Member member){
+    public static Product registProductBoth(RegistProductReqDto productReqDto, Member member){
         return Product.builder()
                 .productName(productReqDto.getProductName())
                 .category(Category.valueOf(productReqDto.getCategory()))
-                .salesStatus(productReqDto.getSalesStatus())
+                .salesStatus(SalesStatus.valueOf(productReqDto.getSalesStatus()))
                 .productDesc(productReqDto.getProductDesc())
                 .imdPurchase(productReqDto.getImdPurchase())
                 .auctionSelected(productReqDto.getAuctionSelected())
@@ -182,7 +184,7 @@ public class Product extends BaseTimeEntity {
         this.category = category;
     }
 
-    public void setSalesStatus(Sales_status salesStatus) {
+    public void setSalesStatus(SalesStatus salesStatus) {
         this.salesStatus = salesStatus;
     }
 
@@ -209,4 +211,7 @@ public class Product extends BaseTimeEntity {
     public void setReview(Review review) {
         this.review = review;
     }
+
+
+
 }

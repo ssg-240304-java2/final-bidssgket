@@ -1,7 +1,8 @@
 package com.ssg.bidssgket.user.domain.product.view.dto.request;
 
 
-import com.ssg.bidssgket.user.domain.product.domain.Sales_status;
+import com.ssg.bidssgket.user.domain.product.domain.ProductImage;
+import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,21 +18,20 @@ public class ProductReqDto {
     private String productName;
     private String category;
     private String productDesc;
-    private Sales_status salesStatus;
+    private SalesStatus salesStatus;
     private Boolean imdPurchase;
     private Boolean auctionSelected;
     private Boolean eventAuction;
     private Integer buyNowPrice;
     private Integer auctionStartPrice;
-    private LocalDateTime auctionStartTime;
     private LocalDateTime auctionEndTime;
-    private List<String> productImg;
+    private List<ProductImage> productImages;
 
     @Builder
-    public ProductReqDto(Long productNo,String productName, String category, String productDesc, Sales_status salesStatus,
+    public ProductReqDto(Long productNo, String productName, String category, String productDesc, SalesStatus salesStatus,
                          Boolean imdPurchase, Boolean auctionSelected, Boolean eventAuction,
-                         Integer buyNowPrice, Integer auctionStartPrice, LocalDateTime auctionStartTime,
-                         LocalDateTime auctionEndTime, List<String> productImg) {
+                         Integer buyNowPrice, Integer auctionStartPrice, LocalDateTime auctionEndTime,
+                         List<ProductImage> productImg) {
         this.productNo = productNo;
         this.productName = productName;
         this.category = category;
@@ -42,14 +42,10 @@ public class ProductReqDto {
         this.eventAuction = eventAuction;
         this.buyNowPrice = buyNowPrice;
         this.auctionStartPrice = auctionStartPrice;
-        this.auctionStartTime = auctionStartTime;
         this.auctionEndTime = auctionEndTime;
-        this.productImg = productImg;
+        this.productImages = productImg;
     }
 
-    public void setProductImg(List<String> productImg){
-        this.productImg = productImg;
-    }
 
     public Long getProductNo() {
         return productNo;

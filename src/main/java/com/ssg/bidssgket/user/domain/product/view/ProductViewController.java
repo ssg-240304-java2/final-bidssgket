@@ -42,20 +42,22 @@ public class ProductViewController {
     }
 
     @GetMapping("/update/{productNo}")
-    public String updatePageController(Model model, @PathVariable("productNo") int productNo) {
+    public String updatePageController(Model model, @PathVariable("productNo") Long productNo) {
         log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
         model.addAttribute("product", product);
         System.out.println("product = " + product.getProductName());
+        System.out.println("product.getProductImages() = " + product);
         return "user/product/update";
     }
 
     @PostMapping("/update/{productNo}")
     public String updateProduct(@PathVariable("productNo") Long productNo,
                                 @ModelAttribute ProductReqDto productReqDto,
-                                @RequestParam(value = "productImages", required = false) List<MultipartFile> productImages) {
-        log.info("Received Product Update Data: {}", productReqDto);
-        productService.updateProduct(productReqDto, productImages);
+                                @RequestParam("productImages")List<MultipartFile> productImages,
+                                @RequestParam(value = "deletedImageIds",required = false, defaultValue = "") List<Long> deletedImageIds) {
+        productService.updateProduct(productReqDto,productImages,deletedImageIds);
+        System.out.println("productReqDto = " + productReqDto.toString());
         return "redirect:/user/main/mainpage";
     }
 

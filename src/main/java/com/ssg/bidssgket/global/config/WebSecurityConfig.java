@@ -63,7 +63,7 @@ public class WebSecurityConfig {
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(new AntPathRequestMatcher("/api/token")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/**")).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll() // .authenticated()
                         .requestMatchers("/**").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
