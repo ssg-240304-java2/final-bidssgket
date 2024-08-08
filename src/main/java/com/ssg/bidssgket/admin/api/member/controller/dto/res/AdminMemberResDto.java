@@ -11,7 +11,7 @@ public class AdminMemberResDto {
     private Long memberNo;
     private String memberNickname;
     private String email;
-    private String address;
+//    private String address;
     private String role;
     private Integer biscuit;
     private String isDeleted;
@@ -21,7 +21,7 @@ public class AdminMemberResDto {
         this.memberNo = member.getMemberNo();
         this.memberNickname = member.getMemberNickname();
         this.email = member.getEmail();
-        this.address = member.getAddress().toString();
+//        this.address = member.getAddress().toString();
         this.role = member.getRole();
         this.biscuit = member.getBiscuit();
         this.isDeleted = member.isDeleted() == true ? "YES" : "NO";

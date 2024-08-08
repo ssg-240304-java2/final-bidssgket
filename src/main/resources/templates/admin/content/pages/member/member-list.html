@@ -14,7 +14,9 @@
 
 <div layout:fragment="content">
 	<style>
-
+		a:link{color:black;text-decoration:none;}
+		a:visited{color:black;text-decoration:none;}
+		a:hover{color:blue;text-decoration:none;}
 	</style>
 
 	<h1 class="mt-4">회원 목록</h1>
@@ -35,7 +37,7 @@
 					<br>
 					<br>
 					<div class="row" style="width: 100%; text-align: center">
-						<div class="pagination" id="pagination">
+						<div class="pagination" id="pagination" style="display: block; text-align: center;">
 							<script>
 								function clickPage(page){
 
@@ -60,7 +62,7 @@
 														<th scope="col">회원번호</th>
 														<th scope="col">닉네임</th>
 														<th scope="col">이메일</th>
-														<th scope="col">주소</th>
+<!--														<th scope="col">주소</th>-->
 														<th scope="col">비스킷</th>
 														<th scope="col">역할</th>
 														<th scope="col">탈퇴여부</th>
@@ -76,9 +78,9 @@
 																<th scope="col">${member.memberNo}</th>
 																<th scope="col">${member.memberNickname}</th>
 																<th scope="col">${member.email}</th>
-																<th scope="col">${member.address}</th>
-																<th scope="col">${member.role}</th>
+<!--																<th scope="col">${member.address}</th>-->
 																<th scope="col">${member.biscuit}</th>
+																<th scope="col">${member.role}</th>
 																<th scope="col">${member.isDeleted}</th>
 																<th scope="col">${member.isPenalty}</th>
 															</a>
