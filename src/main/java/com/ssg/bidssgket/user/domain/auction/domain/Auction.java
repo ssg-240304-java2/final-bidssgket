@@ -57,4 +57,12 @@ public class Auction{
     public void setMember(Member member){
         this.member = member;
     }
+
+    public void updateMaxTenderPrice(int maxTenderPrice) {
+        this.maxTenderPrice = maxTenderPrice;
+    }
+
+    public void updateTenderDeleted(boolean tenderDeleted) {
+        this.tenderDeleted = tenderDeleted;
+    }
 }

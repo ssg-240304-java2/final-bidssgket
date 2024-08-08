@@ -8,6 +8,50 @@
     <title>경매 입찰 등록</title>
     <link rel="stylesheet" href="/user/auction/css/auctionregist.css">
 
+    <!--<script>
+        function validateBids() {
+            const minBidInput = document.getElementById('minTenderPrice');
+            const maxBidInput = document.getElementById('maxTenderPrice');
+            const submitBtn = document.querySelector('.submit-btn');
+            const errorMessage = document.getElementById('error-message');
+            const bidCount = parseInt(document.getElementById('bidCount').value);
+
+            function validateMaxBid() {
+                const minBidValue = parseFloat(minBidInput.value) || 0;
+                const maxBidValue = parseFloat(maxBidInput.value) || 0;
+
+                if (maxBidValue <= minBidValue) {
+                    maxBidInput.setCustomValidity('최대 입찰가는 최소 입찰가보다 커야 합니다.');
+                    errorMessage.textContent = '최대 입찰가는 최소 입찰가보다 커야 합니다.';
+                } else {
+                    maxBidInput.setCustomValidity('');
+                    errorMessage.textContent = '';
+                }
+            }
+
+            if (bidCount >= 2) {
+                submitBtn.disabled = true;
+                errorMessage.textContent = '최대 두 번까지 입찰할 수 있습니다.';
+            } else {
+                minBidInput.addEventListener('input', validateMaxBid);
+                maxBidInput.addEventListener('input', validateMaxBid);
+
+                submitBtn.addEventListener('click', function(event) {
+                    if (!minBidInput.checkValidity() || !maxBidInput.checkValidity() || maxBidInput.value.trim() === "") {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        errorMessage.textContent = '유효한 입찰가를 입력하세요.';
+                    } else {
+                        document.getElementById('auctionForm').submit();
+                    }
+                });
+
+                validateMaxBid();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', validateBids);
+    </script>-->
     <script>
         function validateBids() {
             const minBidInput = document.getElementById('minTenderPrice');
@@ -36,9 +80,22 @@
                     event.preventDefault();
                     event.stopPropagation();
                 } else {
-                    const maxBidField = document.getElementById('maxTenderPriceField');
-                    maxBidField.value = maxBidInput.value;
-                    document.getElementById('auctionForm').submit();
+                    const memberEmail = 'yunjc536147@gmail.com'; // Use actual user email from session/context
+                    const productNo = 17; // Use actual product number from context
+
+                    fetch(`/auction/count?email=${memberEmail}&productNo=${productNo}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.count >= 3) {
+                                alert('입찰은 최대 2번만 가능합니다.');
+                                window.location.href = '/user/product/detailAuction';
+                            } else {
+                                const maxBidField = document.getElementById('maxTenderPriceField');
+                                maxBidField.value = maxBidInput.value;
+                                document.getElementById('auctionForm').submit();
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
                 }
             });
 
@@ -54,7 +111,8 @@
     <div class="form-header-line"></div>
     <div class="form-content">
         <div class="image-container">
-            <img src="https://via.placeholder.com/400x400" class="image-placeholder" alt="상품 이미지">
+            <!--            <img src="" class="image-placeholder" alt="상품 이미지">-->
+            <img th:each="images: ${product.productImages[0].productImg}" th:src="${images}" class="image-placeholder" alt="상품 이미지">
         </div>
         <div class="form-details">
             <h2 class="item-title" th:text="${product.productName}">상품글 제목</h2>
@@ -65,7 +123,7 @@
             <div class="form-group">
                 <label for="minTenderPrice">최소 입찰가</label>
                 <input type="number" id="minTenderPrice" th:attr="value=${minBid},min=${minBid}" placeholder="최소 입찰가 입력">
-                <p class="hint" th:text="${minBid} + '원 이상 입찰되어야 합니다.'">3490원 이상 입찰되어야 합니다.</p>
+                <p class="hint" th:text="${minBid} + '원 이상 입찰되어야 합니다.'"></p>
             </div>
             <div class="form-group">
                 <label for="maxTenderPrice">최대 입찰가</label>
