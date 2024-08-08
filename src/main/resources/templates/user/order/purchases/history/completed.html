@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/fragments/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구매내역 | 구매 완료</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/user/order/css/mypage.css">
+</head>
+<body>
+
+<main class="contents" layout:fragment="content">
+    <div class="container mx-auto flex" style="max-width: 1440px;">
+        <aside class="w-52 p-4" style="max-width: 210px;">
+            <a href="/user/order/mypage" class="block">
+                <h2 class="text-2xl font-bold mb-4 transform hover:scale-105 transition-transform duration-300">마이 페이지</h2>
+            </a>
+            <ul class="space-y-2">
+                <li>
+                    <a href="/user/order/mypage" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">쇼핑 정보</a>
+                </li>
+                <li>
+                    <a href="/user/order/purchases/history/auction" class="block text-left w-full font-bold text-black transform hover:scale-105 transition-transform duration-300">구매 내역</a>
+                </li>
+                <li>
+                    <a href="/user/order/sales/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">판매 내역</a>
+                </li>
+                <li>
+                    <a href="/user/payment/info" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">결제</a>
+                </li>
+                <li>
+                    <a href="#" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">채팅</a>
+                </li>
+            </ul>
+        </aside>
+        <section class="flex-1 p-4" style="max-width: 1230px">
+            <div class="min-h-full p-4">
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="flex justify-around text-center text-sm py-2 border-b">
+                        <div class="flex-1">
+                            <a href="/user/order/purchases/history/auction" class="block">
+                                <div>경매중</div>
+                                <div class="text-black-500">0</div>
+                            </a>
+                        </div>
+                        <div class="flex-1">
+                            <a href="/user/order/purchases/history/progress" class="block">
+                                <div>구매중</div>
+                                <div class="text-black-500">0</div>
+                            </a>
+                        </div>
+                        <div class="flex-1">
+                            <a href="/user/order/purchases/history/completed" class="block">
+                                <div>구매 완료</div>
+                                <div class="text-red-500">0</div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-2 border-b">
+                        <select class="border border-gray-300 rounded px-2 py-1">
+                            <option>전체</option>
+                        </select>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead>
+                            <tr class="text-left border-b text-gray-500 text-sm">
+                                <th class="px-4 py-2">제품명</th>
+                                <th class="px-4 py-2">결제 금액</th>
+                                <th class="px-4 py-2">종료 일자</th>
+                                <th class="px-4 py-2">상태</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="border-b">
+                                <td class="flex items-center space-x-2 px-4 py-2">
+                                    <img src="https://placehold.co/100x100" alt="나이키 에어 줌 알파플라이 넥스트% 3 블루프린트 운동화" class="w-24 h-24 mr-4">
+                                    <div class="bg-white p-6 mb-8">
+                                        <a href="#" class="block text-lg font-medium">나이키 에어 줌 알파플라이 넥스트% 3 블루프린트</a>
+                                        <div class="text-gray-600">260</div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-2">300,000원</td>
+                                <td class="px-4 py-2">24/07/31</td>
+                                <td class="px-4 py-2">구매 완료</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-center min-h-18 bg-white">
+                <div class="flex flex-col items-center space-y-4 border border-gray-200 rounded-lg px-8 py-4">
+                    <div class="flex items-center space-x-4">
+                        <button class="flex items-center justify-center w-10 h-10 bg-gray-100 rounded text-gray-500">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <ul class="flex items-center space-x-3 text-gray-400 text-lg">
+                            <li class="text-black">1</li>
+                            <li>2</li>
+                            <li>3</li>
+                            <li>4</li>
+                            <li>5</li>
+                            <li>6</li>
+                            <li>7</li>
+                            <li>8</li>
+                            <li>9</li>
+                            <li>10</li>
+                        </ul>
+                        <button class="flex items-center justify-center w-10 h-10 bg-gray-100 rounded text-gray-500">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-4 text-gray-400 text-lg">
+                        <button class="text-gray-400 hover:text-gray-500">
+                            « 처음
+                        </button>
+                        <span class="border-l border-gray-300 h-full"></span>
+                        <button class="text-gray-400 hover:text-gray-500">
+                            마지막 »
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+</body>
+</html>
