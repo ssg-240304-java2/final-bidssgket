@@ -41,7 +41,7 @@
 
 									$.ajax({
 										type: "GET",
-										url: "/admin/api/user/list?page="+page, //여기 api 따
+										url: "/admin/api/member/list?page="+page, //여기 api 따
 										// dataType: "json",
 										success: function (memberList) {
 											const option = {
@@ -58,11 +58,11 @@
 													`
 													<tr>
 														<th scope="col">회원번호</th>
-														<th scope="col">이름</th>
-														<th scope="col">아이디</th>
-														<th scope="col">휴대폰번호</th>
+														<th scope="col">닉네임</th>
+														<th scope="col">이메일</th>
 														<th scope="col">주소</th>
 														<th scope="col">비스킷</th>
+														<th scope="col">역할</th>
 														<th scope="col">탈퇴여부</th>
 														<th scope="col">패널티여부</th>
 													</tr>
@@ -74,10 +74,10 @@
 														<tr>
 															<a href="/admin/user/info${member.memberNo}" style="color: black">
 																<th scope="col">${member.memberNo}</th>
-																<th scope="col">${member.memberName}</th>
-																<th scope="col">${member.id}</th>
-																<th scope="col">${member.phone}</th>
+																<th scope="col">${member.memberNickname}</th>
+																<th scope="col">${member.email}</th>
 																<th scope="col">${member.address}</th>
+																<th scope="col">${member.role}</th>
 																<th scope="col">${member.biscuit}</th>
 																<th scope="col">${member.isDeleted}</th>
 																<th scope="col">${member.isPenalty}</th>

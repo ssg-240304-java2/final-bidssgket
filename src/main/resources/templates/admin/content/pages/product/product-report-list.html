@@ -27,7 +27,7 @@
 			<div class="row">
 					<div class="row">
 						<div class="wrapper" >
-							<table id="memberReportListSpace" class="table table-bordered">
+							<table id="productReportListSpace" class="table table-bordered">
 
 							</table>
 						</div>
@@ -41,79 +41,43 @@
 
 									$.ajax({
 										type: "GET",
-										url: "/admin/api/user/report/list?page="+page, //여기 api 따
+										url: "/admin/api/product/report/list?page="+page, //여기 api 따
 										// dataType: "json",
-										success: function (memberReportList) {
+										success: function (productReportList) {
 											const option = {
 												maximumFractionDigits: 4
 											};
 
 
-											let memberReportListSpace = $("#memberReportListSpace");
-											memberReportListSpace.empty();
-											makePagenation(memberReportList);
+											let productReportListSpace = $("#productReportListSpace");
+											productReportListSpace.empty();
+											makePagenation(productReportList);
 
-											console.log(memberReportList);
+											console.log(productReportList);
 
-											memberReportListSpace.append(
+											productReportListSpace.append(
 													`
 													<tr>
 														<th scope="col">신고번호</th>
+														<th scope="col">상품번호</th>
 														<th scope="col">신고내용</th>
-														<th scope="col">피신고자 회원번호</th>
-														<th scope="col">피신고자 이름</th>
 														<th scope="col">신고자 회원번호</th>
-														<th scope="col">신고자 이름</th>
+														<th scope="col">신고일자</th>
 													</tr>
 													`
 											)
-											memberReportList.content.forEach(function(member){
-												memberReportListSpace.append(
+
+
+											productReportList.content.forEach(function(product){
+												productReportListSpace.append(
 														`
 														<tr>
-															<a href="/admin/user/report/info/${member.complainNo}" style="color: black">
-																<th scope="col">${member.complainNo}</th>
-																<th scope="col">${member.complainContent}</th>
-																<th scope="col">${member.reportedMemberNo}</th>
-																<th scope="col">${member.reportedMemberName}</th>
-																<th scope="col">${member.memberNo}</th>
-																<th scope="col">${member.memberName}</th>
-															</a>
-														</tr>
-														`
-												);
-
-											})
-
-											rtListSpace = $("#memberReportListSpace");
-											memberReportListSpace.empty();
-											makePagenation(memberReportList);
-
-											console.log(memberReportList);
-
-											memberReportListSpace.append(
-													`
-													<tr>
-														<th scope="col">신고번호</th>
-														<th scope="col">신고내용</th>
-														<th scope="col">피신고자 회원번호</th>
-														<th scope="col">피신고자 이름</th>
-														<th scope="col">신고자 회원번호</th>
-														<th scope="col">신고자 이름</th>
-													</tr>
-													`
-											)
-											memberReportList.content.forEach(function(member){
-												memberReportListSpace.append(
-														`
-														<tr>
-															<a href="/admin/user/report/info/${member.complainNo}" style="color: black">
-																<th scope="col">${member.complainNo}</th>
-																<th scope="col">${member.complainContent}</th>
-																<th scope="col">${member.reportedMemberNo}</th>
-																<th scope="col">${member.reportedMemberName}</th>
-																<th scope="col">${member.memberNo}</th>
-																<th scope="col">${member.memberName}</th>
+															<a href="/admin/user/report/info/${product.complainNo}" style="color: black">
+																<th scope="col">${product.complainNo}</th>
+																<th scope="col">${product.productNo}</th>
+																<th scope="col">${product.complainContent}</th>
+																<th scope="col">${product.memberNo}</th>
+																<th scope="col">${product.complainDate}</th>
 															</a>
 														</tr>
 														`
