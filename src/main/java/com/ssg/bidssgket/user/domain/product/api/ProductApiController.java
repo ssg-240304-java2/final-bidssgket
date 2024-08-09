@@ -1,5 +1,7 @@
 package com.ssg.bidssgket.user.domain.product.api;
 
+import com.ssg.bidssgket.global.util.ncps3.FileDto;
+import com.ssg.bidssgket.global.util.ncps3.FileService;
 import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto;
 import com.ssg.bidssgket.user.domain.product.api.dto.response.ProductApiResDto;
 //import com.ssg.bidssgket.user.domain.product.application.ProductService;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +29,7 @@ import java.util.List;
 public class ProductApiController {
 
     private final ProductService productService;
+    private final FileService fileService;
 
     @PostMapping("/register")
     public ResponseEntity<ProductApiResDto> registProduct(@ModelAttribute RegistProductReqDto registProductReqDto,
@@ -45,4 +49,11 @@ public class ProductApiController {
             System.out.println("error!!!!");
         }
     }
+
+    @PostMapping("/addImage")
+    public void addProductImage(@RequestParam("productImages") List<MultipartFile> productImages,
+                                @RequestParam Long productNo) {
+        productService.addImage(productImages,productNo);
+    }
+
 }

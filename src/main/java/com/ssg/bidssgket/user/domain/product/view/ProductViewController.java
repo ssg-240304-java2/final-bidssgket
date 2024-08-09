@@ -34,8 +34,6 @@ public class ProductViewController {
     @PostMapping("/register")
     public String registProduct(@ModelAttribute RegistProductReqDto registProductReqDto,
                                 @RequestParam("productImages")List<MultipartFile> productImages) {
-        log.info("Received Product Registration Data: {}", registProductReqDto);
-        log.info("Received {} Product Images", productImages.size());
         productService.registProduct(registProductReqDto, productImages);
         // fileDto -> entity로 바꿔서 DB에 파일 저장
         return "redirect:/user/main/mainpage";
@@ -46,18 +44,13 @@ public class ProductViewController {
         log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
         model.addAttribute("product", product);
-        System.out.println("product = " + product.getProductName());
-        System.out.println("product.getProductImages() = " + product);
         return "user/product/update";
     }
 
     @PostMapping("/update/{productNo}")
     public String updateProduct(@PathVariable("productNo") Long productNo,
-                                @ModelAttribute ProductReqDto productReqDto,
-                                @RequestParam("productImages")List<MultipartFile> productImages,
-                                @RequestParam(value = "deletedImageIds",required = false, defaultValue = "") List<Long> deletedImageIds) {
-        productService.updateProduct(productReqDto,productImages,deletedImageIds);
-        System.out.println("productReqDto = " + productReqDto.toString());
+                                @ModelAttribute ProductReqDto productReqDto) {
+        productService.updateProduct(productReqDto);
         return "redirect:/user/main/mainpage";
     }
 

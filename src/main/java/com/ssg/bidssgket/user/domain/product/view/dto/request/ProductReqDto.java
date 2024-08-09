@@ -3,16 +3,14 @@ package com.ssg.bidssgket.user.domain.product.view.dto.request;
 
 import com.ssg.bidssgket.user.domain.product.domain.ProductImage;
 import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class ProductReqDto {
     private Long productNo;
     private String productName;

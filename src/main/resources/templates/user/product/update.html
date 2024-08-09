@@ -28,14 +28,14 @@
                     <div id="thumbnailContainer" class="thumbnail-container mb-3">
                         <!-- 기존 이미지를 그리드에 표시 -->
                         <th:block th:each="image : ${product.productImages}">
-                            <img  th:src="@{${image.getProductImg()}}"  alt="이미지 미리보기" class="img-fluid rounded thumbnail-image">
-                            <input type="hidden" th:data-id="${image.productImgNo}">
+                            <img th:src="@{${image.productImg}}"  alt="이미지 미리보기" class="img-fluid rounded thumbnail-image" th:data-id="${image.productImgNo}">
+<!--                            <input type="hidden" th:data-id="${image.productImgNo}" >-->
                         </th:block>
                     </div>
                     <div class="thumbnail text-center mb-3" id="thumbnailUploadArea" >
                         <!-- 파일 입력 요소를 여기로 이동 -->
                         <input class="form-control" type="file" id="productImages" name="productImages" accept="image/*" multiple style="display: none;">
-<!--                        <input type="hidden" id="deletedImages" name="deletedImagesId">-->
+<!--                        <input type="hidden" id="deletedImage" name="deletedImagesId">-->
                     </div>
                     <div class="mb-3">
                         <label for="productImages" class="form-label"></label>
@@ -116,7 +116,14 @@
             function submitForm() {
                 var form = document.getElementById('productForm');
                 var productNo = [[${product.productNo}]];
-                form.action = '/update/' + parseInt(productNo);
+                console.log("Product No:", productNo);
+
+                document.getElementById('productImages').value = '';
+                console.log("파일 입력 필드 초기화");
+
+                form.action = '/update/' + productNo;
+                console.log("폼 액션 설정:", form.action);
+
                 form.submit();
             }
 
@@ -130,10 +137,19 @@
                 const files = event.target.files;
                 const thumbnailContainer = document.getElementById('thumbnailContainer');
                 const existingImages = thumbnailContainer.getElementsByClassName('thumbnail-image').length;
+
                 if (existingImages + files.length > 6) {
                     alert('사진은 최대 6개까지 업로드할 수 있습니다.');
                     return;
                 }
+
+                const formData = new FormData();  // 서버로 보낼 FormData 객체 생성
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('productImages', files[i]);  // 각 파일을 FormData에 추가
+                }
+
+                formData.append('productNo', '[[${product.productNo}]]');
+
                 for (let i = 0; i < files.length; i++) {
                     const reader = new FileReader();
                     reader.onload = function(){
@@ -144,12 +160,28 @@
                     };
                     reader.readAsDataURL(files[i]);
                 }
+
+                $.ajax({
+                    url: '/api/products/addImage',  // 파일 업로드를 처리하는 서버의 엔드포인트
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,  // FormData는 contentType을 지정하지 않음
+                    processData: false,  // FormData는 processData를 하지 않음
+                    success: function(data) {
+                        console.log('성공!!!');
+                    },
+                    error: function(error) {
+                        console.log('실패!!!');
+                    }
+                });
+
                 resizeImages(); // 이미지 리사이즈 함수 호출
             });
 
             document.getElementById('deleteButton').addEventListener('click', function() {
                 const thumbnailContainer = document.getElementById('thumbnailContainer');
                 const selectedImages = thumbnailContainer.querySelectorAll('.thumbnail-image.selected');
+
                 if (selectedImages.length === 0) {
                     alert('삭제할 이미지를 선택해주세요.');
                     return;
@@ -158,34 +190,43 @@
                     alert('한 번에 이미지는 한장만 삭제할 수 있어요.');
                     return;
                 }
-                let deleteImageId = selectedImages[0].nextElementSibling.value;
-                const deletedImages = [];
-                selectedImages.forEach(img => {
-                    deletedImages.push(img.getAttribute('data-id')); // Collect image IDs
-                    img.remove();
-                });
-                document.getElementById('deletedImages').value = JSON.stringify(deletedImages); // Store IDs in hidden input
+
+                if (selectedImageId === null) {
+                    alert('삭제할 이미지가 선택되지 않았습니다.');
+                    return;
+                }
+
+                // 선택된 이미지를 화면에서 제거
+                selectedImages[0].remove();
+
+                // 삭제된 이미지 ID를 hidden input 필드에 추가
+                let deletedImages = document.getElementById('deletedImages').value;
+                deletedImages = deletedImages ? JSON.parse(deletedImages) : [];
+                deletedImages.push(selectedImageId);
+                document.getElementById('deletedImages').value = JSON.stringify(deletedImages);
+
+                console.log("Deleted Image ID: ", selectedImageId); // 삭제할 이미지의 ID 확인용
+
                 resizeImages(); // 이미지 리사이즈 함수 호출
 
                 $.ajax({
                     url: "/api/products/image",
                     type: "delete",
-                    data: {deleteImageId},
-                    success: function (data) {
-                        console.log(data);
+                    data: { deleteImageId: selectedImageId },
+                    success: function(data) {
                         if (data === "fail"){
-                            alert("사진 삭제 실패!!!!")
+                            alert("사진 삭제 실패!!!!");
                         } else {
-                            alert("사진이 삭제되었습니다!")
-                            window.location.reload();
+                            console.log(data);
+                            alert("사진이 삭제되었습니다!");
+                            selectedImages[0].remove();
+                            // window.location.reload();
                         }
-                        // 성공을하면 alert을 띄워주고 특정페이지로 이동
                     },
-                    error: function (error){
+                    error: function(error) {
                         console.log(error);
                     }
-
-                })
+                });
             });
 
             function resizeImages() {
@@ -203,10 +244,19 @@
                 resizeImages();
             };
 
+            let selectedImageId = null; // 선택된 이미지의 ID를 저장할 전역 변수
+
             // 이미지 클릭 시 선택/해제 기능 추가
             document.getElementById('thumbnailContainer').addEventListener('click', function(event) {
                 if (event.target.classList.contains('thumbnail-image')) {
                     event.target.classList.toggle('selected');
+                    // 선택된 이미지의 data-id 값을 전역 변수에 저장
+                    if (event.target.classList.contains('selected')) {
+                        selectedImageId = event.target.dataset.id;
+                    } else {
+                        selectedImageId = null; // 선택 해제 시 null로 설정
+                    }
+                    console.log("Selected Image ID: ", selectedImageId); // 선택된 이미지의 ID 확인용
                 }
             });
 

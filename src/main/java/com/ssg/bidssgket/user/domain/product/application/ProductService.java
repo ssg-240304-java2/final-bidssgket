@@ -72,7 +72,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void updateProduct(ProductReqDto updateProduct,List<MultipartFile> productImages, List<Long> deletedImageIds) {
+    public void updateProduct(ProductReqDto updateProduct) {
         Product foundProduct = productRepository.findById(updateProduct.getProductNo())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with productNo: " + updateProduct.getProductNo()));
 
@@ -87,27 +87,34 @@ public class ProductService {
         foundProduct.setAuctionStartPrice(updateProduct.getAuctionStartPrice());
         foundProduct.setAuctionEndTime(updateProduct.getAuctionEndTime());
 
-        List<FileDto> fileDtos = fileService.uploadFiles(productImages, "product-images");
-        for (FileDto fileDto : fileDtos) {
-            ProductImage productImage = ProductImage.builder()
-                    .productImg(fileDto.getUploadFileUrl())
-                    .productThumbnail(false) // 필요에 따라 썸네일 여부 설정
-                    .product(foundProduct)
-                    .build();
-            productImageRepository.save(productImage);
-        }
-
         // 업데이트된 제품 저장
         productRepository.save(foundProduct);
-
     }
 
     @Transactional
     public void deleteImage(Long deleteImageId) {
         ProductImage productImage = productImageRepository.findById(deleteImageId)
                 .orElseThrow(() -> new IllegalArgumentException("ProductImage not found with id: " + deleteImageId));
+
+        System.out.println("deleteImageId = " + deleteImageId);
         productImageRepository.deleteById(deleteImageId);
         productImageRepository.flush();
+    }
+
+    public void addImage(List<MultipartFile> productImages,Long productNo) {
+        // productNo를 이용해 Product 엔티티를 조회
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with productNo: " + productNo));
+
+        List<FileDto> fileDtos = fileService.uploadFiles(productImages, "product-images");
+        for (FileDto fileDto : fileDtos) {
+            ProductImage productImage = ProductImage.builder()
+                    .productImg(fileDto.getUploadFileUrl())
+                    .productThumbnail(false) // 필요에 따라 썸네일 여부 설정
+                    .product(product)
+                    .build();
+            productImageRepository.save(productImage);
+        }
     }
 }
 
