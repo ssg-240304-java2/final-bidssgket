@@ -1,6 +1,6 @@
 package com.ssg.bidssgket.user.domain.product.domain;
 
-public enum Sales_status {
+public enum SalesStatus {
     selling,
     trading,
     sale_completed,

@@ -34,21 +34,26 @@ public class ProductViewController {
     @PostMapping("/register")
     public String registProduct(@ModelAttribute RegistProductReqDto registProductReqDto,
                                 @RequestParam("productImages")List<MultipartFile> productImages) {
-        log.info("Received Product Registration Data: {}", registProductReqDto);
-        log.info("Received {} Product Images", productImages.size());
         productService.registProduct(registProductReqDto, productImages);
         // fileDto -> entity로 바꿔서 DB에 파일 저장
         return "redirect:/user/main/mainpage";
     }
 
     @GetMapping("/update/{productNo}")
-    public String updatePageController(Model model, @PathVariable("productNo") int productNo) {
+    public String updatePageController(Model model, @PathVariable("productNo") Long productNo) {
         log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
         model.addAttribute("product", product);
-        System.out.println("product = " + product.getProductName());
-        return "/user/product/update";
+        return "user/product/update";
     }
+
+    @PostMapping("/update/{productNo}")
+    public String updateProduct(@PathVariable("productNo") Long productNo,
+                                @ModelAttribute ProductReqDto productReqDto) {
+        productService.updateProduct(productReqDto);
+        return "redirect:/user/main/mainpage";
+    }
+
 
     @GetMapping("/bidFailed")
     public String bidFailedController() {

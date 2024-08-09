@@ -25,6 +25,7 @@ public class RegistProductReqDto extends FileDto{
     private LocalDateTime auctionStartTime;
     private LocalDateTime auctionEndTime;
     private List<String> productImg;
+    private Long productImgNo;
 
     @Builder // Builder 패턴 추가
     public RegistProductReqDto(String productName, String category, String productDesc, String salesStatus,
