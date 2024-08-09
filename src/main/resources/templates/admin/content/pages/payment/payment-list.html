@@ -14,7 +14,9 @@
 
 <div layout:fragment="content">
 	<style>
-
+		a:link{color:black;text-decoration:none;}
+		a:visited{color:black;text-decoration:none;}
+		a:hover{color:blue;text-decoration:none;}
 	</style>
 
 	<h1 class="mt-4">결제 목록</h1>
@@ -23,19 +25,18 @@
 <!--	</ol>-->
 
 	<div class="section">
-		<div class="container">
-			<div class="row">
-					<div class="row">
-						<div class="wrapper" >
-							<table id="paymentListSpace"  class="table table-bordered">
+		<div class="container" style="width: 100%">
+			<div class="row" style="width: 100%">
+				<div class="wrapper" >
+					<table id="paymentListSpace"  class="table table-bordered">
 
-							</table>
-						</div>
-					</div>
-					<br>
-					<br>
-					<div class="row" style="width: 100%; text-align: center">
-						<div class="pagination" id="pagination">
+					</table>
+				</div>
+			</div>
+			<br>
+			<br>
+			<div class="row" style="width: 100%; text-align: center">
+						<div class="pagination" id="pagination" style="display: block; text-align: center;">
 							<script>
 								function clickPage(page){
 
@@ -59,27 +60,25 @@
 													<tr>
 														<th scope="col">결제번호</th>
 														<th scope="col">결제유형</th>
+														<th scope="col">거래유형</th>
 														<th scope="col">결제금액</th>
 														<th scope="col">결제상태</th>
 														<th scope="col">결제일</th>
-														<th scope="col">삭제여부</th>
-														<th scope="col">결제자</th>
+														<th scope="col">회원번호</th>
 													</tr>
 													`
 											)
 											paymentList.content.forEach(function(payment){
 												paymentListSpace.append(
 														`
-														<tr>
-															<a href="/admin/user/info${payment.paymentNo}" style="color: black">
-																<th scope="col">${payment.paymentNo}</th>
-																<th scope="col">${payment.paymentType}</th>
-																<th scope="col">${payment.amount}</th>
-																<th scope="col">${payment.paymentStatus}</th>
-																<th scope="col">${payment.createdAt}</th>
-																<th scope="col">${payment.isDeleted}</th>
-																<th scope="col">${payment.userName}</th>
-															</a>
+														<tr onclick= "location.href='/admin/payment/info/${payment.paymentNo}'" style="color: black; cursor: pointer">
+															<th scope="col">${payment.paymentNo}</th>
+															<th scope="col">${payment.paymentType}</th>
+															<th scope="col">${payment.transactionType}</th>
+															<th scope="col">${payment.amount}</th>
+															<th scope="col">${payment.paymentStatus}</th>
+															<th scope="col">${payment.createdAt}</th>
+															<th scope="col">${payment.memberNo}</th>
 														</tr>
 														`
 												);
@@ -141,9 +140,8 @@
 							</script>
 						</div>
 					</div>
-				<br>
-				<br>
-			</div>
+			<br>
+			<br>
 		</div>
 	</div>
 
