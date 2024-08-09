@@ -1,26 +1,27 @@
 //package com.ssg.bidssgket.user.domain.member.api.chat.Controller;
 //
-//import com.ssg.bidssgket.user.domain.member.api.chat.Dto.ChatRequestDto;
+//import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatMessage;
 //import lombok.RequiredArgsConstructor;
 //import org.springframework.messaging.handler.annotation.MessageMapping;
-//import org.springframework.messaging.simp.SimpMessagingTemplate;
+//import org.springframework.messaging.handler.annotation.Payload;
+//import org.springframework.messaging.handler.annotation.SendTo;
+//import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 //import org.springframework.stereotype.Controller;
-//import org.springframework.web.bind.annotation.RequestBody;
 //
 //@Controller
 //@RequiredArgsConstructor
 //public class ChatController {
-//    private final SimpMessagingTemplate messagingTemplate;
 //
-//    //입장을 할 때 사용하는 루트입니다.
-//    @MessageMapping("/chat/enter")
-//    public void enter(@RequestBody ChatRequestDto dto) {
-//        messagingTemplate.convertAndSend("/sub/chat/room/1", dto);
+//    @MessageMapping("/chat.sendMessage")
+//    @SendTo("/topic/public")
+//    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
+//        return chatMessage;
 //    }
 //
-//    //메세지를 전송할 때 사용하는 루트입니다.
-//    @MessageMapping("/chat/message")
-//    public void message(@RequestBody ChatRequestDto dto) {
-//        messagingTemplate.convertAndSend("/sub/chat/room/1", dto);
+//    @MessageMapping("/chat.addUser")
+//    @SendTo("/topic/public")
+//    public ChatMessage addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor){
+//        headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
+//        return chatMessage;
 //    }
 //}

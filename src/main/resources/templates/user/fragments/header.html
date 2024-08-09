@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<!-- 다른 페이지에 포함시킬 영역을 th:fragment로 선언해준다.-->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head>
     <link rel="stylesheet" type="text/css" href="/user/css/style.css">
 </head>
@@ -15,7 +14,10 @@
         <div class="header-links">
             <a href="/user/mypage">마이페이지</a>
             <a href="#">알림</a>
-            <a href="#">로그인</a>
+            <!-- 로그인 상태에 따라 링크 표시 -->
+            <a id="login-link" href="/login">로그인</a>
+            <a id="logout-link" href="/logout" style="display: none;">로그아웃</a>
+
         </div>
         <div class="search-container">
             <nav class="nav">
@@ -34,12 +36,26 @@
                     <a href="#">경매</a>
                 </div>
                 <div class="product_regist">
-                    <a href="/user/product/register">상품등록</a>
+                    <a href="/user/product/regist">상품등록</a>
                 </div>
             </nav>
             <input type="text" placeholder="Search">
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded',function (){
+            var isAuthenticated = '[[${session.member}]]';
+            var loginLink = document.getElementById('login-link');
+            var logoutLink = document.getElementById('logout-link');
+            if (isAuthenticated) {
+                loginLink.style.display = 'none';
+                logoutLink.style.display = 'inline';
+            } else {
+                loginLink.style.display = 'inline';
+                logoutLink.style.display = 'none';
+            }
+        });
+    </script>
 </div>
 </body>
 </html>
