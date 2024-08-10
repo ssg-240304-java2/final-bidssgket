@@ -73,7 +73,7 @@
 									memberList.content.forEach(function(member){
 										memberListSpace.append(
 												`
-												<tr onclick= "location.href='/admin/member/info${member.memberNo}'" style="color: black; cursor: pointer">
+												<tr onclick= "location.href='/admin/member/info/${member.memberNo}'" style="color: black; cursor: pointer">
 													<th scope="col">${member.memberNo}</th>
 													<th scope="col">${member.memberNickname}</th>
 													<th scope="col">${member.email}</th>

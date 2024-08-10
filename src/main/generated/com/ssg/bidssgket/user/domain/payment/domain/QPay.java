@@ -32,11 +32,11 @@ public class QPay extends EntityPathBase<Pay> {
 
     public final com.ssg.bidssgket.user.domain.member.domain.QMember member;
 
-    public final NumberPath<Integer> memberNo = createNumber("memberNo", Integer.class);
-
     public final NumberPath<Integer> payBalance = createNumber("payBalance", Integer.class);
 
-    public final ListPath<PayChange, QPayChange> payChanges = this.<PayChange, QPayChange>createList("payChanges", PayChange.class, QPayChange.class, PathInits.DIRECT2);
+    public final ListPath<PayChange, QPayChange> payChangeList = this.<PayChange, QPayChange>createList("payChangeList", PayChange.class, QPayChange.class, PathInits.DIRECT2);
+
+    public final NumberPath<Long> payNo = createNumber("payNo", Long.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;

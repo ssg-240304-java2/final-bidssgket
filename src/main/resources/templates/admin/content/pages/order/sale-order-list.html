@@ -19,7 +19,7 @@
 		a:hover{color:blue;text-decoration:none;}
 	</style>
 
-	<h1 class="mt-4">주문 목록</h1>
+	<h1 class="mt-4">판매 주문 내역 목록</h1>
 <!--	<ol class="breadcrumb mb-4">-->
 <!--		<li class="breadcrumb-item active">회원 목록</li>-->
 <!--	</ol>-->
@@ -42,43 +42,48 @@
 
 							$.ajax({
 								type: "GET",
-								url: "/admin/api/payment/list?page="+page, //여기 api 따
+								url: "/admin/api/order/sale/list?page="+page, //여기 api 따
 								// dataType: "json",
-								success: function (orderList) {
+								success: function (saleOrderList) {
 									const option = {
 										maximumFractionDigits: 4
 									};
 
 									let orderListSpace = $("#orderListSpace");
 									orderListSpace.empty();
-									makePagenation(orderList);
+									makePagenation(saleOrderList);
 
-									console.log(orderList);
+									console.log(saleOrderList);
 
 									orderListSpace.append(
 											`
 											<tr>
 												<th scope="col">주문번호</th>
+												<th scope="col">구매유형</th>
 												<th scope="col">거래유형</th>
 												<th scope="col">주문상태</th>
+												<th scope="col">결제상</th>
 												<th scope="col">등록일</th>
 												<th scope="col">수정일</th>
-												<th scope="col">삭제여부</th>
-												<th scope="col">판매자 회원번호</th>
+												<th scope="col">상품번호</th>
+												<th scope="col">구매자 회원번호</th>
 											</tr>
 											`
 									)
-									orderList.content.forEach(function(order){
+
+									saleOrderList.content.forEach(function(saleOrder){
 										orderListSpace.append(
 												`
-												<tr onclick= "location.href='/admin/order/sale/info${product.saleOrderNo}'" style="color: black; cursor: pointer">
-													<th scope="col">${order.paymentNo}</th>
-													<th scope="col">${order.paymentType}</th>
-													<th scope="col">${order.amount}</th>
-													<th scope="col">${order.paymentStatus}</th>
-													<th scope="col">${order.createdAt}</th>
-													<th scope="col">${order.isDeleted}</th>
-													<th scope="col">${order.memberNo}</th>
+												<tr onclick= "location.href='/admin/order/sale/info/${saleOrder.saleOrderNo}'" style="color: black; cursor: pointer">
+													<th scope="col">${saleOrder.saleOrderNo}</th>
+													<th scope="col">${saleOrder.transactionType}</th>
+													<th scope="col">${saleOrder.deliveryType}</th>
+													<th scope="col">${saleOrder.orderStatus}</th>
+													<th scope="col">${saleOrder.paymentStatus}</th>
+													<th scope="col">${saleOrder.createdAt}</th>
+													<th scope="col">${saleOrder.createdAt}</th>
+													<th scope="col">${saleOrder.productNo}</th>
+													<th scope="col">${saleOrder.memberNo}</th>
 												</tr>
 												`
 										);

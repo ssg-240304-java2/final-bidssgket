@@ -22,13 +22,17 @@ public class QReview extends EntityPathBase<Review> {
 
     public static final QReview review = new QReview("review");
 
-    public final NumberPath<Integer> biscuit_rating = createNumber("biscuit_rating", Integer.class);
+    public final NumberPath<Integer> biscuitRating = createNumber("biscuitRating", Integer.class);
 
     public final StringPath comment = createString("comment");
 
-    public final QMember member;
+    public final com.ssg.bidssgket.user.domain.product.domain.QProduct product;
 
-    public final NumberPath<Integer> review_no = createNumber("review_no", Integer.class);
+    public final QMember reviewee;
+
+    public final QMember reviewer;
+
+    public final NumberPath<Long> reviewNo = createNumber("reviewNo", Long.class);
 
     public QReview(String variable) {
         this(Review.class, forVariable(variable), INITS);
@@ -48,7 +52,9 @@ public class QReview extends EntityPathBase<Review> {
 
     public QReview(Class<? extends Review> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.member = inits.isInitialized("member") ? new QMember(forProperty("member"), inits.get("member")) : null;
+        this.product = inits.isInitialized("product") ? new com.ssg.bidssgket.user.domain.product.domain.QProduct(forProperty("product"), inits.get("product")) : null;
+        this.reviewee = inits.isInitialized("reviewee") ? new QMember(forProperty("reviewee"), inits.get("reviewee")) : null;
+        this.reviewer = inits.isInitialized("reviewer") ? new QMember(forProperty("reviewer"), inits.get("reviewer")) : null;
     }
 
 }

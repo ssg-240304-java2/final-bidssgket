@@ -77,7 +77,7 @@
 										productList.content.forEach(function(product){
 											productListSpace.append(
 													`
-													<tr onclick= "location.href='/admin/product/info${product.productNo}'" style="color: black; cursor: pointer">
+													<tr onclick= "location.href='/admin/product/info/${product.productNo}'" style="color: black; cursor: pointer">
 														<th scope="col">${product.productNo}</th>
 														<th scope="col">${product.productName}</th>
 														<th scope="col">${product.category}</th>

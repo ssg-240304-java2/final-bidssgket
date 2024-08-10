@@ -1,4 +1,4 @@
-package com.ssg.bidssgket.admin.api.product.controller.dto.res;
+package com.ssg.bidssgket.admin.api.product.product.controller.dto.res;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ssg.bidssgket.user.domain.product.domain.Category;

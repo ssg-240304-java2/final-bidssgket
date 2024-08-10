@@ -29,7 +29,7 @@ public class AdminPaymentResDto {
         this.paymentType = payment.getPaymentType().equals(PaymentType.BISCUIT_PAY) ? "비스킷페이" : "카카오페이";
         this.transactionType = payment.getTransactionType().equals(TransactionType.AUCTION) ? "경매" : "즉시구매";
         this.amount = payment.getAmount();
-        this.paymentStatus = payment.getPaymentStatus().equals(PaymentStatus.PAID) ? "결제완로" : "결제취소";
+        this.paymentStatus = payment.getPaymentStatus().equals(PaymentStatus.PAID) ? "결제완료" : "결제취소";
         this.createdAt = payment.getCreatedAt();
         this.memberNo = payment.getMember().getMemberNo();
     }

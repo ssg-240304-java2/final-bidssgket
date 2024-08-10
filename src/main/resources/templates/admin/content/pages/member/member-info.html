@@ -28,7 +28,7 @@
 					<div class="row">
 						<div class="wrapper" >
 							<h2>회원정보</h2>
-							<table id="userInfoSpace" class="table table-bordered">
+							<table id="userInfoSpace" class="table table-bordered" style="text-align: center">
 
 							</table>
 
@@ -38,7 +38,7 @@
 							<br>
 							<br>
 							<h2>구매한 물품</h2>
-							<table id="purchaseListSpace" class="table table-bordered">
+							<table id="purchaseListSpace" class="table table-bordered" style="text-align: center">
 
 							</table>
 
@@ -60,43 +60,40 @@
 						<div class="pagination" id="pagination">
 							<script>
 								function clickPage(){
+									let memberNo = [[${memberNo}]];
 
 									$.ajax({
 										type: "GET",
-										url: "/admin/api/user/list",
+										url: "/admin/api/member/info/" + memberNo,
+										// url: "/admin/api/member/info/",
 										// dataType: "json",
-										success: function (member) {
+										success: function (memberInfo) {
 
 											let userInfoSpace = $("#userInfoSpace");
 											userInfoSpace.empty();
-											console.log(member);
+											console.log(memberInfo);
 
 											userInfoSpace.append(
 													`
 													<tr>
 														<th scope="col">회원번호</th>
-														<th scope="col">이름</th>
-														<th scope="col">아이디</th>
-														<th scope="col">이메일</th>
 														<th scope="col">닉네임</th>
-														<th scope="col">타입</th>
-														<th scope="col">권한</th>
-														<th scope="col">주소</th>
+														<th scope="col">이메일</th>
+			<!--														<th scope="col">주소</th>-->
 														<th scope="col">비스킷</th>
+														<th scope="col">역할</th>
 														<th scope="col">탈퇴여부</th>
 														<th scope="col">패널티여부</th>
 													</tr>
 													<tr>
-														<th scope="col">${member.memberNo}</th>
-														<th scope="col">${member.memberName}</th>
-														<th scope="col">${member.id}</th>
-														<th scope="col">${member.email}</th>
-														<th scope="col">${member.memberNickname}</th>
-														<th scope="col">${member.provider}</th>
-														<th scope="col">${member.address}</th>
-														<th scope="col">${member.biscuit}</th>
-														<th scope="col">${member.isDeleted}</th>
-														<th scope="col">${member.isPenalty}</th>
+														<th scope="col">${memberInfo.adminMemberResDto.memberNo}</th>
+														<th scope="col">${memberInfo.adminMemberResDto.memberNickname}</th>
+														<th scope="col">${memberInfo.adminMemberResDto.email}</th>
+	<!--																<th scope="col">${memberInfo.adminMemberResDto.address}</th>-->
+														<th scope="col">${memberInfo.adminMemberResDto.biscuit}</th>
+														<th scope="col">${memberInfo.adminMemberResDto.role}</th>
+														<th scope="col">${memberInfo.adminMemberResDto.isDeleted}</th>
+														<th scope="col">${memberInfo.adminMemberResDto.isPenalty}</th>
 													</tr>
 													`
 											)
@@ -123,25 +120,23 @@
 													`
 											)
 
-											member.purchaseList.content.forEach(function(product){
+											memberInfo.purchaseProductList.forEach(function(product){
 												purchaseListSpace.append(
 														`
-														<tr>
-															<a href="/admin/user/info${product.productNo}" style="color: black">
-																<th scope="col">${product.productNo}</th>
-																<th scope="col">${product.productName}</th>
-																<th scope="col">${product.category}</th>
-																<th scope="col">${product.salesStatus}</th>
-																<th scope="col">${product.imdPurchase}</th>
-																<th scope="col">${product.buyNowPrice}</th>
-																<th scope="col">${product.auctionSelected}</th>
-																<th scope="col">${product.auctionStartTime}</th>
-																<th scope="col">${product.auctionEndTime}</th>
-																<th scope="col">${product.createdAt}</th>
-																<th scope="col">${product.memberNo}</th>
-															</a>
-														</tr>
-														`
+													<tr onclick= "location.href='/admin/product/info/${product.productNo}'" style="color: black; cursor: pointer">
+														<th scope="col">${product.productNo}</th>
+														<th scope="col">${product.productName}</th>
+														<th scope="col">${product.category}</th>
+														<th scope="col">${product.salesStatus}</th>
+														<th scope="col">${product.imdPurchase}</th>
+														<th scope="col">${product.buyNowPrice}</th>
+														<th scope="col">${product.auctionSelected}</th>
+														<th scope="col">${product.auctionStartTime}</th>
+														<th scope="col">${product.auctionEndTime}</th>
+														<th scope="col">${product.createdAt}</th>
+														<th scope="col">${product.memberNo}</th>
+													</tr>
+													`
 												);
 
 											})
@@ -168,7 +163,7 @@
 													`
 											)
 
-											member.saleList.content.forEach(function(product){
+											memberInfo.saleProductList.forEach(function(product){
 												saleListSpace.append(
 														`
 														<tr>

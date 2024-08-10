@@ -1,7 +1,7 @@
-package com.ssg.bidssgket.admin.api.product.application;
+package com.ssg.bidssgket.admin.api.product.product.application;
 
-import com.ssg.bidssgket.admin.api.product.controller.dto.res.AdminProductResDto;
-import com.ssg.bidssgket.admin.api.product.repository.AdminProductRepository;
+import com.ssg.bidssgket.admin.api.product.product.controller.dto.res.AdminProductResDto;
+import com.ssg.bidssgket.admin.api.product.product.repository.AdminProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

@@ -2,6 +2,7 @@ package com.ssg.bidssgket.admin.api.member.controller;
 
 
 import com.ssg.bidssgket.admin.api.member.application.AdminMemberApiService;
+import com.ssg.bidssgket.admin.api.member.controller.dto.res.AdminMemberInfoResDto;
 import com.ssg.bidssgket.admin.api.member.controller.dto.res.AdminMemberResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +38,17 @@ public class AdminMemberApiController {
 
 
         return new ResponseEntity<>(memberList, HttpStatus.OK);
+    }
+
+    /**
+     * 회원 상세 조회
+     */
+    @GetMapping("/info/{memberId}")
+    public ResponseEntity<AdminMemberInfoResDto> getUserInfo(@PathVariable(name = "memberId") Long memberId){
+
+        AdminMemberInfoResDto memberInfo = adminMemberApiService.getUserInfo(memberId);
+
+        return new ResponseEntity<>(memberInfo, HttpStatus.OK);
     }
 
 
