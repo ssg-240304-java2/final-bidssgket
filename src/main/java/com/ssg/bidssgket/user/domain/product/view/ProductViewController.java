@@ -59,7 +59,6 @@ public class ProductViewController {
                                 HttpSession httpSession) {
         System.out.println("registProductReqDto.getMemberNo() = " + registProductReqDto.getMemberNo());
         productService.registProduct(registProductReqDto, productImages);
-        // fileDto -> entity로 바꿔서 DB에 파일 저장
         return "redirect:/list";
     }
 
