@@ -20,7 +20,8 @@
       <h2 class="title">상품 등록</h2>
       <hr class="title-underline">
     </div>
-    <form th:action="@{/user/product/register}" th:object="${registProductReqDto}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+    <form th:action="@{/register}" th:object="${registProductReqDto}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+      <input type="hidden" th:field="*{memberNo}">
       <div class="row mb-4">
         <div class="col-md-6">
           <input class="form-control" type="file" id="productImages" name="productImages" accept="image/*" multiple style="display: none;">

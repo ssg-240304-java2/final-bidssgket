@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -34,6 +35,18 @@ public class mainViewController {
         List<Product> products = productService.getAuctionProducts();
         model.addAttribute("products", products);
         return "user/auction/auctionMain";
+    }
+
+    @GetMapping("/search")
+    public String searchProducts(Model model,@RequestParam(value = "search", required = false) String search) {
+        List<Product> products;
+        if (search != null && !search.isEmpty()) {
+            products = productService.searchProducts(search);
+        } else {
+            products = productService.getAllProducts();
+        }
+        model.addAttribute("products", products);
+        return "user/product/list";
     }
 
 }
