@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductResDto {
+    private Long productNo;
     private String productName;
     private String category;
     private String productDesc;
@@ -26,10 +27,11 @@ public class ProductResDto {
     private Integer auctionStartPrice;
     private LocalDateTime auctionStartTime;
     private LocalDateTime auctionEndTime;
-    private List<String> productImages;
+    private List<ProductImage> productImages;
 
     @Builder
     public ProductResDto(Product product) {
+        this.productNo = product.getProductNo();
         this.productName = product.getProductName();
         this.category = product.getCategory().name();
         this.productDesc = product.getProductDesc();
@@ -41,12 +43,30 @@ public class ProductResDto {
         this.auctionStartPrice = product.getAuctionStartPrice();
         this.auctionStartTime = product.getAuctionStartTime();
         this.auctionEndTime = product.getAuctionEndTime();
-        this.productImages = product.getProductImages().stream()
-                .map(ProductImage::getProductImg)
-                .collect(Collectors.toList());
+        this.productImages = product.getProductImages();
     }
+
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductResDto{" +
+                "productNo=" + productNo +
+                ", productName='" + productName + '\'' +
+                ", category='" + category + '\'' +
+                ", productDesc='" + productDesc + '\'' +
+                ", salesStatus='" + salesStatus + '\'' +
+                ", imdPurchase=" + imdPurchase +
+                ", auctionSelected=" + auctionSelected +
+                ", eventAuction=" + eventAuction +
+                ", buyNowPrice=" + buyNowPrice +
+                ", auctionStartPrice=" + auctionStartPrice +
+                ", auctionStartTime=" + auctionStartTime +
+                ", auctionEndTime=" + auctionEndTime +
+                ", productImages=" + productImages +
+                '}';
     }
 }
