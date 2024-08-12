@@ -1,7 +1,6 @@
 package com.ssg.bidssgket.user.domain.auction.domain;
 
-import com.ssg.bidssgket.common.domain.BaseTimeEntity;
-import com.ssg.bidssgket.user.domain.auction.common.AuctionReqDto;
+import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionReqDto;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import jakarta.persistence.*;
@@ -57,5 +56,13 @@ public class Auction{
     }
     public void setMember(Member member){
         this.member = member;
+    }
+
+    public void updateMaxTenderPrice(int maxTenderPrice) {
+        this.maxTenderPrice = maxTenderPrice;
+    }
+
+    public void updateTenderDeleted(boolean tenderDeleted) {
+        this.tenderDeleted = tenderDeleted;
     }
 }
