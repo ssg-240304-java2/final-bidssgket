@@ -39,6 +39,8 @@ public class WebSecurityConfig {
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/", "/main", "/login", "/oauth2/**").permitAll()
+                                .requestMatchers("/auction/**").permitAll()
+                                .requestMatchers("/user/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .logout(logout ->

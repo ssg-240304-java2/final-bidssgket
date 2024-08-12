@@ -41,5 +41,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
 
     @Query(value = "SELECT COUNT(*) FROM auction a WHERE a.member_no = :memberNo AND a.product_no = :productNo", nativeQuery = true)
     int countByMemberNoAndProductNo(Long memberNo, Long productNo);
+
+
 }
 

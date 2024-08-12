@@ -63,7 +63,15 @@
             <div class="text-center auction-start-section">
               <h5>경매 시작가</h5>
               <h3>121,000 원</h3>
-              <button class="btn btn-secondary mt-2">입찰 수정</button>
+              <!--경매 수정, 삭제를 위한 버튼 수정 -->
+              <form action="/auction/auctionregistmodify" method="get">
+                <button type="submit" class="btn btn-secondary mt-2">입찰 수정</button>
+              </form>
+              <form action="/auction/delete" method="post">
+                <input type="hidden" name="productNo" value="17" />
+                <button type="submit" class="btn btn-secondary mt-2">입찰 삭제</button>
+              </form>
+              <!--경매 수정, 삭제를 위한 버튼 수정 -->
             </div>
           </div>
         </div>
@@ -142,33 +150,66 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    function startTimer(duration, display) {
-      var timer = duration, days, hours, minutes, seconds;
-      setInterval(function () {
-        days = parseInt(timer / (3600 * 24), 10);
-        hours = parseInt((timer % (3600 * 24)) / 3600, 10);
-        minutes = parseInt((timer % 3600) / 60, 10);
-        seconds = parseInt(timer % 60, 10);
+    /*타이머 관련 함수 수정 - 고유진*/
+  function startTimer(duration, display, productNo) {
+    var timer = duration, days, hours, minutes, seconds;
+    console.log(timer);
+    setInterval(function () {
+      days = parseInt(timer / (3600 * 24), 10);
+      hours = parseInt((timer % (3600 * 24)) / 3600, 10);
+      minutes = parseInt((timer % 3600) / 60, 10);
+      seconds = parseInt(timer % 60, 10);
+      days = days < 10 ? "0" + days : days;
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        days = days < 10 ? "0" + days : days;
-        hours = hours < 10 ? "0" + hours : hours;
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
+      display.textContent = days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
 
-        display.textContent = days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
+      if (--timer < 0) {
+        clearInterval(intervalId);  // 타이머 멈추기
+        display.textContent = "경매가 종료되었습니다."; // 타이머 종료 메시지 표시
 
-        if (--timer < 0) {
-          timer = duration;
-        }
-      }, 1000);
-    }
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/auction/endAuction';
 
-    window.onload = function () {
-      var duration = 1 * 24 * 3600 + 11 * 3600 + 15 * 60 + 31; // 1일 11시간 15분 31초
-      var display = document.querySelector('#timer');
-      startTimer(duration, display);
-    };
+        var productInput = document.createElement('input');
+        productInput.type = 'hidden';
+        productInput.name = 'productNo';
+        productInput.value = productNo;
 
+        var emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+
+        form.appendChild(productInput);
+        form.appendChild(emailInput);
+        document.body.appendChild(form);
+        form.submit();
+      }
+    }, 1000);
+  }
+
+  window.onload = function () {
+    var auctionendtime = "[[${auctionendtime}]]";
+    // var auctionstarttime = "[[${auctionstarttime}]]";
+    var auctionstarttime = new Date().getTime();
+    console.log(auctionstarttime);
+    var endTimeMs = new Date(auctionendtime).getTime();
+    // console.log(auctionendtime);
+    // console.log(auctionstarttime);
+    // console.log(endTimeMs);
+    // var startTimeMs = new Date(auctionstarttime).getTime();
+    var duration = (endTimeMs - auctionstarttime) / 1000;
+
+    var display = document.querySelector('#timer');
+    var productNo = "[[${productNo}]]";
+    var email = "[[${email}]]";
+    startTimer(duration, display, productNo);
+  };
+  /*타이머 관련 함수 수정*/
     var ctx = document.getElementById('priceChart').getContext('2d');
     var chart = new Chart(ctx, {
       type: 'line',
