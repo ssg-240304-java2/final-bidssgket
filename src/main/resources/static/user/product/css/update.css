@@ -22,7 +22,7 @@ body, html {
 .title-underline {
     margin-top: -5px;
     border: 0;
-    border-top: 2px solid #dcdcdc;
+: 2px solid #dcdcdc;
 }
 
 .form-label {
@@ -51,15 +51,15 @@ textarea {
     width: 100%;
 }
 
-.thumbnail {
-    border: 1px solid #ddd;
-    padding: 20px;
-    height: 300px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f8f9fa;
-}
+/*.thumbnail {*/
+/*    border: 1px solid #ddd;*/
+/*    padding: 20px;*/
+/*    height: 300px;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    background-color: #f8f9fa;*/
+/*}*/
 
 .thumbnail img {
     max-height: 100%;
@@ -71,8 +71,26 @@ textarea {
     height: 100%;
 }
 
-#thumbnailContainer img {
-    width: 300px;
-    height: 300px;
+/* 기존 및 추가된 이미지를 그리드 레이아웃으로 정렬 */
+.thumbnail-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.thumbnail-container img {
+    width: 100%;
+    height: auto;
     object-fit: cover;
+}
+
+/* 썸네일 이미지를 특정 크기로 설정 */
+#thumbnailContainer img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.thumbnail-image.selected {
+    border: 3px solid #007bff;
 }
