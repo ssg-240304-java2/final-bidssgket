@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class PaymentApiService {
 
-    private PaymentApiRepository paymentApiRepository;
+    private final PaymentApiRepository paymentApiRepository;
 
     @Autowired
     public PaymentApiService(PaymentApiRepository paymentApiRepository) {
