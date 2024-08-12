@@ -9,22 +9,25 @@
   <title>상품 상세_입찰참여자</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="/user/product/css/detail_auction.css" rel="stylesheet">
+  <style>
+    /* 차트와 표의 폭을 넓히는 CSS */
+    .chart-table,
+    .table-responsive {
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
 <main class="contents" layout:fragment="content">
   <div class="container mt-5">
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-4"> <!-- 이미지 슬라이드를 위한 1/3 열 -->
         <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
           <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img src="..." class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-              <img src="..." class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-              <img src="..." class="d-block w-100" alt="...">
+            <div th:each="productImage, iterStat : ${product.productImages}"
+                 th:classappend="${iterStat.index == 0} ? 'active' : ''"
+                 class="carousel-item">
+              <img th:src="@{${productImage.productImg}}" class="d-block w-100" alt="...">
             </div>
           </div>
           <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
@@ -37,54 +40,63 @@
           </a>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-8 d-flex flex-column justify-content-center"> <!-- 버튼들을 위한 넓은 열 -->
+        <div class="d-flex align-items-center justify-content-between"> <!-- 타이머와 버튼을 같은 행에 배치 -->
         <div class="d-flex align-items-center">
           <h3>경매 종료:</h3>
           <h3 id="timer" class="ml-3"></h3>
         </div>
-        <div class="auction-header">
-          <select id="auctionType" class="form-control" disabled>
-            <option value="ongoing">경매 중</option>
-            <option value="forSale">판매 중</option>
-          </select>
-          <h4>유니폼 팝니다.</h4>
+          <button class="btn btn-success">채팅하기</button> <!-- 채팅하기 버튼 추가 -->
         </div>
-        <p>카테고리: 유니폼</p>
-        <p>상품 설명: 사인 유니폼 팝니다. 보관중이어서 상태가 좋습니다.</p>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="text-center buy-now-section">
-              <h5>즉시 구매가</h5>
-              <h3>127,000 원</h3>
-              <button class="btn btn-primary mt-2">즉시 구매하기</button>
-            </div>
+        <div class="auction-header">
+          <select id="auctionType" class="form-control mb-3" th:value="${product.salesStatus}" disabled>
+              <option value="selling" th:selected="${product.salesStatus == 'selling'}">판매중</option>
+              <option value="sale_completed" th:selected="${product.salesStatus == 'sale_completed'}">판매완료</option>
+              <option value="trading" th:selected="${product.salesStatus == 'trading'}">예약중</option>
+              <option value="sale_pause" th:selected="${product.salesStatus == 'sale_pause'}">판매중지</option>
+          </select>
+          <h4 th:text="${product.productName}"></h4>
+        </div>
+        <h5>카테고리</h5>
+        <div>
+          <select class="form-select" id="category" name="category" readonly>
+            <option selected th:if="${product.category == 'tradingCard'}" >트레이딩 카드</option>
+            <option selected th:if="${product.category == 'uniform'}">유니폼</option>
+            <option selected th:if="${product.category == 'shoes'}">신발</option>
+            <option selected th:if="${product.category == 'artToy'}">아트토이</option>
+            <option selected th:if="${product.category == 'watch'}">시계</option>
+            <option selected th:if="${product.category == 'bag'}">가방</option>
+            <option selected th:if="${product.category == 'camera'}">카메라</option>
+            <option selected th:if="${product.category == 'interior'}">인테리어</option>
+          </select>
+        </div>
+        <h5>상품 설명</h5>
+        <p th:text="${product.productDesc}"></p>
+        <div class="price-sections"> <!-- 새로운 컨테이너 추가 -->
+          <div class="buy-now-section text-center"> <!-- 중앙 정렬된 즉시 구매가 섹션 -->
+            <h5>즉시 구매가</h5>
+            <h3 th:text="|${product.buyNowPrice}원|"></h3>
+            <button class="btn btn-primary mb-3">즉시 구매하기</button> <!-- 아래 버튼들과 간격 추가 -->
           </div>
-          <div class="col-md-6">
-            <div class="text-center auction-start-section">
-              <h5>경매 시작가</h5>
-              <h3>121,000 원</h3>
-              <!--경매 수정, 삭제를 위한 버튼 수정 -->
-              <form action="/auction/auctionregistmodify" method="get">
-                <button type="submit" class="btn btn-secondary mt-2">입찰 수정</button>
-              </form>
-              <form action="/auction/delete" method="post">
-                <input type="hidden" name="productNo" value="17" />
-                <button type="submit" class="btn btn-secondary mt-2">입찰 삭제</button>
-              </form>
-              <!--경매 수정, 삭제를 위한 버튼 수정 -->
+          <div class="auction-start-section text-center">
+            <h5>경매 시작가</h5>
+            <h3 th:text="|${product.auctionStartPrice}원|"></h3>
+            <div class="button-group d-flex justify-content-center mb-3"> <!-- 버튼들을 수평으로 정렬 -->
+              <button class="btn btn-secondary mr-2">입찰 수정</button>
+              <button class="btn btn-secondary">입찰 삭제</button>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="row mt-5">
-      <div class="col-md-6">
+      <div class="col-md-6"> <!-- 차트를 위한 넓은 열 -->
         <h4>시세 조회</h4>
         <canvas id="priceChart" class="chart-table"></canvas>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6"> <!-- 표를 위한 넓은 열 -->
         <h4>입찰 현황</h4>
-        <div class="table-responsive chart-table">
+        <div class="table-responsive chart-table"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
           <table class="table table-bordered">
             <thead>
             <tr>
@@ -150,66 +162,35 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    /*타이머 관련 함수 수정 - 고유진*/
-  function startTimer(duration, display, productNo) {
-    var timer = duration, days, hours, minutes, seconds;
-    console.log(timer);
-    setInterval(function () {
-      days = parseInt(timer / (3600 * 24), 10);
-      hours = parseInt((timer % (3600 * 24)) / 3600, 10);
-      minutes = parseInt((timer % 3600) / 60, 10);
-      seconds = parseInt(timer % 60, 10);
-      days = days < 10 ? "0" + days : days;
-      hours = hours < 10 ? "0" + hours : hours;
-      minutes = minutes < 10 ? "0" + minutes : minutes;
-      seconds = seconds < 10 ? "0" + seconds : seconds;
 
-      display.textContent = days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
+    var duration = /*[[${durationMillis}]]*/ 0;
 
-      if (--timer < 0) {
-        clearInterval(intervalId);  // 타이머 멈추기
-        display.textContent = "경매가 종료되었습니다."; // 타이머 종료 메시지 표시
+    function startTimer(duration, display) {
+      var timer = duration, days, hours, minutes, seconds;
+      setInterval(function () {
+        days = parseInt(timer / (3600 * 24), 10);
+        hours = parseInt((timer % (3600 * 24)) / 3600, 10);
+        minutes = parseInt((timer % 3600) / 60, 10);
+        seconds = parseInt(timer % 60, 10);
 
-        var form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/auction/endAuction';
+        days = days < 10 ? "0" + days : days;
+        hours = hours < 10 ? "0" + hours : hours;
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        var productInput = document.createElement('input');
-        productInput.type = 'hidden';
-        productInput.name = 'productNo';
-        productInput.value = productNo;
+        display.textContent = days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
 
-        var emailInput = document.createElement('input');
-        emailInput.type = 'hidden';
-        emailInput.name = 'email';
-        emailInput.value = email;
+        if (--timer < 0) {
+          timer = duration;
+        }
+      }, 1000);
+    }
 
-        form.appendChild(productInput);
-        form.appendChild(emailInput);
-        document.body.appendChild(form);
-        form.submit();
-      }
-    }, 1000);
-  }
+    window.onload = function () {
+      var display = document.querySelector('#timer');
+      startTimer(duration, display);
+    };
 
-  window.onload = function () {
-    var auctionendtime = "[[${auctionendtime}]]";
-    // var auctionstarttime = "[[${auctionstarttime}]]";
-    var auctionstarttime = new Date().getTime();
-    console.log(auctionstarttime);
-    var endTimeMs = new Date(auctionendtime).getTime();
-    // console.log(auctionendtime);
-    // console.log(auctionstarttime);
-    // console.log(endTimeMs);
-    // var startTimeMs = new Date(auctionstarttime).getTime();
-    var duration = (endTimeMs - auctionstarttime) / 1000;
-
-    var display = document.querySelector('#timer');
-    var productNo = "[[${productNo}]]";
-    var email = "[[${email}]]";
-    startTimer(duration, display, productNo);
-  };
-  /*타이머 관련 함수 수정*/
     var ctx = document.getElementById('priceChart').getContext('2d');
     var chart = new Chart(ctx, {
       type: 'line',

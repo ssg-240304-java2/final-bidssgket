@@ -133,7 +133,7 @@ public class AuctionViewController {
         }
     }
 
-    @PostMapping("/delete")
+    @PostMapping("/degit plete")
     public String deleteAuction(@RequestParam Long productNo, RedirectAttributes redirectAttributes, HttpSession httpSession) {
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
