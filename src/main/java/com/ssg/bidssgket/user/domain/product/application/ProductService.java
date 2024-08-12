@@ -2,6 +2,10 @@ package com.ssg.bidssgket.user.domain.product.application;
 
 import com.ssg.bidssgket.global.util.ncps3.FileDto;
 import com.ssg.bidssgket.global.util.ncps3.FileService;
+import com.ssg.bidssgket.user.domain.auction.domain.Auction;
+import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
+import com.ssg.bidssgket.user.domain.member.domain.Member;
+import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto;
 import com.ssg.bidssgket.user.domain.product.domain.Category;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
@@ -11,6 +15,7 @@ import com.ssg.bidssgket.user.domain.product.domain.repository.ProductImageRepos
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -27,12 +32,18 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
+
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final FileService fileService;
+    private final AuctionRepository auctionRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public Product registProduct(RegistProductReqDto registProductReqDto, List<MultipartFile> productImages) {
+        Long memberNo = registProductReqDto.getMemberNo();
+        Member member = memberRepository.findById(memberNo).orElseThrow(EntityNotFoundException::new);
+
         Product product = Product.builder()
                 .productName(registProductReqDto.getProductName())
                 .category(Category.valueOf(registProductReqDto.getCategory()))
@@ -45,6 +56,7 @@ public class ProductService {
                 .auctionStartPrice(registProductReqDto.getAuctionStartPrice())
                 .auctionStartTime(registProductReqDto.getAuctionStartTime())
                 .auctionEndTime(registProductReqDto.getAuctionEndTime())
+                .member(member)
                 .build();
 
         productRepository.save(product);
@@ -122,7 +134,6 @@ public class ProductService {
         }
     }
 
-
     @Transactional
     public void deleteProductByNo(Long productNo) {
         productRepository.deleteById(productNo);
@@ -152,5 +163,17 @@ public class ProductService {
         return productRepository.findByMemberNo(memberNo);
     }
 
+    public List<Auction> findAllByProductNo(Long productNo) {
+        // productNo로 Product를 조회
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with productNo: " + productNo));
+
+        // 조회된 Product를 이용해 Auction 목록 조회
+        return auctionRepository.findAllByProduct(product);
+    }
+
+    public List<Product> searchProducts(String search) {
+        return productRepository.searchBySearch(search);
+    }
 }
 

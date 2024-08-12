@@ -1,8 +1,12 @@
 package com.ssg.bidssgket.user.domain.auction.domain.repository;
 
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
+import com.ssg.bidssgket.user.domain.product.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,5 +24,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
     int countByMemberNoAndProductNo(Long memberNo, Long productNo);
 
 
-}
 
+    List<Auction> findAllByProduct(Product product);
+
+}
