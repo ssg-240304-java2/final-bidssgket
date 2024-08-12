@@ -1,6 +1,7 @@
 package com.ssg.bidssgket.user.domain.member.domain;
 
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
+import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember;
 import com.ssg.bidssgket.user.domain.member.view.DTO.MemberDto;
 import com.ssg.bidssgket.user.domain.order.domain.Parcel;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
@@ -29,15 +30,15 @@ public class Member implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberNo; // 사용자 고유번호
     private String memberName; // 사용자 이름
-    private String memberId; // 사용자 아이디
-    private String pwd; // 사용자 비밀번호
+    private String memberId; // 아이디
+    private String pwd; // 비밀번호
 
     @Column(name = "email", nullable = false, unique = true)
-    private String email;
+    private String email; // 이메일
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private Role role;
+    private Role role; // 관리자인지 사용자인지
 
     @Column(name = "memberNickname", unique = true)
     private String memberNickname;
@@ -81,6 +82,9 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member",cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
+
     @OneToOne(mappedBy = "member", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private Pay pay;
 
@@ -89,6 +93,8 @@ public class Member implements UserDetails {
 
     @OneToOne(mappedBy = "reviewee", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private Review reviewee;
+
+
 
     @Builder
     private Member(String memberName, String memberId, String pwd, String memberNickname, String email, Role role, Integer biscuit, Address address, Boolean isDeleted, Boolean isPenalty) {
@@ -106,18 +112,19 @@ public class Member implements UserDetails {
         this.isPenalty = isPenalty == null? false:isPenalty;
     }
 
-    public static Member createMember(MemberDto memberDto) {
-        return Member.builder()
-                .memberName(memberDto.getMemberName())
-                .memberId(memberDto.getMemberId())
-                .pwd(memberDto.getPwd())
-                .memberNickname(memberDto.getMemberNickname())
-                .biscuit(memberDto.getBiscuit())
-                .address(memberDto.getAddress())
-                .isDeleted(memberDto.getIsDeleted())
-                .isPenalty(memberDto.getIsPenalty())
-                .build();
-    }
+//    public static Member createMember(MemberDto memberDto) {
+//        Address address = Address.createAddress(memberDto.getAddress());
+//        return Member.builder()
+//                .memberName(memberDto.getMemberName())
+//                .memberId(memberDto.getMemberId())
+//                .pwd(memberDto.getPwd())
+//                .memberNickname(memberDto.getMemberNickname())
+//                .biscuit(memberDto.getBiscuit())
+//                .address(address)
+//                .isDeleted(memberDto.getIsDeleted())
+//                .isPenalty(memberDto.getIsPenalty())
+//                .build();
+//    }
 
     public String getRoleKey() {
         return this.role.getKey();

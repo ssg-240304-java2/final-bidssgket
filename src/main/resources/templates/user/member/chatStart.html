@@ -8,15 +8,15 @@
 </head>
 <body>
 
-<div id="username-page">
-    <div class="username-page-container">
-        <h1 class="title">username을 입력하세요</h1>
-        <form id="usernameForm" name="usernameForm">
+<div id="memberName-page">
+    <div class="memberName-page-container">
+        <h1 class="title">Member name을 입력하세요</h1>
+        <form id="memberNameForm" name="memberNameForm">
             <div class="form-group">
-                <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
+                <input type="text" id="name" placeholder="Member Name" autocomplete="off" class="form-control" />
             </div>
             <div class="form-group">
-                <button type="submit" class="accent username-submit">채팅 시작하기</button>
+                <button type="submit" class="accent memberName-submit">채팅 시작하기</button>
             </div>
         </form>
     </div>
@@ -31,7 +31,7 @@
             연결중...
         </div>
         <ul id="messageArea">
-
+            <!-- 채팅 메시지가 여기에 추가됩니다 -->
         </ul>
         <form id="messageForm" name="messageForm">
             <div class="form-group">
@@ -43,6 +43,7 @@
         </form>
     </div>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="/user/member/app.js"></script>
