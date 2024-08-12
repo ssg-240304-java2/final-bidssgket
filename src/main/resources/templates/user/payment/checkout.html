@@ -49,10 +49,10 @@
                     <h1 class="text-2xl font-semibold mb-4">상품 정보</h1>
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-4">
-                            <img src="https://placehold.co/100x100" alt="Product image of 나이키 에어 줌 알파플라이 넥스트%3 블루프린트" class="w-25 h-25">
+                            <img th:src="${product.productImages}" th:alt="'Product image of' + ${ product.productName }" class="w-25 h-25">
                             <div>
-                                <a href="#" class="text-lg font-semibold text-black hover:text-blue-700">나이키 에어 줌 알파플라이 넥스트%3 블루프린트</a>
-                                <p class="text-lg text-gray-500">260</p>
+                                <a href="#" th:text="${product.productName}" class="text-lg font-semibold text-black hover:text-blue-700"></a>
+<!--                                <p class="text-lg text-gray-500">260</p>-->
                             </div>
                         </div>
                         <table>
@@ -60,13 +60,13 @@
                                 <td class="text-lg font-semibold text-right">결제 금액</td>
                             </tr>
                             <tr>
-                                <td class="text-lg font-bold text-right">300,000원</td>
+                                <td id="price" th:text="${product.buyNowPrice}" class="text-lg font-bold text-right"></td>
                             </tr>
                             <tr>
                                 <td class="text-sm text-red-500 text-right">결제 만료일</td>
                             </tr>
                             <tr>
-                                <td class="text-sm text-red-500 text-right">2024년 7월 31일 12시 00분</td>
+                                <td id="timer" class="text-sm text-red-500 text-right"></td>
                             </tr>
                         </table>
                     </div>
@@ -124,7 +124,46 @@
 
             <!-- 결제하기 -->
             <script>
-                function
+
+            </script>
+
+            <!-- 결제 타이머 -->
+            <script>
+                function startTimer(duration, display) {
+                    let timer = duration, hours, minutes, seconds;
+                    setInterval(function () {
+                        hours = parseInt(timer / 3600, 10);
+                        minutes = parseInt((timer % 3600) / 60, 10);
+                        seconds = parseInt(timer % 60, 10);
+
+                        hours = hours < 10 ? "0" + hours : hours;
+                        minutes = minutes < 10 ? "0" + minutes : minutes;
+                        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                        display.textContent = hours + "시간 " + minutes + "분 " + seconds + "초";
+
+                        if (--timer < 0) {
+                            timer = 0; // 타이머가 0이 되면 멈춤
+                            alert("결제 시간이 만료되었습니다.");
+                        }
+                    }, 1000); // 1초마다 업데이트
+                }
+
+                window.onload = function () {
+                    let twelveHours = 12 * 60 * 60; // 12시간을 초 단위로 변환
+                    let display = document.querySelector('#timer'); // 타이머를 표시할 요소 선택
+                    startTimer(twelveHours, display); // 타이머 시작
+                }
+
+            </script>
+
+            <!-- 가격 포맷팅 -->
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const priceElement = document.getElementById('price');
+                    const priceValue = parseInt(priceElement.textContent, 10);
+                    priceElement.textContent = new Intl.NumberFormat('ko-KR').format(priceValue) + '원';
+                })
             </script>
 
             <!-- 충전 금액 포맷팅 및 숫자 제한 -->

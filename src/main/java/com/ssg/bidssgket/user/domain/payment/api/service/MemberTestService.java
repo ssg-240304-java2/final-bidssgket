@@ -2,8 +2,8 @@ package com.ssg.bidssgket.user.domain.payment.api.service;
 
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.payment.api.repository.MemberTestRepository;
+import com.ssg.bidssgket.user.domain.payment.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -30,9 +30,9 @@ public class MemberTestService {
         }
     }
 
-    public Member getMemberByMemberName(String username) {
+    public Member getMemberByEmail(String email) {
 
-        return (Member) memberTestRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username + " 정보를 찾을 수 없습니다."));
+        return (Member) memberTestRepository.getMemberByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email + " : 회원 정보를 찾을 수 없습니다."));
     }
 }

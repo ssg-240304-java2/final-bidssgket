@@ -22,6 +22,6 @@ public class PaymentApiController {
         this.paymentApiService = paymentApiService;
     }
 
-    @PostMapping("/chekcout")
-    public String
+//    @PostMapping("/chekcout")
+//    public String
 }
