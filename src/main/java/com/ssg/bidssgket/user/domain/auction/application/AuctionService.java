@@ -7,6 +7,7 @@ import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
+import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,4 +78,19 @@ public class AuctionService {
         auctionRepository.save(auction);
     }
 
+    @Transactional
+    public void endAuction(Long productNo) {
+        Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+        product.setSalesStatus(SalesStatus.trading);
+
+        List<Auction> auction = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
+        if (!auction.isEmpty()) {
+            Auction winningBid = auction.get(1);
+            winningBid.updateBidSuccess(true);
+            product.setBidSuccessPrice(winningBid.getMinTenderPrice());
+        }
+
+        productRepository.save(product);
+        auctionRepository.saveAll(auction);
+    }
 }

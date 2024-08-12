@@ -167,11 +167,11 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
 
-    var duration = /*[[${durationMillis}]]*/ 0;
+    var duration = [[${durationMillis}]];
 
     function startTimer(duration, display) {
       var timer = duration, days, hours, minutes, seconds;
-      setInterval(function () {
+      var intervalId = setInterval(function () {
         days = parseInt(timer / (3600 * 24), 10);
         hours = parseInt((timer % (3600 * 24)) / 3600, 10);
         minutes = parseInt((timer % 3600) / 60, 10);
@@ -185,10 +185,30 @@
         display.textContent = days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
 
         if (--timer < 0) {
-          timer = duration;
+          clearInterval(intervalId);
+          display.textContent = "경매가 종료되었습니다.";
+
+          submitEndAuctionForm();
         }
       }, 1000);
     }
+
+    function submitEndAuctionForm() {
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/auction/endAuction';
+
+      var productNoField = document.createElement('input');
+      productNoField.type = 'hidden';
+      productNoField.name = 'productNo';
+      productNoField.value = "[[${product.productNo}]]";
+      form.appendChild(productNoField);
+
+
+      document.body.appendChild(form);
+      form.submit();
+    }
+
 
     window.onload = function () {
       var display = document.querySelector('#timer');
