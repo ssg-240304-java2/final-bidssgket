@@ -37,13 +37,16 @@
                     </div>
                 </div>
                 <div class="auction">
-                    <a href="#">경매</a>
+                    <a href="/auction/auctionMain">경매</a>
                 </div>
                 <div class="product_regist">
-                    <a href="/user/product/register">상품등록</a>
+                    <a href="/register">상품등록</a>
                 </div>
             </nav>
-            <input type="text" placeholder="Search">
+            <form action="/search" method="get">
+                <input type="text" name="search" placeholder="Search" th:value="${search}">
+                <button type="submit">검색</button>
+            </form>
         </div>
     </div>
     <script>

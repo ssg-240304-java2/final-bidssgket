@@ -16,6 +16,13 @@
       width: 100%;
     }
   </style>
+  <script>
+    let message = `[[${message}]]`;
+    console.log(message);
+    if(message){
+      window.alert(message);
+    }
+  </script>
 </head>
 <body>
 <main class="contents" layout:fragment="content">
@@ -75,14 +82,18 @@
         <div class="price-sections"> <!-- 새로운 컨테이너 추가 -->
           <div class="buy-now-section text-center"> <!-- 중앙 정렬된 즉시 구매가 섹션 -->
             <h5>즉시 구매가</h5>
-            <h3 th:text="|${product.buyNowPrice}원|"></h3>
-            <button class="btn btn-primary mb-3">즉시 구매하기</button> <!-- 아래 버튼들과 간격 추가 -->
+            <h3 th:if="${product.buyNowPrice != null}" th:text="|${product.buyNowPrice}원|"></h3>
+            <button class="btn btn-primary mb-3"
+                    th:disabled="${product.imdPurchase == false}">즉시 구매하기</button> <!-- 아래 버튼들과 간격 추가 -->
           </div>
           <div class="auction-start-section text-center">
             <h5>경매 시작가</h5>
-            <h3 th:text="|${product.auctionStartPrice}원|"></h3>
+            <h3 th:if="${product.auctionStartPrice != null}" th:text="|${product.auctionStartPrice}원|"></h3>
             <div class="button-group d-flex justify-content-center mb-3"> <!-- 버튼들을 수평으로 정렬 -->
-              <button class="btn btn-secondary mr-2">입찰하기</button>
+              <a th:href="@{/auction/auctionregistform/{productNo}(productNo=${product.productNo})}">
+                <button type="button" class="btn btn-primary"
+                  th:disabled="${product.auctionSelected == false}">입찰 등록</button>
+              </a>
             </div>
           </div>
         </div>
