@@ -51,11 +51,11 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Auction> auctions = new ArrayList<>();
 
-    @ManyToOne
+    @OneToOne(cascade = {CascadeType.REMOVE},orphanRemoval = true)
     @JoinColumn(name = "productNo", insertable = false, updatable = false)
     private SaleOrder saleOrder;
 
-    @ManyToOne
+    @OneToOne(cascade = {CascadeType.REMOVE},orphanRemoval = true)
     @JoinColumn(name = "productNo", insertable = false, updatable = false)
     private PurchaseOrder purchaseOrder;
 
