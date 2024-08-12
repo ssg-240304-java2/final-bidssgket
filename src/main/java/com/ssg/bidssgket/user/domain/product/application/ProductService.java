@@ -13,10 +13,14 @@ import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -101,6 +105,7 @@ public class ProductService {
         productImageRepository.flush();
     }
 
+    @Transactional
     public void addImage(List<MultipartFile> productImages,Long productNo) {
         // productNo를 이용해 Product 엔티티를 조회
         Product product = productRepository.findById(productNo)
@@ -116,5 +121,36 @@ public class ProductService {
             productImageRepository.save(productImage);
         }
     }
+
+
+    @Transactional
+    public void deleteProductByNo(Long productNo) {
+        productRepository.deleteById(productNo);
+        productImageRepository.deleteById(productNo);
+        productRepository.flush();
+    }
+
+    public List<Product> getMainpageProduct() {
+        LocalDateTime now = LocalDateTime.now();
+        Pageable pageable = PageRequest.of(0,10);
+        return productRepository.findTop10ByAuctionEndDateClosest(now,pageable);
+    }
+
+    public List<Product> getProductsByCategory(Category category) {
+        return productRepository.findByCategory(category);
+    }
+
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
+    public List<Product> getAuctionProducts() {
+        return productRepository.findByAuctionSelected();
+    }
+
+    public List<Product> getProductsByMember(Long memberNo) {
+        return productRepository.findByMemberNo(memberNo);
+    }
+
 }
 

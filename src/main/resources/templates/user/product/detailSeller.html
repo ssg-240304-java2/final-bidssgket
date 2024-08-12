@@ -8,23 +8,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>상품 상세_판매자</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/user/product/css/detail_seller.css" rel="stylesheet">
+  <link href="/user/product/css/detail_auction.css" rel="stylesheet">
+  <style>
+    /* 차트와 표의 폭을 넓히는 CSS */
+    .chart-table,
+    .table-responsive {
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
 <main class="contents" layout:fragment="content">
   <div class="container mt-5">
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-4"> <!-- 이미지 슬라이드를 위한 1/3 열 -->
         <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
           <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img src="..." class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-              <img src="..." class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-              <img src="..." class="d-block w-100" alt="...">
+            <div th:each="productImage, iterStat : ${product.productImages}"
+                 th:classappend="${iterStat.index == 0} ? 'active' : ''"
+                 class="carousel-item">
+              <img th:src="@{${productImage.productImg}}" class="d-block w-100" alt="...">
             </div>
           </div>
           <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
@@ -37,46 +40,62 @@
           </a>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-8 d-flex flex-column justify-content-center"> <!-- 버튼들을 위한 넓은 열 -->
+        <div class="d-flex align-items-center justify-content-between"> <!-- 타이머와 버튼을 같은 행에 배치 -->
         <div class="d-flex align-items-center">
           <h3>경매 종료:</h3>
           <h3 id="timer" class="ml-3"></h3>
         </div>
-        <div class="auction-header">
-          <select id="auctionType" class="form-control" disabled>
-            <option value="ongoing">경매 중</option>
-            <option value="forSale">판매 중</option>
-          </select>
-          <h4>유니폼 팝니다.</h4>
+          <button class="btn btn-success">채팅하기</button> <!-- 채팅하기 버튼 추가 -->
         </div>
-        <p>카테고리: 유니폼</p>
-        <p>상품 설명: 사인 유니폼 팝니다. 보관중이어서 상태가 좋습니다.</p>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="text-center buy-now-section">
-              <h5>즉시 구매가</h5>
-              <h3>127,000 원</h3>
-              <button class="btn btn-primary mt-2">즉시 구매하기</button>
-            </div>
+        <div class="auction-header">
+          <select id="auctionType" class="form-control mb-3" th:value="${product.salesStatus}" disabled>
+            <option value="selling" th:selected="${product.salesStatus == 'selling'}">판매중</option>
+            <option value="sale_completed" th:selected="${product.salesStatus == 'sale_completed'}">판매완료</option>
+            <option value="trading" th:selected="${product.salesStatus == 'trading'}">예약중</option>
+            <option value="sale_pause" th:selected="${product.salesStatus == 'sale_pause'}">판매중지</option>
+          </select>
+          <h4 th:text="${product.productName}"></h4>
+        </div>
+        <h5>카테고리</h5>
+        <div>
+          <select class="form-select" id="category" name="category" readonly>
+            <option selected th:if="${product.category == 'tradingCard'}" >트레이딩 카드</option>
+            <option selected th:if="${product.category == 'uniform'}">유니폼</option>
+            <option selected th:if="${product.category == 'shoes'}">신발</option>
+            <option selected th:if="${product.category == 'artToy'}">아트토이</option>
+            <option selected th:if="${product.category == 'watch'}">시계</option>
+            <option selected th:if="${product.category == 'bag'}">가방</option>
+            <option selected th:if="${product.category == 'camera'}">카메라</option>
+            <option selected th:if="${product.category == 'interior'}">인테리어</option>
+          </select>
+        </div>
+        <h5>상품 설명</h5>
+        <p th:text="${product.productDesc}"></p>
+        <div class="price-sections"> <!-- 새로운 컨테이너 추가 -->
+          <div class="buy-now-section text-center"> <!-- 중앙 정렬된 즉시 구매가 섹션 -->
+            <h5>즉시 구매가</h5>
+            <h3 th:text="|${product.buyNowPrice}원|"></h3>
+            <button class="btn btn-primary mb-3" type="button" id="deleteBtn">삭제하기</button> <!-- 아래 버튼들과 간격 추가 -->
           </div>
-          <div class="col-md-6">
-            <div class="text-center auction-start-section">
-              <h5>경매 시작가</h5>
-              <h3>121,000 원</h3>
-              <button class="btn btn-secondary mt-2" id="updateBtn">수정하기</button>
+          <div class="auction-start-section text-center">
+            <h5>경매 시작가</h5>
+            <h3 th:text="|${product.auctionStartPrice}원|"></h3>
+            <div class="button-group d-flex justify-content-center mb-3"> <!-- 버튼들을 수평으로 정렬 -->
+              <button class="btn btn-secondary" type="button" id="updateBtn">수정하기</button>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="row mt-5">
-      <div class="col-md-6">
+      <div class="col-md-6"> <!-- 차트를 위한 넓은 열 -->
         <h4>시세 조회</h4>
         <canvas id="priceChart" class="chart-table"></canvas>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6"> <!-- 표를 위한 넓은 열 -->
         <h4>입찰 현황</h4>
-        <div class="table-responsive chart-table">
+        <div class="table-responsive chart-table"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
           <table class="table table-bordered">
             <thead>
             <tr>
@@ -137,14 +156,13 @@
       </div>
     </div>
   </div>
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    document.getElementById('updateBtn').addEventListener('click', function (){
-      location.href = '/user/product/update';
-    });
+
+    var duration = /*[[${durationMillis}]]*/ 0;
 
     function startTimer(duration, display) {
       var timer = duration, days, hours, minutes, seconds;
@@ -168,7 +186,6 @@
     }
 
     window.onload = function () {
-      var duration = 1 * 24 * 3600 + 11 * 3600 + 15 * 60 + 31; // 1일 11시간 15분 31초
       var display = document.querySelector('#timer');
       startTimer(duration, display);
     };
@@ -186,6 +203,27 @@
         }]
       },
       options: {}
+    });
+
+    document.getElementById('updateBtn').addEventListener('click',function (){
+      let productNo = [[${product.productNo}]];
+      location.href = '/update/'+ productNo;
+    });
+
+    document.getElementById('deleteBtn').addEventListener('click',function (){
+      let productNo = [[${product.productNo}]];
+      $.ajax({
+        url: '/api/products/delete?productNo=' + productNo,
+        type: 'delete',
+        data: productNo,
+        success: function (){
+          alert("삭제에 성공하였습니다!!🚮")
+          location.href = '/';
+        },
+        error: function () {
+          alert("삭제 실패!!!!!")
+        }
+      });
     });
   </script>
 </main>

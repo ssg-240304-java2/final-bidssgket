@@ -11,6 +11,7 @@ import com.ssg.bidssgket.user.domain.product.domain.ProductImage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,4 +57,10 @@ public class ProductApiController {
         productService.addImage(productImages,productNo);
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteProduct(@RequestParam Long productNo) {
+        productService.deleteProductByNo(productNo);
+        return ResponseEntity.ok("Product deleted");
+    }
+  
 }

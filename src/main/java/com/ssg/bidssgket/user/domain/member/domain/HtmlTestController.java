@@ -38,11 +38,11 @@ public class HtmlTestController {
           return "user/main/mainpage";
       }
 
-    @GetMapping("/")
-    public String home(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAuthenticated = auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser");
-        model.addAttribute("isAuthenticated", isAuthenticated);
-        return "user/main/mainpage";
-    }
+//    @GetMapping("/")
+//    public String home(Model model) {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        boolean isAuthenticated = auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser");
+//        model.addAttribute("isAuthenticated", isAuthenticated);
+//        return "user/main/mainpage";
+//    }
 }

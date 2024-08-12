@@ -3,15 +3,18 @@ package com.ssg.bidssgket.user.domain.product.domain.repository;
 import com.ssg.bidssgket.user.domain.product.domain.Category;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -26,5 +29,17 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                       @Param("auctionStartPrice") Integer auctionStartPrice, @Param("auctionStartTime") LocalDateTime auctionStartTime,
                       @Param("auctionEndTime") LocalDateTime auctionEndTime, @Param("category") Category category,
                       @Param("salesStatus") SalesStatus salesStatus);
+
+    @Query("SELECT p FROM Product p WHERE p.auctionEndTime > :now AND p.salesStatus = 'selling' ORDER BY p.auctionEndTime ASC")
+    List<Product> findTop10ByAuctionEndDateClosest(@Param("now") LocalDateTime now, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.category = :category AND p.salesStatus = 'selling' ORDER BY p.auctionEndTime ASC")
+    List<Product> findByCategory(@Param("category") Category category);
+
+    @Query("SELECT p FROM Product p WHERE p.auctionSelected = true AND p.salesStatus = 'selling' ORDER BY p.auctionEndTime ASC")
+    List<Product> findByAuctionSelected();
+
+    @Query("SELECT p FROM Product p WHERE p.salesStatus = 'selling' AND p.member.memberNo = :memberNo")
+    List<Product> findByMemberNo(Long memberNo);
 
 }
