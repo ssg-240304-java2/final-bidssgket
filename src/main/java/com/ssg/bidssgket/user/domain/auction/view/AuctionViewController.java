@@ -145,5 +145,4 @@ public class AuctionViewController {
             return "redirect:/user/product/detailAuction";
         }
     }
-
 }
