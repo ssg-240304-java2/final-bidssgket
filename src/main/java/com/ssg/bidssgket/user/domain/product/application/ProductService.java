@@ -122,6 +122,7 @@ public class ProductService {
         }
     }
 
+
     @Transactional
     public void deleteProductByNo(Long productNo) {
         productRepository.deleteById(productNo);
@@ -150,5 +151,6 @@ public class ProductService {
     public List<Product> getProductsByMember(Long memberNo) {
         return productRepository.findByMemberNo(memberNo);
     }
+
 }
 
