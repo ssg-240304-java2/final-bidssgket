@@ -13,6 +13,7 @@
             const maxTenderPriceInput = document.getElementById('maxTenderPrice');
             const minTenderPriceField = document.getElementById('minTenderPriceField');
             const maxTenderPriceField = document.getElementById('maxTenderPriceField');
+            const productNoField = document.getElementById('productNoField');
             const errorMessage = document.getElementById('error-message');
             const submitButton = document.querySelector('#btnSubmit');
 
@@ -37,7 +38,9 @@
                 minTenderPriceField.value = minTenderPriceInput.value;
                 maxTenderPriceField.value = maxTenderPriceInput.value;
 
-                frm.setAttribute('action','/auction/auctionregist');
+                const productNo = productNoField.value;
+                frm.setAttribute('action', `/auction/auctionregist/${productNo}`);
+                /*frm.setAttribute('action','/auction/auctionregist');*/
                 frm.setAttribute('method', 'post');
                 frm.submit();
             });
@@ -45,7 +48,9 @@
 
         let message = `[[${message}]]`;
         // console.log(message);
-        window.alert(message);
+        if(message){
+            window.alert(message);
+        }
     </script>
 </head>
 <body layout:fragment="content">
@@ -77,6 +82,7 @@
                 <form id="frm">
                     <input type="hidden" name="minTenderPrice" id="minTenderPriceField" th:value="${minBid}" />
                     <input type="hidden" name="maxTenderPrice" id="maxTenderPriceField"/>
+                    <input type="hidden" name="productNo" id="productNoField" th:value="${product.productNo}"/>
                     <button type="submit" class="btn submit-btn" id="btnSubmit">입찰 등록</button>
                 </form>
                 <button type="button" class="btn cancel-btn">취소</button>

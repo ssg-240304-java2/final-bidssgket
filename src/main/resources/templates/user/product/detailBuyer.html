@@ -16,6 +16,13 @@
       width: 100%;
     }
   </style>
+  <script>
+    let message = `[[${message}]]`;
+    console.log(message);
+    if(message){
+      window.alert(message);
+    }
+  </script>
 </head>
 <body>
 <main class="contents" layout:fragment="content">
@@ -82,7 +89,12 @@
             <h5>경매 시작가</h5>
             <h3 th:text="|${product.auctionStartPrice}원|"></h3>
             <div class="button-group d-flex justify-content-center mb-3"> <!-- 버튼들을 수평으로 정렬 -->
-              <button class="btn btn-secondary mr-2">입찰하기</button>
+<!--              <form action="/auction/auctionregistform" method="post">-->
+<!--                <input type="hidden" name="productNo" th:value="${product.productNo}" />-->
+<!--              |location.href='@{view(uid=${data.uid})}'|-->
+              <a th:href="@{/auction/auctionregistform/{productNo}(productNo=${product.productNo})}">
+                <button type="button" class="btn btn-primary">입찰 등록</button>
+              </a>
             </div>
           </div>
         </div>

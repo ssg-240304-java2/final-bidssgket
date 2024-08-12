@@ -9,10 +9,11 @@
     <link rel="stylesheet" href="/user/auction/css/auctionregist.css">
 
     <script>
-        function validateBids() {
+        /*function validateBids() {
             const maxBidInput = document.getElementById('maxTenderPrice');
             const submitBtn = document.querySelector('.submit-btn');
             const errorMessage = document.getElementById('error-message');
+            const productNoField = document.getElementById('productNoField');
             const minBidValue = parseFloat(document.getElementById('minTenderPrice').value) || 0;
 
             function validateMaxBid() {
@@ -42,7 +43,45 @@
             validateMaxBid();
         }
 
-        document.addEventListener('DOMContentLoaded', validateBids);
+        document.addEventListener('DOMContentLoaded', validateBids);*/
+        document.addEventListener('DOMContentLoaded', function () {
+            const maxTenderPriceInput = document.getElementById('maxTenderPrice');
+            const maxTenderPriceField = document.getElementById('maxTenderPriceField');
+            const productNoField = document.getElementById('productNoField');
+            const errorMessage = document.getElementById('error-message');
+            const submitButton = document.querySelector('.submit-btn');
+            const frm = document.getElementById('modifyform');
+
+            // 최소 입찰가보다 큰 금액만 최대 입찰가로 입력 가능
+            maxTenderPriceInput.addEventListener('input', function () {
+                const minTenderPriceValue = parseFloat(document.getElementById('minTenderPrice').value) || 0;
+                const maxTenderPriceValue = parseFloat(maxTenderPriceInput.value) || 0;
+
+                if (maxTenderPriceValue <= minTenderPriceValue) {
+                    errorMessage.textContent = '최대 입찰가는 최소 입찰가보다 커야 합니다.';
+                    submitButton.disabled = true;
+                } else {
+                    errorMessage.textContent = '';
+                    submitButton.disabled = false;
+                }
+            });
+
+            // form 제출 전 필드 값을 설정
+            submitButton.addEventListener('click', function (event) {
+                event.preventDefault();
+                maxTenderPriceField.value = maxTenderPriceInput.value;
+
+                const productNo = productNoField.value;
+                frm.setAttribute('action', `/auction/auctionregistmodify/${productNo}`);
+                frm.setAttribute('method', 'post');
+                frm.submit();
+            });
+        });
+
+        let message = `[[${message}]]`;
+        if(message){
+            window.alert(message);
+        }
     </script>
 </head>
 <body layout:fragment="content">
@@ -66,21 +105,27 @@
                 <input type="number" id="minTenderPrice" th:attr="value=${minBid}" readonly placeholder="최소 입찰가 입력">
                 <p class="hint" th:text="${minBid} + '원 이상 입찰되어야 합니다.'"></p>
             </div>
-            <form action="/auction/auctionregistmodify" method="post" id="auctionForm">
             <div class="form-group">
                 <label for="maxTenderPrice">최대 입찰가</label>
                 <input type="number" id="maxTenderPrice" name="maxTenderPrice" th:value="${maxBid}"  placeholder="최대 입찰가 입력" required>
                 <p class="hint" id="error-message" style="color: red;"></p>
             </div>
+            <!--<form id="frm">
+                <input type="hidden" name="minTenderPrice" id="minTenderPriceField" th:value="${minBid}" />
+                <input type="hidden" name="maxTenderPrice" id="maxTenderPriceField"/>
+                <input type="hidden" name="productNo" id="productNoField" th:value="${product.productNo}"/>
+                <button type="submit" class="btn submit-btn" id="btnSubmit">입찰 등록</button>
+            </form>
+            <button type="button" class="btn cancel-btn">취소</button>-->
             <div class="form-actions">
-
-                    <input type="hidden" name="minTenderPrice" id="minTenderPriceField" />
-                    <input type="hidden"  id="maxTenderPriceField" th:value="${maxBid}"/>
+                <form id="modifyform">
+                    <input type="hidden" name="maxTenderPrice" id="maxTenderPriceField"/>
+                    <input type="hidden" name="productNo" id="productNoField" th:value="${product.productNo}"/>
                     <button type="submit" class="btn submit-btn">입찰 수정</button>
-
-                <button type="button" class="btn cancel-btn" onclick="window.location.href='/user/main/mainpage'">취소</button>
+                </form>
             </div>
             </form>
+            <button type="button" class="btn cancel-btn" onclick="window.location.href='/main'">취소</button>
             <p class="disclaimer">입찰을 선택하면, 낙찰자가 될 경우 이 상품을 구매하기로 약정하는 것입니다.</p>
         </div>
     </div>

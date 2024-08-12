@@ -8,6 +8,7 @@ import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
+import com.sun.tools.jconsole.JConsoleContext;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,10 @@ public class AuctionViewController {
      * @param model
      * @return
      */
-    @GetMapping("/auctionregist")
-    public String showAuctionRegistForm(Model model, HttpSession httpSession) {
+    @GetMapping("/auctionregistform/{productNo}")
+    public String showAuctionRegistForm(Model model,  @PathVariable Long productNo, HttpSession httpSession) {
+        log.info("productNo >>>>> {}", productNo);
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-        Long productNo = 17L;
         System.out.println(email);
 
         Member member = auctionService.getMemberByEmail(email);
@@ -64,27 +65,27 @@ public class AuctionViewController {
      * @param redirectAttributes
      * @return
      */
-    @PostMapping("/auctionregist")
-    public String registerAuction(@RequestParam(required = false) int minTenderPrice, @RequestParam(required = false) int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+    @PostMapping("/auctionregist/{productNo}")
+    public String registerAuction(@PathVariable("productNo") Long productNo, @RequestParam(required = false) int minTenderPrice, @RequestParam(required = false) int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+        System.out.println("productNo = " + productNo);
         System.out.println("minTenderPrice = " + minTenderPrice);
         System.out.println("maxTenderPrice = " + maxTenderPrice);
         System.out.println(((SessionMember) httpSession.getAttribute("member")).getEmail());
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
             System.out.println(email);
-            Long productNo = 17L;
             int auctionCount = auctionService.countAuctionsByMemberAndProduct(email, productNo);
             if (auctionCount >= 2) {
                 redirectAttributes.addFlashAttribute("message", "입찰은 최대 2번까지 가능합니다.");
-                return "redirect:/auction/auctionregist"; // 나중에 경로 바꾸기!!!
+                return "redirect:/detailBuyer/" + productNo;
             }
             AuctionReqDto auctionReqDto = new AuctionReqDto(minTenderPrice, maxTenderPrice, productNo);
             auctionService.registerAuction(auctionReqDto, email);
             redirectAttributes.addFlashAttribute("message", "경매가 성공적으로 등록되었습니다.");
-            return "redirect:/user/product/detailAuction";
+            return "redirect:/detailAuction/" + productNo;
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "경매 등록에 실패했습니다.");
-            return "redirect:/auction/auctionregist";
+            return "redirect:/detailBuyer/" + productNo;
         }
     }
 
@@ -93,10 +94,9 @@ public class AuctionViewController {
      * @param model
      * @return
      */
-    @GetMapping("/auctionregistmodify")
-    public String showAuctionRegistModifyForm(Model model, HttpSession httpSession) {
+    @GetMapping("/auctionregistmodify/{productNo}")
+    public String showAuctionRegistModifyForm(Model model, @PathVariable("productNo") Long productNo, HttpSession httpSession) {
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-        Long productNo = 17L;
 
         Member member = auctionService.getMemberByEmail(email);
         log.info("member >>>>>>>>>>. {}", member);
@@ -119,30 +119,30 @@ public class AuctionViewController {
      * @param redirectAttributes
      * @return
      */
-    @PostMapping("/auctionregistmodify")
-    public String modifyAuction(@RequestParam int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+    @PostMapping("/auctionregistmodify/{productNo}")
+    public String modifyAuction(@PathVariable("productNo") Long productNo, @RequestParam int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+        log.info("productNo >>>>> {}", productNo);
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-            Long productNo = 17L;
             auctionService.modifyAuction(email, productNo, maxTenderPrice);
-            redirectAttributes.addFlashAttribute("successMessage", "경매가 성공적으로 수정되었습니다.");
-            return "redirect:/user/main/mainpage";
+            redirectAttributes.addFlashAttribute("message", "경매가 성공적으로 수정되었습니다.");
+            return "redirect:/detailAuction/" + productNo;
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "경매 수정에 실패했습니다.");
-            return "redirect:/auction/auctionregistmodify";
+            redirectAttributes.addFlashAttribute("message", "경매 수정에 실패했습니다.");
+            return "redirect:/detailAuction/" + productNo;
         }
     }
 
-    @PostMapping("/degit plete")
-    public String deleteAuction(@RequestParam Long productNo, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+    @PostMapping("/delete/{productNo}")
+    public String deleteAuction(@PathVariable("productNo") Long productNo, RedirectAttributes redirectAttributes, HttpSession httpSession) {
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
             auctionService.deleteAuction(email, productNo);
-            redirectAttributes.addFlashAttribute("successMessage", "경매가 성공적으로 삭제되었습니다.");
-            return "redirect:/user/product/detailAuction";
+            redirectAttributes.addFlashAttribute("message", "경매가 성공적으로 삭제되었습니다.");
+            return "redirect:/detailBuyer/" + productNo;
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "경매 삭제에 실패했습니다.");
-            return "redirect:/user/product/detailAuction";
+            redirectAttributes.addFlashAttribute("message", "경매 삭제에 실패했습니다.");
+            return "redirect:/detailAuction/" + productNo;
         }
     }
 }
