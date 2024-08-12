@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Slf4j
@@ -148,19 +149,23 @@ public class ProductService {
     }
 
     public List<Product> getProductsByCategory(Category category) {
-        return productRepository.findByCategory(category);
+        LocalDateTime now = LocalDateTime.now();
+        return productRepository.findByCategory(category,now);
     }
 
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        LocalDateTime now = LocalDateTime.now();
+        return productRepository.findAllProduct(now);
     }
 
     public List<Product> getAuctionProducts() {
-        return productRepository.findByAuctionSelected();
+        LocalDateTime now = LocalDateTime.now();
+        return productRepository.findByAuctionSelected(now);
     }
 
     public List<Product> getProductsByMember(Long memberNo) {
-        return productRepository.findByMemberNo(memberNo);
+        LocalDateTime now = LocalDateTime.now();
+        return productRepository.findByMemberNo(memberNo,now);
     }
 
     public List<Auction> findAllByProductNo(Long productNo) {
@@ -173,7 +178,8 @@ public class ProductService {
     }
 
     public List<Product> searchProducts(String search) {
-        return productRepository.searchBySearch(search);
+        LocalDateTime now = LocalDateTime.now();
+        return productRepository.searchBySearch(search,now);
     }
 }
 
