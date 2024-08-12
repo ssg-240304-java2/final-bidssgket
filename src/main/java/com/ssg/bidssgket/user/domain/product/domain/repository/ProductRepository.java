@@ -42,6 +42,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.salesStatus = 'selling' AND p.member.memberNo = :memberNo")
     List<Product> findByMemberNo(Long memberNo);
 
-    @Query("SELECT p FROM Product p WHERE p.productName LIKE %:search% OR p.productDesc LIKE %:search%")
+    @Query("SELECT p FROM Product p WHERE p.productName LIKE %:search% OR p.productDesc LIKE %:search% ORDER BY p.createdAt DESC")
     List<Product> searchBySearch(@Param("search") String search);
 }
