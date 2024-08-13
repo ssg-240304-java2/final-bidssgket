@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/layout/default_layout}" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+
+<th:block layout:fragment="css">
+	<link href="//cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" rel="stylesheet"/>
+</th:block>
+
+<th:block layout:fragment="script">
+
+	<script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+
+</th:block>
+
+<div layout:fragment="content">
+	<style>
+
+	</style>
+
+	<h1 class="mt-4">상품 신  상세</h1>
+<!--	<ol class="breadcrumb mb-4">-->
+<!--		<li class="breadcrumb-item active">회원 목록</li>-->
+<!--	</ol>-->
+
+	<div class="section">
+		<div class="container">
+			<div class="row">
+				<div class="row">
+					<div class="wrapper" >
+						<table id="userListSpace" class="table table-bordered"  style="text-align: center">
+							<tr>
+								<th scope="col">신고번호</th>
+								<th scope="col">상품번호</th>
+								<th scope="col">신고고내용</th>
+								<th scope="col">신고자 회원번호</th>
+								<th scope="col">신고일자</th>
+							</tr>
+							<tr onclick= "location.href='/admin/product/report/info/${product.complainNo}'" style="color: black; cursor: pointer">
+								<th scope="col">${product.complainNo}</th>
+								<th scope="col">${product.productNo}</th>
+								<th scope="col">${product.complainContent}</th>
+								<th scope="col">${product.memberNo}</th>
+								<th scope="col">${product.complainDate}</th>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<br>
+				<br>
+				<br>
+				<script>
+					function clickPage(page){
+
+						$.ajax({
+							type: "GET",
+							url: "/admin/api/product/report/list?page="+page, //여기 api 따
+							// dataType: "json",
+							success: function (productReportList) {
+								const option = {
+									maximumFractionDigits: 4
+								};
+
+
+								let productReportListSpace = $("#productReportListSpace");
+								productReportListSpace.empty();
+								makePagenation(productReportList);
+
+								console.log(productReportList);
+
+								productReportListSpace.append(
+										`
+													<tr>
+														<th scope="col">신고번호</th>
+														<th scope="col">상품번호</th>
+														<th scope="col">신고고내용</th>
+														<th scope="col">신고자 회원번호</th>
+														<th scope="col">신고일자</th>
+													</tr>
+													`
+								)
+
+
+								productReportList.content.forEach(function(product){
+									productReportListSpace.append(
+											`
+														<tr onclick= "location.href='/admin/product/report/info/${product.complainNo}'" style="color: black; cursor: pointer">
+															<th scope="col">${product.complainNo}</th>
+															<th scope="col">${product.productNo}</th>
+															<th scope="col">${product.complainContent}</th>
+															<th scope="col">${product.memberNo}</th>
+															<th scope="col">${product.complainDate}</th>
+														</tr>
+														`
+									);
+
+								})
+
+							},
+							error: function () {
+								// alert("현재 신고된 유저가 존재하지 않습니다!");
+							}
+						})
+					}
+
+
+					function makePagenation(page){
+						let pagination = $("#pagination");
+						pagination.empty();
+
+						let curr = page.number; // 0 부터임
+
+						console.log("curr : " +curr);
+						let endPage = Math.ceil((curr+1) / 10.0) * 10; // 1~10
+						let startPage = endPage - 9; // 1~10
+
+						console.log("start : " +startPage);
+						console.log("end : " +endPage);
+
+						if(endPage > page.totalPages-1){ // totalPage는 1부터 셈(Page는 0부터 시작이니 1 빼기)
+							endPage = page.totalPages;
+						}
+
+						if(curr > 0){ // 이전버튼(<<) &laquo
+							pagination.append(`<a onclick="clickPage(${curr-1}); return false;" href="javascript:void(0)" >&lt;</a>`)
+						}
+
+						for(let i = startPage; i <= endPage; i++){
+							if(curr == i-1){ // active 설정
+								pagination.append(`<a class="active" onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
+							}
+							else{
+								pagination.append(`<a onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
+							}
+						}
+
+						if(curr + 1 < page.totalPages){ // 이후버튼(>>) &raquo
+							pagination.append(`<a onclick="clickPage(${curr+1}); return false;" href="javascript:void(0)">&gt;</a>`)
+						}
+
+						window.scrollTo(0,0); // 맨 위로 이동
+
+					}
+
+					// 처음 들어올 때
+					$(document).ready(function (){
+						console.log("첫 진입")
+						clickPage(0);
+					})
+
+				</script>
+			</div>
+		</div>
+	</div>
+
+
+</div>
+
+</html>
+

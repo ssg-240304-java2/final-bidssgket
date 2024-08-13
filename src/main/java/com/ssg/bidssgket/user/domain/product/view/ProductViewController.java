@@ -89,15 +89,17 @@ public class ProductViewController {
     }
 
     @GetMapping("/detailAuction/{productNo}")
-    public String detailAuctionController(Model model, @PathVariable("productNo") Long productNo) {
+    public String detailAuctionController(Model model, @PathVariable("productNo") Long productNo,HttpSession httpSession) {
         log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime auctionEndDate = product.getAuctionEndTime();
-        Duration duration = Duration.between(auctionEndDate, now);
-        long durationMillis = duration.toMillis();
-        model.addAttribute("durationMillis", durationMillis);
+        String member = ((SessionMember) httpSession.getAttribute("member")).getEmail();
+        Optional<Member> memberInfo = memberRepository.findByEmail(member);
+        Long memberNo = memberInfo.get().getMemberNo();
+        model.addAttribute("memberNo", memberNo);
+        System.out.println("memberNo = " + memberNo);
         model.addAttribute("product", product);
+        List<Auction> auctions = productService.findAuctionByProductNo(productNo);
+        model.addAttribute("auctions", auctions);
         return "user/product/detailAuction";
     }
 
@@ -105,11 +107,8 @@ public class ProductViewController {
     public String detailBuyerController(Model model, @PathVariable("productNo") Long productNo) {
         log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime auctionEndDate = product.getAuctionEndTime();
-        Duration duration = Duration.between(auctionEndDate, now);
-        long durationMillis = duration.toMillis();
-        model.addAttribute("durationMillis", durationMillis);
+        List<Auction> auctions = productService.findAuctionByProductNo(productNo);
+        model.addAttribute("auctions", auctions);
         model.addAttribute("product", product);
         return "user/product/detailBuyer";
     }
@@ -118,11 +117,8 @@ public class ProductViewController {
     public String detailSellerController(Model model, @PathVariable("productNo") Long productNo) {
         log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime auctionEndDate = product.getAuctionEndTime();
-        Duration duration = Duration.between(auctionEndDate, now);
-        long durationMillis = duration.toMillis();
-        model.addAttribute("durationMillis", durationMillis);
+        List<Auction> auctions = productService.findAuctionByProductNo(productNo);
+        model.addAttribute("auctions", auctions);
         model.addAttribute("product", product);
         return "user/product/detailSeller";
     }
@@ -150,14 +146,21 @@ public class ProductViewController {
         Long memberNo = memberInfo.get().getMemberNo();
         List<Product> products = productService.getProductsByMember(memberNo);
         List<Auction> auctions = productService.findAllByProductNo(productNo);
+        List<Auction> onAuctions = productService.findDeleteAuction(memberNo);
+        model.addAttribute("memberNo", memberNo);
+        System.out.println("memberNo = " + memberNo);
+        model.addAttribute("member", member);
         boolean isSeller = products.stream()
                                     .anyMatch(product -> product.getProductNo().equals(productNo));
         boolean isAuction = auctions.stream()
                                     .anyMatch(auction -> auction.getMember().getMemberNo().equals(memberNo));
+        boolean onAuction = onAuctions.stream()
+                .anyMatch(auction -> auction.getTenderDeleted().equals(false));
+
         if (isSeller) {
             return "redirect:/detailSeller/" + productNo;
         }else {
-            if (isAuction) {
+            if (isAuction && onAuction) {
                 return "redirect:/detailAuction/" + productNo;
             } else {
                 return "redirect:/detailBuyer/" + productNo;
