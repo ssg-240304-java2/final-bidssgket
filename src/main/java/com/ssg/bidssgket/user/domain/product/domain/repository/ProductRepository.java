@@ -49,4 +49,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.auctionEndTime > :now AND p.salesStatus = 'selling' ORDER BY p.createdAt DESC ")
     List<Product> findAllProduct( @Param("now") LocalDateTime now);
 
+    @Query(value = "SELECT CASE WHEN count(*)>0 THEN TRUE ELSE FALSE END FROM product p WHERE p.member_no= :memberNo AND p.product_no= :productNo", nativeQuery = true)
+    Long existsByMemberAndProductNo(Long memberNo, Long productNo);
 }

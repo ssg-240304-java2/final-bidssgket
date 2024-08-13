@@ -83,10 +83,10 @@
             <h3 th:text="|${product.auctionStartPrice}원|"></h3>
             <div class="button-group d-flex justify-content-center mb-3"> <!-- 버튼들을 수평으로 정렬 -->
               <a th:href="@{/auction/auctionregistmodify/{productNo}(productNo=${product.productNo})}">
-                <button type="button" class="btn btn-primary">입찰 수정</button>
+                <button type="button" class="btn btn-primary" th:disabled="${product.salesStatus != 'selling'}">입찰 수정</button>
               </a>
               <form th:action="@{/auction/delete/{productNo}(productNo=${product.productNo})}" method="post">
-                <button type="submit" class="btn btn-danger">입찰 삭제</button>
+                <button type="submit" class="btn btn-danger" th:disabled="${product.salesStatus != 'selling'}">입찰 삭제</button>
               </form>
             </div>
           </div>
@@ -166,9 +166,6 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-
-    var duration = [[${durationMillis}]];
-
     function startTimer(duration, display) {
       var timer = duration, days, hours, minutes, seconds;
       var intervalId = setInterval(function () {
@@ -187,30 +184,20 @@
         if (--timer < 0) {
           clearInterval(intervalId);
           display.textContent = "경매가 종료되었습니다.";
-
-          submitEndAuctionForm();
+          location.href = '/auction/endAuction/'+ [[${product.productNo}]];
         }
       }, 1000);
     }
 
-    function submitEndAuctionForm() {
-      var form = document.createElement('form');
-      form.method = 'POST';
-      form.action = '/auction/endAuction';
-
-      var productNoField = document.createElement('input');
-      productNoField.type = 'hidden';
-      productNoField.name = 'productNo';
-      productNoField.value = "[[${product.productNo}]]";
-      form.appendChild(productNoField);
-
-
-      document.body.appendChild(form);
-      form.submit();
-    }
-
-
     window.onload = function () {
+      var auctionendtime = "[[${product.auctionEndTime}]]";
+      var auctionstarttime = new Date().getTime();
+      console.log(auctionstarttime);
+      var endTimeMs = new Date(auctionendtime).getTime();
+      console.log(auctionendtime);
+      console.log(auctionstarttime);
+      console.log(endTimeMs);
+      var duration = (endTimeMs - auctionstarttime) / 1000;
       var display = document.querySelector('#timer');
       startTimer(duration, display);
     };

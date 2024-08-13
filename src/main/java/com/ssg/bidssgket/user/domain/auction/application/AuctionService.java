@@ -80,12 +80,13 @@ public class AuctionService {
 
     @Transactional
     public void endAuction(Long productNo) {
+        System.out.println("productNo = " + productNo);
         Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
         product.setSalesStatus(SalesStatus.trading);
 
         List<Auction> auction = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
         if (!auction.isEmpty()) {
-            Auction winningBid = auction.get(1);
+            Auction winningBid = auction.size() > 1 ? auction.get(1) : auction.get(0);
             winningBid.updateBidSuccess(true);
             product.setBidSuccessPrice(winningBid.getMinTenderPrice());
         }
@@ -93,4 +94,13 @@ public class AuctionService {
         productRepository.save(product);
         auctionRepository.saveAll(auction);
     }
+
+    public boolean isAuctionParticipant(Long memberNo, Long productNo) {
+        return auctionRepository.countByMemberNoAndProductNo(memberNo, productNo) > 0;
+    }
+
+    public boolean isSeller(Long memberNo, Long productNo) {
+        return productRepository.existsByMemberAndProductNo(memberNo, productNo) > 0? true: false;
+    }
 }
+

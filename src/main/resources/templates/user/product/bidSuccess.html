@@ -9,6 +9,13 @@
   <title>상품 상세_낙찰</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="/user/product/css/bid_success.css" rel="stylesheet">
+  <script>
+    let message = `[[${message}]]`;
+    // console.log(message);
+    if(message){
+      window.alert(message);
+    }
+  </script>
 </head>
 <body>
   <main class="contents" layout:fragment="content">
@@ -62,14 +69,14 @@
               <div class="text-center auction-start-section">
                 <h5>경매 시작가</h5>
                 <h3>121,000 원</h3>
-                <button class="btn btn-primary mt-2">낙찰포기</button>
+                <button id="abandonBidButton" class="btn btn-primary mt-2">낙찰 포기</button>
               </div>
             </div>
             <div class="col-md-4">
               <div class="text-center auction-start-section">
                 <h5>낙찰가</h5>
                 <h3>140,000 원</h3>
-                <button class="btn btn-secondary mt-2">구매확정</button>
+                <button id="confirmPurchaseButton" class="btn btn-secondary mt-2">구매 확정</button>
               </div>
             </div>
           </div>
@@ -148,9 +155,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-      function startTimer(duration, display) {
+      function startTimer(duration, display, abandonButton, confirmButton) {
         var timer = duration, days, hours, minutes, seconds;
-        setInterval(function () {
+        var interval = setInterval(function () {
           days = parseInt(timer / (3600 * 24), 10);
           hours = parseInt((timer % (3600 * 24)) / 3600, 10);
           minutes = parseInt((timer % 3600) / 60, 10);
@@ -164,15 +171,51 @@
           display.textContent = days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
 
           if (--timer < 0) {
-            timer = duration;
+            clearInterval(interval);
+            confirmButton.disabled = true;
+            abandonButton.disabled = true;
+            // Automatically trigger the abandon bid after time runs out
+            abandonButton.click();
           }
         }, 1000);
       }
 
       window.onload = function () {
-        var duration = 1 * 24 * 3600 + 11 * 3600 + 15 * 60 + 31; // 1일 11시간 15분 31초
+        var duration = 12 * 3600; // 12시간
         var display = document.querySelector('#timer');
-        startTimer(duration, display);
+        var abandonButton = document.getElementById('abandonBidButton');
+        var confirmButton = document.getElementById('confirmPurchaseButton');
+        startTimer(duration, display, abandonButton, confirmButton);
+
+        abandonButton.addEventListener('click', function () {
+          var form = document.createElement('form');
+          form.method = 'POST';
+          form.action = '/auction/abandonBid';
+
+          var productNoField = document.createElement('input');
+          productNoField.type = 'hidden';
+          productNoField.name = 'productNo';
+          productNoField.value = "[[${product.productNo}]]";
+
+          form.appendChild(productNoField);
+          document.body.appendChild(form);
+          form.submit();
+        });
+
+        confirmButton.addEventListener('click', function () {
+          var form = document.createElement('form');
+          form.method = 'POST';
+          form.action = '/auction/confirmPurchase';
+
+          var productNoField = document.createElement('input');
+          productNoField.type = 'hidden';
+          productNoField.name = 'productNo';
+          productNoField.value = "[[${product.productNo}]]";
+
+          form.appendChild(productNoField);
+          document.body.appendChild(form);
+          form.submit();
+        });
       };
 
       var ctx = document.getElementById('priceChart').getContext('2d');

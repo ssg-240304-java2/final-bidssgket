@@ -9,6 +9,42 @@
   <title>상품 상세_유찰</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="/user/product/css/bid_failed.css" rel="stylesheet">
+  <script>
+    window.onload = function () {
+      var confirmButton = document.getElementById('confirmPurchaseButton');
+      var abandonButton = document.getElementById('abandonBidButton');
+
+      confirmButton.addEventListener('click', function () {
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/auction/confirmPurchase';
+
+        var productNoField = document.createElement('input');
+        productNoField.type = 'hidden';
+        productNoField.name = 'productNo';
+        productNoField.value = "[[${product.productNo}]]";
+
+        form.appendChild(productNoField);
+        document.body.appendChild(form);
+        form.submit();
+      });
+
+      abandonButton.addEventListener('click', function () {
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/auction/abandonBid';
+
+        var productNoField = document.createElement('input');
+        productNoField.type = 'hidden';
+        productNoField.name = 'productNo';
+        productNoField.value = "[[${product.productNo}]]";
+
+        form.appendChild(productNoField);
+        document.body.appendChild(form);
+        form.submit();
+      });
+    };
+  </script>
 </head>
 <body>
   <main class="contents" layout:fragment="content">
@@ -40,7 +76,7 @@
         <div class="col-md-6">
           <div class="d-flex align-items-center">
             <h3>경매 종료:</h3>
-            <h3 id="timer" class="ml-3"></h3>
+            <h3 id="timer" class="ml-3">00일 00시 00분 00초</h3>
           </div>
           <div class="auction-header">
             <select id="auctionType" class="form-control" disabled>
@@ -49,27 +85,29 @@
             </select>
             <h4>유니폼 팝니다.</h4>
           </div>
-          <p>카테고리: 유니폼</p>
-          <p>상품 설명: 사인 유니폼 팝니다. 보관중이어서 상태가 좋습니다.</p>
+          <p>카테고리: [[${product.category}]]</p>
+          <p>상품 설명: [[${product.productDesc}]]</p>
           <div class="row">
             <div class="col-md-4">
               <div class="text-center buy-now-section">
                 <h5>즉시 구매가</h5>
-                <h3>127,000 원</h3>
+                <h3>[[${product.buyNowPrice}]] 원</h3>
               </div>
             </div>
             <div class="col-md-4">
               <div class="text-center auction-start-section">
                 <h5>경매 시작가</h5>
-                <h3>121,000 원</h3>
-                <button class="btn btn-secondary mt-2">경매 재개</button>
+                <h3>[[${product.auctionStartPrice}]] 원</h3>
+                <a th:href="@{/auction/update/{productNo}(productNo=${product.productNo})}">
+                  <button class="btn btn-secondary mt-2">경매 재개</button>
+                </a>
               </div>
             </div>
             <div class="col-md-4">
               <div class="text-center auction-start-section">
                 <h5>낙찰가</h5>
-                <h3>0 원</h3>
-                <button class="btn btn-primary mt-2">삭제하기</button>
+                <h3>[[${product.bidSuccessPrice != null ? product.bidSuccessPrice : 0}]] 원</h3>
+                <button id="deleteBtn" class="btn btn-danger mt-2">삭제하기</button>
               </div>
             </div>
           </div>
@@ -148,7 +186,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-      function startTimer(duration, display) {
+      /*function startTimer(duration, display) {
         var timer = duration, days, hours, minutes, seconds;
         setInterval(function () {
           days = parseInt(timer / (3600 * 24), 10);
@@ -173,7 +211,7 @@
         var duration = 1 * 24 * 3600 + 11 * 3600 + 15 * 60 + 31; // 1일 11시간 15분 31초
         var display = document.querySelector('#timer');
         startTimer(duration, display);
-      };
+      };*/
 
       var ctx = document.getElementById('priceChart').getContext('2d');
       var chart = new Chart(ctx, {

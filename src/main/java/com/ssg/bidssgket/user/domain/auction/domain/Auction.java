@@ -21,7 +21,7 @@ public class Auction{
     private LocalDateTime tenderDate;
     private Boolean bidSuccess;
     private Boolean tenderDeleted;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "memberNo")
     private Member member;
     @ManyToOne(fetch = FetchType.LAZY)
