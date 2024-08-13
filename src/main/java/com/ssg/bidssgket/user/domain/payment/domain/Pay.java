@@ -60,4 +60,8 @@ public class Pay extends BaseTimeAndDeleteEntity {
         payChange.setPay(this);
         this.payChangeList.add(payChange);
     }
+
+    public void setPayBalance(int payBalance) {
+        this.payBalance = payBalance;
+    }
 }

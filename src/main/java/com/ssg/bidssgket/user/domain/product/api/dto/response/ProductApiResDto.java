@@ -1,9 +1,12 @@
 package com.ssg.bidssgket.user.domain.product.api.dto.response;
 
 import com.ssg.bidssgket.user.domain.product.domain.Product;
+import com.ssg.bidssgket.user.domain.product.domain.ProductImage;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -19,6 +22,7 @@ public class ProductApiResDto {
     private Integer bidSuccessPrice;
     private String category;
     private String salesStatus;
+    private List<ProductImage> productImages;
 
     public ProductApiResDto(Product product) {
         this.productNo = product.getProductNo();
@@ -32,5 +36,6 @@ public class ProductApiResDto {
         this.bidSuccessPrice = product.getBidSuccessPrice();
         this.category = product.getCategory().name();
         this.salesStatus = product.getSalesStatus().name();
+        this.productImages = product.getProductImages();
     }
 }

@@ -27,7 +27,10 @@ public class PayChange {
     private int payChangeAmount; // 변경 금액 (양수: 입금 / 음수: 출금)
 
     @Column(nullable = false)
-    private int balance; // 보유 잔액
+    private int balance; // 초기 보유 잔액
+
+    @Column(nullable = false)
+    private int updatedBalance; // 변경 후 잔액
 
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt; // 등록일
@@ -37,40 +40,24 @@ public class PayChange {
     private Pay pay; // 페이 [FK]
 
     @Builder
-    public PayChange(PayChangeType payChangeType, int payChangeAmount, int balance, Pay pay) {
+    public PayChange(PayChangeType payChangeType, int payChangeAmount, int balance, int updatedBalance, Pay pay) {
         this.payChangeType = payChangeType;
         this.payChangeAmount = payChangeAmount;
         this.balance = balance;
+        this.updatedBalance = updatedBalance;
         this.pay = pay;
         this.createdAt = LocalDateTime.now();
     }
 
     public static PayChange addPayChange(PayChangeType payChangeType, int payChangeAmount, int initialBalance, Pay pay) {
-        int updatedBalance = calculateBalance(payChangeType, payChangeAmount, initialBalance);
 
         return PayChange.builder()
                 .payChangeType(payChangeType)
                 .payChangeAmount(payChangeAmount)
-                .balance(updatedBalance)
+                .balance(initialBalance)
+                .updatedBalance(0)
                 .pay(pay)
                 .build();
-    }
-
-    /***
-     * 잔액 계산 메서드
-     * @param payChangeType 비스킷 페이 잔액 변동 유형 (입금/출금)
-     * @param payChangeAmount 비스킷 페이 잔액 변동 금액
-     * @param initialBalance 비스킷 페이 초기 잔액
-     * @return 업데이트 후 잔액 or 초기 잔액
-     */
-    private static int calculateBalance(PayChangeType payChangeType, int payChangeAmount, int initialBalance) {
-        if (payChangeType == PayChangeType.DEPOSIT) {
-            return initialBalance + payChangeAmount;
-        } else if (payChangeType == PayChangeType.WITHDRAWAL) {
-            return initialBalance - payChangeAmount;
-        }
-
-        return initialBalance;
     }
 
     /***

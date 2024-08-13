@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/fragments/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Review</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* 기본 글꼴 설정 */
+            margin: 0;
+            color: #333;
+        }
+
+        .Review-font {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* 왼쪽 정렬 */
+            margin-left:-4rem;
+            margin-bottom: 4rem;
+
+        }
+
+        .Review-font img {
+            margin-right: 1rem; /* 이미지와 텍스트 사이의 간격 조절 */
+            margin-top: 0; /* 이미지의 상단 여백 제거 */
+        }
+
+        .Review-font h1 {
+            /* h1 태그의 기본 여백 제거 */
+            margin:0;
+            white-space: nowrap;
+            font-size: 1.5rem;
+
+        }
+
+        .container {
+            margin-left: 32rem;
+            margin-top: 2rem;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+
+        .rating-section,
+        .feedback-section {
+            margin-bottom: 2rem;
+        }
+
+        .rating-section label,
+        .feedback-section label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 2rem;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .star {
+            cursor: pointer;
+            color: #ddd;
+        }
+
+        .star.selected {
+            color: #f39c12;
+        }
+
+        .feedback-section input[type="number"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .feedback-section textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-button {
+            display: block;
+            width: 50%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            background-color: #000;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-left: 8rem;
+        }
+
+        .submit-button:hover {
+            background-color: #fff;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="rating-section">
+        <div class="Review-font">
+            <img src="/css/review.png" alt="Review Icon" width="50" height="50">
+            <h1>리뷰</h1>
+        </div>
+        <form>
+            <div class="feedback-section">
+                <label for="seller-rating">구매자 만족도 (1~100)</label>
+                <input type="number" id="seller-rating" name="seller-rating" min="1" max="100" step="1" required>
+                <label for="comments">코멘트</label>
+                <textarea id="comments" name="comments" placeholder="코멘트를 남겨주세요..." required></textarea>
+            </div>
+
+            <button type="submit" class="submit-button">제출</button>
+        </form>
+    </div>
+
+    <script>
+        // JavaScript for star rating functionality
+        document.querySelectorAll('.star-rating .star').forEach(star => {
+            star.addEventListener('click', () => {
+                const value = star.getAttribute('data-value');
+                document.querySelectorAll('.star-rating .star').forEach(star => {
+                    star.classList.toggle('selected', star.getAttribute('data-value') <= value);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

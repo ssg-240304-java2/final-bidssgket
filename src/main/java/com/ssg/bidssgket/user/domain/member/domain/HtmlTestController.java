@@ -1,34 +1,48 @@
 package com.ssg.bidssgket.user.domain.member.domain;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import java.security.Principal;
+
 
 @Controller
 public class HtmlTestController {
-    @GetMapping("/")
-    public String indexController() {
-        return "index";
-    }
 
-    @GetMapping("/login")
-    public String home() {
-        return "/user/member/login";
-    }
+//    @GetMapping("/private")
+//    public String privatePage() {
+//        return "user/main/mainpage";
+//    }
+//
+//    @GetMapping("/admin")
+//    public String adminPage() {
+//        return "user/member/review_seller.admin";
+//    }
 
-    @GetMapping("/private")
-    public String privatePage(@RequestParam("token") String token) {
 
-        System.out.println("access_token = " + token);
+      @GetMapping("/login")
+      public String loginPage() {
+          return "user/member/login";
+      }
 
-        return "user/main/mainpage";
-    }
+      @GetMapping("/main")
+      public String showReviewPage(Principal principal, HttpSession httpSession) {
+//          System.out.println("principal = " + principal);
+//          SessionMember member = (SessionMember) httpSession.getAttribute("member");
+//          System.out.println("---->"+member); //--> 세션확인용
+          return "user/main/mainpage";
+      }
 
-    @GetMapping("/admin")
-    public String adminPage() {
-        return "user/member/review_seller.admin";
-    }
+//    @GetMapping("/")
+//    public String home(Model model) {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        boolean isAuthenticated = auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser");
+//        model.addAttribute("isAuthenticated", isAuthenticated);
+//        return "user/main/mainpage";
+//    }
 }
