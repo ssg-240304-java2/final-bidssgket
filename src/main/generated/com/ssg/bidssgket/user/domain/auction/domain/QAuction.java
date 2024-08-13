@@ -22,7 +22,7 @@ public class QAuction extends EntityPathBase<Auction> {
 
     public static final QAuction auction = new QAuction("auction");
 
-    public final NumberPath<Integer> bidNo = createNumber("bidNo", Integer.class);
+    public final NumberPath<Long> bidNo = createNumber("bidNo", Long.class);
 
     public final BooleanPath bidSuccess = createBoolean("bidSuccess");
 
@@ -34,7 +34,7 @@ public class QAuction extends EntityPathBase<Auction> {
 
     public final com.ssg.bidssgket.user.domain.product.domain.QProduct product;
 
-    public final DateTimePath<org.joda.time.DateTime> tenderDate = createDateTime("tenderDate", org.joda.time.DateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> tenderDate = createDateTime("tenderDate", java.time.LocalDateTime.class);
 
     public final BooleanPath tenderDeleted = createBoolean("tenderDeleted");
 

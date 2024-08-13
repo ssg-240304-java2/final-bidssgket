@@ -41,7 +41,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByAuctionSelected(@Param("now") LocalDateTime now);
 
     @Query("SELECT p FROM Product p WHERE p.auctionEndTime > :now AND p.salesStatus = 'selling' AND p.member.memberNo = :memberNo")
-    List<Product> findByMemberNo(Long memberNo, @Param("now") LocalDateTime now);
+    List<Product> findByMemberNo(@Param("memberNo") Long memberNo, @Param("now") LocalDateTime now);
 
     @Query("SELECT p FROM Product p WHERE p.auctionEndTime > :now AND p.productName LIKE %:search% OR p.productDesc LIKE %:search% AND p.salesStatus = 'selling' ORDER BY p.createdAt ASC ")
     List<Product> searchBySearch(@Param("search") String search, @Param("now") LocalDateTime now);
