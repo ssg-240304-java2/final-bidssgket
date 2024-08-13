@@ -14,7 +14,9 @@
 
 <div layout:fragment="content">
 	<style>
-
+		a:link{color:black;text-decoration:none;}
+		a:visited{color:black;text-decoration:none;}
+		a:hover{color:blue;text-decoration:none;}
 	</style>
 
 	<h1 class="mt-4">회원 목록</h1>
@@ -23,126 +25,125 @@
 <!--	</ol>-->
 
 	<div class="section">
-		<div class="container">
-			<div class="row">
-					<div class="row">
-						<div class="wrapper" >
-							<table id="memberListSpace" class="table table-bordered">
+		<div class="container" style="width: 100%">
+			<div class="row" style="width: 100%">
+				<div class="wrapper" >
+					<table id="memberListSpace" class="table table-bordered" style="text-align: center">
 
-							</table>
-						</div>
-					</div>
-					<br>
-					<br>
-					<div class="row" style="width: 100%; text-align: center">
-						<div class="pagination" id="pagination">
-							<script>
-								function clickPage(page){
+					</table>
+				</div>
+			</div>
+			</div>
+			<br>
+			<br>
+			<div class="row" style="width: 100%; text-align: center">
+				<div class="pagination" id="pagination" style="display: block; text-align: center;">
+					<script>
+						function clickPage(page){
 
-									$.ajax({
-										type: "GET",
-										url: "/admin/api/user/list?page="+page, //여기 api 따
-										// dataType: "json",
-										success: function (memberList) {
-											const option = {
-												maximumFractionDigits: 4
-											};
+							$.ajax({
+								type: "GET",
+								url: "/admin/api/member/list?page="+page, //여기 api 따
+								// dataType: "json",
+								success: function (memberList) {
+									const option = {
+										maximumFractionDigits: 4
+									};
 
-											let memberListSpace = $("#memberListSpace");
-											memberListSpace.empty();
-											makePagenation(memberList);
+									let memberListSpace = $("#memberListSpace");
+									memberListSpace.empty();
+									makePagenation(memberList);
 
-											console.log(memberList);
+									console.log(memberList);
 
-											memberListSpace.append(
-													`
-													<tr>
-														<th scope="col">회원번호</th>
-														<th scope="col">이름</th>
-														<th scope="col">아이디</th>
-														<th scope="col">휴대폰번호</th>
-														<th scope="col">주소</th>
-														<th scope="col">비스킷</th>
-														<th scope="col">탈퇴여부</th>
-														<th scope="col">패널티여부</th>
-													</tr>
-													`
-											)
-											memberList.content.forEach(function(member){
-												memberListSpace.append(
-														`
-														<tr>
-															<a href="/admin/user/info${member.memberNo}" style="color: black">
-																<th scope="col">${member.memberNo}</th>
-																<th scope="col">${member.memberName}</th>
-																<th scope="col">${member.id}</th>
-																<th scope="col">${member.phone}</th>
-																<th scope="col">${member.address}</th>
-																<th scope="col">${member.biscuit}</th>
-																<th scope="col">${member.isDeleted}</th>
-																<th scope="col">${member.isPenalty}</th>
-															</a>
-														</tr>
-														`
-												);
+									memberListSpace.append(
+											`
+											<tr>
+												<th scope="col">회원번호</th>
+												<th scope="col">닉네임</th>
+												<th scope="col">이메일</th>
+<!--														<th scope="col">주소</th>-->
+												<th scope="col">비스킷</th>
+												<th scope="col">역할</th>
+												<th scope="col">탈퇴여부</th>
+												<th scope="col">패널티여부</th>
+											</tr>
+											`
+									)
+									memberList.content.forEach(function(member){
+										memberListSpace.append(
+												`
+												<tr onclick= "location.href='/admin/member/info/${member.memberNo}'" style="color: black; cursor: pointer">
+													<th scope="col">${member.memberNo}</th>
+													<th scope="col">${member.memberNickname}</th>
+													<th scope="col">${member.email}</th>
+<!--																<th scope="col">${member.address}</th>-->
+													<th scope="col">${member.biscuit}</th>
+													<th scope="col">${member.role}</th>
+													<th scope="col">${member.isDeleted}</th>
+													<th scope="col">${member.isPenalty}</th>
 
-											})
+												</tr>
+												`
+										);
 
-										},
-										error: function () {
-											// alert("현재 유저가 존재하지 않습니다!");
-										}
 									})
+
+								},
+								error: function () {
+									// alert("현재 유저가 존재하지 않습니다!");
 								}
+							})
+						}
 
 
-								function makePagenation(page){
-									let pagination = $("#pagination");
-									pagination.empty();
+						function makePagenation(page){
+							let pagination = $("#pagination");
+							pagination.empty();
 
-									let curr = page.number; // 0 부터임
+							let curr = page.number; // 0 부터임
 
-									console.log("curr : " +curr);
-									let endPage = Math.ceil((curr+1) / 10.0) * 10; // 1~10
-									let startPage = endPage - 9; // 1~10
+							console.log("curr : " +curr);
+							let endPage = Math.ceil((curr+1) / 10.0) * 10; // 1~10
+							let startPage = endPage - 9; // 1~10
 
-									console.log("start : " +startPage);
-									console.log("end : " +endPage);
+							console.log("start : " +startPage);
+							console.log("end : " +endPage);
 
-									if(endPage > page.totalPages-1){ // totalPage는 1부터 셈(Page는 0부터 시작이니 1 빼기)
-										endPage = page.totalPages;
-									}
+							if(endPage > page.totalPages-1){ // totalPage는 1부터 셈(Page는 0부터 시작이니 1 빼기)
+								endPage = page.totalPages;
+							}
 
-									if(curr > 0){ // 이전버튼(<<) &laquo
-										pagination.append(`<a onclick="clickPage(${curr-1}); return false;" href="javascript:void(0)" >&lt;</a>`)
-									}
+							if(curr > 0){ // 이전버튼(<<) &laquo
+								pagination.append(`<a onclick="clickPage(${curr-1}); return false;" href="javascript:void(0)" >&lt;</a>`)
+							}
 
-									for(let i = startPage; i <= endPage; i++){
-										if(curr == i-1){ // active 설정
-											pagination.append(`<a class="active" onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
-										}
-										else{
-											pagination.append(`<a onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
-										}
-									}
-
-									if(curr + 1 < page.totalPages){ // 이후버튼(>>) &raquo
-										pagination.append(`<a onclick="clickPage(${curr+1}); return false;" href="javascript:void(0)">&gt;</a>`)
-									}
-
-									window.scrollTo(0,0); // 맨 위로 이동
-
+							for(let i = startPage; i <= endPage; i++){
+								if(curr == i-1){ // active 설정
+									pagination.append(`<a class="active" onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
 								}
+								else{
+									pagination.append(`<a onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
+								}
+							}
 
-								// 처음 들어올 때
-								$(document).ready(function (){
-									console.log("첫 진입")
-									clickPage(0);
-								})
+							if(curr + 1 < page.totalPages){ // 이후버튼(>>) &raquo
+								pagination.append(`<a onclick="clickPage(${curr+1}); return false;" href="javascript:void(0)">&gt;</a>`)
+							}
 
-							</script>
-						</div>
-					</div>
+							window.scrollTo(0,0); // 맨 위로 이동
+
+						}
+
+						// 처음 들어올 때
+						$(document).ready(function (){
+							console.log("첫 진입")
+							clickPage(0);
+						})
+
+					</script>
+				</div>
+			</div>
 				<br>
 				<br>
 			</div>

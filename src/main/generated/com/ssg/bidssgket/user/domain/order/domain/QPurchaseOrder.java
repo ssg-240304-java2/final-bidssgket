@@ -24,8 +24,6 @@ public class QPurchaseOrder extends EntityPathBase<PurchaseOrder> {
 
     public final com.ssg.bidssgket.common.domain.QBaseTimeAndDeleteEntity _super = new com.ssg.bidssgket.common.domain.QBaseTimeAndDeleteEntity(this);
 
-    public final com.ssg.bidssgket.user.domain.member.domain.QMember buyer;
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
@@ -34,13 +32,17 @@ public class QPurchaseOrder extends EntityPathBase<PurchaseOrder> {
     //inherited
     public final BooleanPath isDeleted = _super.isDeleted;
 
+    public final com.ssg.bidssgket.user.domain.member.domain.QMember member;
+
     public final EnumPath<com.ssg.bidssgket.user.domain.order.domain.enums.OrderStatus> orderStatus = createEnum("orderStatus", com.ssg.bidssgket.user.domain.order.domain.enums.OrderStatus.class);
+
+    public final QParcel parcel;
 
     public final com.ssg.bidssgket.user.domain.payment.domain.QPayment payment;
 
     public final com.ssg.bidssgket.user.domain.product.domain.QProduct product;
 
-    public final NumberPath<Integer> purchaseOrderNo = createNumber("purchaseOrderNo", Integer.class);
+    public final NumberPath<Long> purchaseOrderNo = createNumber("purchaseOrderNo", Long.class);
 
     public final EnumPath<com.ssg.bidssgket.user.domain.order.domain.enums.TransactionType> transactionType = createEnum("transactionType", com.ssg.bidssgket.user.domain.order.domain.enums.TransactionType.class);
 
@@ -65,7 +67,8 @@ public class QPurchaseOrder extends EntityPathBase<PurchaseOrder> {
 
     public QPurchaseOrder(Class<? extends PurchaseOrder> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.buyer = inits.isInitialized("buyer") ? new com.ssg.bidssgket.user.domain.member.domain.QMember(forProperty("buyer"), inits.get("buyer")) : null;
+        this.member = inits.isInitialized("member") ? new com.ssg.bidssgket.user.domain.member.domain.QMember(forProperty("member"), inits.get("member")) : null;
+        this.parcel = inits.isInitialized("parcel") ? new QParcel(forProperty("parcel"), inits.get("parcel")) : null;
         this.payment = inits.isInitialized("payment") ? new com.ssg.bidssgket.user.domain.payment.domain.QPayment(forProperty("payment"), inits.get("payment")) : null;
         this.product = inits.isInitialized("product") ? new com.ssg.bidssgket.user.domain.product.domain.QProduct(forProperty("product"), inits.get("product")) : null;
     }
