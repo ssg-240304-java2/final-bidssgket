@@ -1,7 +1,6 @@
 package com.ssg.bidssgket.user.domain.product.api.dto.request;
 
 import com.ssg.bidssgket.global.util.ncps3.FileDto;
-import com.ssg.bidssgket.user.domain.product.domain.Product;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,12 +24,13 @@ public class RegistProductReqDto extends FileDto{
     private LocalDateTime auctionStartTime;
     private LocalDateTime auctionEndTime;
     private List<String> productImg;
+    private Long memberNo;
 
     @Builder // Builder 패턴 추가
     public RegistProductReqDto(String productName, String category, String productDesc, String salesStatus,
                                Boolean imdPurchase, Boolean auctionSelected, Boolean eventAuction,
                                Integer buyNowPrice, Integer auctionStartPrice, LocalDateTime auctionStartTime,
-                               LocalDateTime auctionEndTime, List<String> productImg) {
+                               LocalDateTime auctionEndTime, List<String> productImg, Long memberNo) {
         this.productName = productName;
         this.category = category;
         this.productDesc = productDesc;
@@ -43,9 +43,14 @@ public class RegistProductReqDto extends FileDto{
         this.auctionStartTime = auctionStartTime;
         this.auctionEndTime = auctionEndTime;
         this.productImg = productImg;
+        this.memberNo = memberNo;
     }
 
     public void setProductImg(List<String> productImg){
         this.productImg = productImg;
+    }
+
+    public void setMemberNo(Long memberNo) {
+        this.memberNo = memberNo;
     }
 }

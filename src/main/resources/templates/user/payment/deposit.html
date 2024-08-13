@@ -7,7 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>결제 | 비스킷 페이 충전</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
         .input-wrapper {
             position: relative;
@@ -16,18 +19,27 @@
         .input-bold {
             font-weight: bold;
         }
+        #btn-pay-ready {
+            background-color: #FAE300;
+            color: #3C1E1E;
+            font-weight: 800;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 <main class="contents" layout:fragment="content">
     <div class="container mx-auto flex" style="max-width: 1440px;">
         <aside class="w-52 p-4" style="max-width: 210px;">
-            <a href="/user/order/mypage" class="block">
+            <a href="/user/mypage" class="block">
                 <h2 class="text-2xl font-bold mb-4 transform hover:scale-105 transition-transform duration-300">마이 페이지</h2>
             </a>
             <ul class="space-y-2">
                 <li>
-                    <a href="/user/order/mypage" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">쇼핑 정보</a>
+                    <a href="/user/mypage" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">쇼핑 정보</a>
                 </li>
                 <li>
                     <a href="/user/order/purchases/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">구매 내역</a>
@@ -44,7 +56,6 @@
             </ul>
         </aside>
         <section class="flex-1 p-4" style="max-width: 1230px;">
-<!--    <div class="container mx-auto" style="max-width: 1230px;">-->
         <div class="mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg" style="width: 600px;">
             <h1 class="text-xl font-bold mb-4">비스킷 페이 충전</h1>
             <div class="mb-4 w-full text-right">
@@ -67,74 +78,86 @@
             <div class="flex justify-between items-center mb-4">
                 <h1 class="text-xl font-bold">결제수단</h1>
             </div>
-            <div class="space-y-4">
-                <div class="flex items-center">
-                    <input type="radio" name="payment" id="general" class="mr-2" checked>
-                    <label for="general" class="text-lg font-semibold">일반결제</label>
-                </div>
-                <div class="pl-8">
-                    <div class="flex items-center mb-4">
-                        <button class="py-2 px-4 bg-white border border-gray-300 rounded mr-2">신용카드</button>
-                    </div>
-                    <div class="mb-4">
-                        <select class="w-full py-2 px-4 border border-gray-300 rounded">
-                            <option>삼성</option>
-                        </select>
-                    </div>
-                </div>
+            <div>
+                <buton id="btn-pay-ready">kakao pay <i class="fa-solid fa-comment"></i></buton>
                 <button class="w-full py-4 mt-6 text-white bg-gray-300 rounded-lg">충전하기</button>
             </div>
         </div>
         </section>
     </div>
 
-        <!-- 충전 금액 포맷팅 및 숫자 제한 -->
-        <script>
-            function formatNumber(value) {
-                return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            }
-
-            function moveCursorToLeftOfSuffix(input) {
-                const value = input.value;
-                const suffix = '원';
-                if (value.endsWith(suffix)) {
-                    const cursorPosition = value.length - suffix.length;
-                    input.setSelectionRange(cursorPosition, cursorPosition);
+    <script type="text/javascript">
+        // 카카오페이 결제 팝업창 연결
+        $(function() {
+            $("#btn-pay-ready").click(function(e) {
+                let data = {
+                    name: '비스킷 페이 충전', // 카카오페이에 보낼 대표 상품명
+                    totalPrice: 100000 // 총 결제 금액
                 }
-            }
-
-            document.getElementById('amount-input').addEventListener('input', function (e) {
-                let value = e.target.value.replace(/[^0-9]/g, ''); // 숫자가 아닌 문자 제거
-                if (value) {
-                    e.target.value = formatNumber(value) + '원'; // 숫자 포맷팅 및 "원" 추가
-                    e.target.classList.add('input-bold'); // 숫자가 입력되면 굵게 표시
-                    moveCursorToLeftOfSuffix(e.target);
-                } else {
-                    e.target.value = ''; // 입력값이 없으면 빈 문자열로 설정
-                    e.target.classList.remove('input-bold'); // 숫자가 없으면 굵게 표시 제거
-                }
+                $.ajax({
+                    url: '/user/payment/ready',
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        location.href = response.next_redirect_pc_url;
+                    },
+                    error: function(xhr, err, status) {
+                        console.log(xhr.responseText);
+                        alert(err + "이(가) 발생했습니다: " + status);
+                    }
+                });
             });
+        });
+    </script>
 
-            document.getElementById('amount-input').addEventListener('keydown', function (e) {
-                const suffix = '원';
-                if (e.key === 'ArrowRight') {
-                    const value = e.target.value;
-                    if (value.endsWith(suffix)) {
-                        const cursorPosition = e.target.selectionStart;
-                        if (cursorPosition >= value.length - suffix.length) {
-                            e.preventDefault();
-                            moveCursorToLeftOfSuffix(e.target);
-                        }
+    <!-- 충전 금액 포맷팅 및 숫자 제한 -->
+    <script>
+        function formatNumber(value) {
+            return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function moveCursorToLeftOfSuffix(input) {
+            const value = input.value;
+            const suffix = '원';
+            if (value.endsWith(suffix)) {
+                const cursorPosition = value.length - suffix.length;
+                input.setSelectionRange(cursorPosition, cursorPosition);
+            }
+        }
+
+        document.getElementById('amount-input').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/[^0-9]/g, ''); // 숫자가 아닌 문자 제거
+            if (value) {
+                e.target.value = formatNumber(value) + '원'; // 숫자 포맷팅 및 "원" 추가
+                e.target.classList.add('input-bold'); // 숫자가 입력되면 굵게 표시
+                moveCursorToLeftOfSuffix(e.target);
+            } else {
+                e.target.value = ''; // 입력값이 없으면 빈 문자열로 설정
+                e.target.classList.remove('input-bold'); // 숫자가 없으면 굵게 표시 제거
+            }
+        });
+
+        document.getElementById('amount-input').addEventListener('keydown', function (e) {
+            const suffix = '원';
+            if (e.key === 'ArrowRight') {
+                const value = e.target.value;
+                if (value.endsWith(suffix)) {
+                    const cursorPosition = e.target.selectionStart;
+                    if (cursorPosition >= value.length - suffix.length) {
+                        e.preventDefault();
+                        moveCursorToLeftOfSuffix(e.target);
                     }
                 }
-            });
+            }
+        });
 
-            document.getElementById('amount-input').addEventListener('mouseup', function (e) {
-                setTimeout(() => {
-                    moveCursorToLeftOfSuffix(e.target);
-                }, 0);
-            });
-        </script>
+        document.getElementById('amount-input').addEventListener('mouseup', function (e) {
+            setTimeout(() => {
+                moveCursorToLeftOfSuffix(e.target);
+            }, 0);
+        });
+    </script>
 </main>
 </body>
 </html>

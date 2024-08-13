@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Slf4j
 @Controller
-@RequestMapping("/user/order")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class OrderViewController {
 
     @GetMapping("/mypage")
     public String mypage() { return "/user/order/mypage"; }
 
-    @GetMapping("/checkout")
+    @GetMapping("/order/checkout")
     public String productCheckout() { return "/user/order/checkout"; }
 }
