@@ -7,12 +7,11 @@ import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto;
-import com.ssg.bidssgket.user.domain.product.domain.Category;
-import com.ssg.bidssgket.user.domain.product.domain.Product;
-import com.ssg.bidssgket.user.domain.product.domain.ProductImage;
-import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
+import com.ssg.bidssgket.user.domain.product.domain.*;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductImageRepository;
+import com.ssg.bidssgket.user.domain.product.domain.repository.ProductReportRepository;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
+import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReportReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,10 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -180,6 +178,14 @@ public class ProductService {
     public List<Product> searchProducts(String search) {
         LocalDateTime now = LocalDateTime.now();
         return productRepository.searchBySearch(search,now);
+    }
+
+    public List<Auction> findDeleteAuction(Long memberNo) {
+        return auctionRepository.findDeleteAuctionByMember(memberNo);
+    }
+
+    public List<Auction> findAuctionByProductNo(Long productNo) {
+        return auctionRepository.findAuctionByProductNo(productNo);
     }
 }
 

@@ -105,50 +105,10 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-              <td>f******t</td>
-              <td>5,769 원</td>
-              <td>2024.08.11 15시 34분 42초</td>
-            </tr>
-            <tr>
-              <td>d***e</td>
-              <td>4,300 원</td>
-              <td>2024.08.10 22시 11분 35초</td>
-            </tr>
-            <tr>
-              <td>f****7</td>
-              <td>4,186 원</td>
-              <td>2024.08.10 19시 52분 01초</td>
-            </tr>
-            <tr>
-              <td>f*****r</td>
-              <td>3,980 원</td>
-              <td>2024.08.11 15시 34분 42초</td>
-            </tr>
-            <tr>
-              <td>d***e</td>
-              <td>3,900 원</td>
-              <td>2024.08.10 22시 11분 35초</td>
-            </tr>
-            <tr>
-              <td>f****7</td>
-              <td>3,800 원</td>
-              <td>2024.08.10 19시 52분 01초</td>
-            </tr>
-            <tr>
-              <td>f******t</td>
-              <td>3,390 원</td>
-              <td>2024.08.11 15시 34분 42초</td>
-            </tr>
-            <tr>
-              <td>d***e</td>
-              <td>3,186 원</td>
-              <td>2024.08.10 22시 11분 35초</td>
-            </tr>
-            <tr>
-              <td>f****7</td>
-              <td>3,186 원</td>
-              <td>2024.08.10 19시 52분 01초</td>
+            <tr th:each="auction : ${auctions}">
+              <td th:text="${auction.member.email.split('@')[0].length() > 4 ? auction.member.email.split('@')[0].substring(0, auction.member.email.split('@')[0].length() - 4) + '****' + '@' + auction.member.email.split('@')[1] : '****' + '@' + auction.member.email.split('@')[1]}"></td>
+              <td th:text="${#numbers.formatInteger(auction.minTenderPrice, 0)} + ' 원'"></td>
+              <td th:text="${#temporals.format(auction.tenderDate, 'yyyy.MM.dd HH:mm:ss')}"></td>
             </tr>
             </tbody>
           </table>
