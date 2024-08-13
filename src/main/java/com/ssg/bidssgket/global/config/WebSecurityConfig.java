@@ -21,10 +21,22 @@ public class WebSecurityConfig {
                 .requestMatchers(
                         new AntPathRequestMatcher("/admin/**"),
                         new AntPathRequestMatcher("/user/**"),
-                        new AntPathRequestMatcher("/error")
+                        new AntPathRequestMatcher("/error"),
+                        new AntPathRequestMatcher("/error"),
+                        new AntPathRequestMatcher("/favicon.ico"),
+                        new AntPathRequestMatcher("/image_make_light"),
+                        new AntPathRequestMatcher("/no-image-square"),
+                        new AntPathRequestMatcher("/valid.js")
                 );    //static관련 핸들러 메소드에서 필터링 제외시킴.
     }
 
+    //                .antMatchers("/api/users/**").permitAll()
+//                .antMatchers("/api/issue").permitAll()
+//                .antMatchers("/admin/**").permitAll()
+//                .antMatchers("/favicon.ico").permitAll()
+//                .antMatchers("/swagger-ui/**").permitAll()
+//                .antMatchers("/api-docs/**").permitAll()
+//                .antMatchers("/error/**").permitAll()
     private final CustomOAuth2UserService customOAuth2UserService;
 
     public WebSecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
