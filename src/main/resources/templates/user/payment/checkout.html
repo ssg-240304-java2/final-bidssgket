@@ -77,15 +77,17 @@
                         <div>
                             <div class="text-gray-900 mb-2">
                                 <span class="text-gray-400 mr-10">받는 분</span>
-                                <span>홍길동</span>
+                                <input id="receiverName" type="text" class="border rounded p-2" placeholder="이름을 입력하세요."/>
                             </div>
                             <div class="text-gray-900 mb-2">
                                 <span class="text-gray-400 mr-11">연락처</span>
-                                <span>010-1234-1644</span>
+                                <input id="contactNumber" type="text" class="border rounded p-2" placeholder="전화번호를 입력하세요."/>
                             </div>
                             <div class="text-gray-900 mb-2">
                                 <span class="text-gray-400 mr-6">배송 주소</span>
-                                <span>(06166) 서울특별시 강남구 삼성로 534 SAC아트홀 6층</span>
+                                <span id="shippingAddress">
+<!--                                    <span th:text=""></span>-->
+                                </span>
                             </div>
                         </div>
                         <div class="flex flex-col items-end">
@@ -98,11 +100,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center mt-4">
-                        <input type="text" class="border w-full p-3 rounded" placeholder="문 앞에 놔주세요."/>
-                        <button class="p-3">
-                            <i class="fas fa-chevron-right text-gray-600"></i>
-                        </button>
+                    <div class="mt-4" id="requestListContainer">
+                        <label for="deliveryRequest" class="text-gray-400">배송 요청 사항</label>
+                        <select id="deliveryRequest" name="deliveryRequest" class="border w-full p-3 rounded">
+                            <option value="문 앞에 놔주세요.">문 앞에 놔주세요.</option>
+                            <option value="경비실에 맡겨주세요.">경비실에 맡겨주세요.</option>
+                            <option value="배송 전에 전화주세요.">배송 전에 전화주세요.</option>
+                            <option value="직접 입력">판매자에게 직접 채팅으로 요청</option>
+                        </select>
                     </div>
                 </div>
                 <div class="border-b pt-4 pb-4 mb-4">

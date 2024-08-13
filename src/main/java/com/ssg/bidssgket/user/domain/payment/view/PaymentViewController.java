@@ -48,12 +48,12 @@ public class PaymentViewController {
 //        String email = oAuth2User.getAttribute("email"); // 이메일 정보 추출
 //        log.info("[PaymentViewController] (showPaymentPage) User email: {}", email);
 
-        // Test용 이메일
-        String email = "yunjc536147@gmail.com";
+//         Test용 이메일
+        String email = "finite2030@gmail.com";
 
-        // 이메일을 통해 데이터베이스에서 회원 정보 가져오기
+//         이메일을 통해 데이터베이스에서 회원 정보 가져오기
         Member member = memberTestService.getMemberByEmail(email);
-        log.info("[MemberTestService] (getMemberByMemberName) member: {}", member);
+        log.info("[MemberTestService] (getMemberByMemberName) member: {}", member.getEmail());
 
         // 2. 상품 정보 가져오기
         ProductResDto product = productService.findProductByNo(productNo);
