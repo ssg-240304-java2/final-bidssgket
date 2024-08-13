@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -17,22 +18,35 @@ public class QChatImage extends EntityPathBase<ChatImage> {
 
     private static final long serialVersionUID = -1687026508L;
 
-    public static final QChatImage chatImage = new QChatImage("chatImage");
+    private static final PathInits INITS = PathInits.DIRECT2;
 
-    public final StringPath chat_image = createString("chat_image");
+    public static final QChatImage chatImage1 = new QChatImage("chatImage1");
 
-    public final NumberPath<Integer> chat_image_no = createNumber("chat_image_no", Integer.class);
+    public final QChatContent chatContent;
+
+    public final StringPath chatImage = createString("chatImage");
+
+    public final NumberPath<Long> chatImageNo = createNumber("chatImageNo", Long.class);
 
     public QChatImage(String variable) {
-        super(ChatImage.class, forVariable(variable));
+        this(ChatImage.class, forVariable(variable), INITS);
     }
 
     public QChatImage(Path<? extends ChatImage> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QChatImage(PathMetadata metadata) {
-        super(ChatImage.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QChatImage(PathMetadata metadata, PathInits inits) {
+        this(ChatImage.class, metadata, inits);
+    }
+
+    public QChatImage(Class<? extends ChatImage> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.chatContent = inits.isInitialized("chatContent") ? new QChatContent(forProperty("chatContent"), inits.get("chatContent")) : null;
     }
 
 }
