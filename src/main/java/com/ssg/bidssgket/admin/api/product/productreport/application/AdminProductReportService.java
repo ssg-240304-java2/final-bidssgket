@@ -18,13 +18,27 @@ public class AdminProductReportService {
     private final AdminProductReportRepository adminProductRepository;
 
 
-    public Page<AdminProductReportResDto> getProductReportList(Pageable pageable){
+    public Page<AdminProductReportResDto> getWaitingProductReportList(Pageable pageable){
         Page<AdminProductReportResDto> productResDtos = adminProductRepository.findAll(pageable).map(AdminProductReportResDto::new);
 
         return productResDtos;
     }
 
-    public void deleteProductReport(Long complainNo) {
+    public Page<AdminProductReportResDto> getApprovalProductReportList(Pageable pageable){
+        Page<AdminProductReportResDto> productResDtos = adminProductRepository.findAll(pageable).map(AdminProductReportResDto::new);
+
+        return productResDtos;
+    }
+
+    public Page<AdminProductReportResDto> getRejectionProductReportList(Pageable pageable){
+        Page<AdminProductReportResDto> productResDtos = adminProductRepository.findAll(pageable).map(AdminProductReportResDto::new);
+
+        return productResDtos;
+    }
+
+
+
+    public void rejectProductReport(Long complainNo) {
         adminProductRepository.deleteById(complainNo);
 
     }

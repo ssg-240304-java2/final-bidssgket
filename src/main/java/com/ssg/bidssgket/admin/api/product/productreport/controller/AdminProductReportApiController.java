@@ -22,28 +22,69 @@ public class AdminProductReportApiController {
     private final AdminProductReportService adminProductService;
 
     /**
-     * 상품 신고 목록 조회
+     * 상품 신고 대기 목록 조회
      * paging 처리(ajax)
      */
-    @GetMapping("/list")
-    public ResponseEntity<Page<AdminProductReportResDto>> getProductReportList(@PageableDefault(size = 32, sort="complainDate", direction = Sort.Direction.DESC) Pageable pageable){
+    @GetMapping("/waiting/list")
+    public ResponseEntity<Page<AdminProductReportResDto>> getWaitingProductReportList(@PageableDefault(size = 32, sort="complainDate", direction = Sort.Direction.DESC) Pageable pageable){
 
-        log.info("==== get product report List ====");
+        log.info("==== get waiting product report List ====");
 
-        Page<AdminProductReportResDto> productReportList = adminProductService.getProductReportList(pageable);
+        Page<AdminProductReportResDto> productReportList = adminProductService.getWaitingProductReportList(pageable);
+
+        return new ResponseEntity<>(productReportList, HttpStatus.OK);
+    }
+
+
+    /**
+     * 상품 신고 승인 목록 조회
+     * paging 처리(ajax)
+     */
+    @GetMapping("/approval/list")
+    public ResponseEntity<Page<AdminProductReportResDto>> getApproveProductReportList(@PageableDefault(size = 32, sort="complainDate", direction = Sort.Direction.DESC) Pageable pageable){
+
+        log.info("==== get approval product report List ====");
+
+        Page<AdminProductReportResDto> productReportList = adminProductService.getApprovalProductReportList(pageable);
 
         return new ResponseEntity<>(productReportList, HttpStatus.OK);
     }
 
     /**
+     * 상품 신고 반려 목록 조회
+     * paging 처리(ajax)
+     */
+    @GetMapping("/rejection/list")
+    public ResponseEntity<Page<AdminProductReportResDto>> getRejectProductReportList(@PageableDefault(size = 32, sort="complainDate", direction = Sort.Direction.DESC) Pageable pageable){
+
+        log.info("==== get rejection product report List ====");
+
+        Page<AdminProductReportResDto> productReportList = adminProductService.getRejectionProductReportList(pageable);
+
+        return new ResponseEntity<>(productReportList, HttpStatus.OK);
+    }
+
+
+    /**
+     * 상품 신고 승인
+     */
+    @PutMapping("/approval/{complainNo}")
+    public ResponseEntity<String> approveProductReport(@PathVariable(name = "complainNo") Long complainNo){
+        adminProductService.approveProductReport(complainNo);
+
+        return new ResponseEntity<>("성공적으로 승인했습니다..", HttpStatus.OK);
+    }
+
+
+    /**
      * 상품 신고 반려
      *
      */
-    @DeleteMapping("/{complainNo}")
-    public ResponseEntity<String> deleteProductReport(@PathVariable(name = "complainNo") Long complainNo){
-        adminProductService.deleteProductReport(complainNo);
+    @PutMapping("/rejection/{complainNo}")
+    public ResponseEntity<String> rejectProductReport(@PathVariable(name = "complainNo") Long complainNo){
+        adminProductService.rejectProductReport(complainNo);
 
-        return new ResponseEntity<>("성공적으로 삭제하였습니다.", HttpStatus.OK);
+        return new ResponseEntity<>("성공적으로 반려했습니다.", HttpStatus.OK);
     }
 
 

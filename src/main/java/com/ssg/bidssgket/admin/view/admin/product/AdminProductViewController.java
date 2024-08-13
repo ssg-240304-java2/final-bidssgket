@@ -40,14 +40,38 @@ public class AdminProductViewController {
 
 
     /**
-     * 상품 신고 목록 조회 페이지
+     * 상품 신고 대기 목록 조회 페이지
      */
-    @GetMapping("/report/list")
-    public String userReportListPage() {
+    @GetMapping("/report/waiting/list")
+    public String userReportWaitingListPage() {
         log.info("===== product report list page =====");
 
-        return "admin/content/pages/product/product-report-list";
+        return "admin/content/pages/product/product-report-waiting-list";
     }
+
+
+    /**
+     * 상품 신고 거절 목록 조회 페이지
+     */
+    @GetMapping("/report/rejection/list")
+    public String userReportRejectionListPage() {
+        log.info("===== product report list page =====");
+
+        return "admin/content/pages/product/product-report-rejection-list";
+    }
+
+
+    /**
+     * 상품 신고 승인 목록 조회 페이지
+     */
+    @GetMapping("/report/approval/list")
+    public String userReportApprovalListPage() {
+        log.info("===== product report list page =====");
+
+        return "admin/content/pages/product/product-report-approval-list";
+    }
+
+
 
 
     /**

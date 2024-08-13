@@ -22,6 +22,7 @@ public class AdminProductReportResDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDateTime complainDate;
     private Long memberNo;
+    private String acceptance;
 
 
     public AdminProductReportResDto(ProductReport productReport) {
@@ -30,5 +31,7 @@ public class AdminProductReportResDto {
         this.complainContent = productReport.getComplainContent();
         this.complainDate = productReport.getComplainDate();
         this.memberNo = productReport.getMember().getMemberNo();
+        this.acceptance = "";
     }
+
 }
