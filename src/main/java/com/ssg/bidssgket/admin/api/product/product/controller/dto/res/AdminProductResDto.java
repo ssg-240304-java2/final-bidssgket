@@ -3,7 +3,7 @@ package com.ssg.bidssgket.admin.api.product.product.controller.dto.res;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ssg.bidssgket.user.domain.product.domain.Category;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
-import com.ssg.bidssgket.user.domain.product.domain.Sales_status;
+import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +18,7 @@ public class AdminProductResDto {
     private Long productNo;
     private String productName;
     private Category category;
-    private Sales_status salesStatus;
+    private SalesStatus salesStatus;
     private String imdPurchase;
     private Integer buyNowPrice;
     private String auctionSelected;

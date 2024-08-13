@@ -34,6 +34,8 @@ public class QPayChange extends EntityPathBase<PayChange> {
 
     public final EnumPath<com.ssg.bidssgket.user.domain.payment.domain.enums.PayChangeType> payChangeType = createEnum("payChangeType", com.ssg.bidssgket.user.domain.payment.domain.enums.PayChangeType.class);
 
+    public final NumberPath<Integer> updatedBalance = createNumber("updatedBalance", Integer.class);
+
     public QPayChange(String variable) {
         this(PayChange.class, forVariable(variable), INITS);
     }

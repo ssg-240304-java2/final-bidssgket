@@ -22,7 +22,7 @@ public class AdminMemberResDto {
         this.memberNickname = member.getMemberNickname();
         this.email = member.getEmail();
 //        this.address = member.getAddress().toString();
-        this.role = member.getRole();
+        this.role = member.getRole().toString();
         this.biscuit = member.getBiscuit();
         this.isDeleted = member.isDeleted() == true ? "YES" : "NO";
         this.isPenalty = member.isPenalty() == true ? "YES" : "NO";

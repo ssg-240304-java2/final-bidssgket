@@ -42,5 +42,9 @@ public class AdminProductReportService {
         adminProductRepository.deleteById(complainNo);
 
     }
+    public void approveProductReport(Long complainNo) {
+        adminProductRepository.deleteById(complainNo);
+
+    }
 
 }

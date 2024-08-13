@@ -1,10 +1,7 @@
 package com.ssg.bidssgket.admin.api.product.productreport.controller.dto.res;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ssg.bidssgket.user.domain.product.domain.Category;
-import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.ProductReport;
-import com.ssg.bidssgket.user.domain.product.domain.Sales_status;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

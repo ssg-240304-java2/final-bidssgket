@@ -65,7 +65,7 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final com.ssg.bidssgket.user.domain.order.domain.QSaleOrder saleOrder;
 
-    public final EnumPath<Sales_status> salesStatus = createEnum("salesStatus", Sales_status.class);
+    public final EnumPath<SalesStatus> salesStatus = createEnum("salesStatus", SalesStatus.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
