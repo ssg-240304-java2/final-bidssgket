@@ -92,7 +92,7 @@
         </a>
     </div>
     <div class="category-card">
-        <a href="/user/product/list">
+        <a href="/list">
             <img src="/user/main/images/잡화.png" alt="전체">
             <div class="card-category-title">전체</div>
         </a>
@@ -116,7 +116,9 @@
                         <div th:id="'carouselExample' + ${product.productNo}" class="carousel slide carousel-product" data-bs-ride="carousel">
                             <div class="carousel-inner">
                                 <div th:each="productImage, iterStat : ${product.productImages}" class="carousel-item" th:classappend="${iterStat.index == 0} ? ' active'">
+                                    <a th:href="@{/detail/{productNo}(productNo=${product.productNo})}">
                                     <img th:src="@{${productImage.productImg}}" class="d-block w-100 card-img-top" th:alt="'이미지 ' + ${iterStat.index + 1}">
+                                    </a>
                                 </div>
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample0" data-bs-slide="prev">
@@ -129,14 +131,15 @@
                             </button>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title" th:text="${product.productName}">
+                            <h5 class="card-title">
+                                <a th:href="@{/detail/{productNo}(productNo=${product.productNo})}" th:text="${product.productName}" style="text-decoration-line: none; color: black;"></a>
                                 <button class="wishheartbtn" onclick="toggleHeart(this)">
                                     <img src="/user/main/images/empty_heart2.png" alt="관심 없음" class="wishheart">
                                 </button>
                             </h5>
-                            <p class="card-text">경매 종료: <span th:text="${product.auctionEndTime}" id="auction-end-1"></span></p>
-                            <p class="card-text">즉시 구매 가격: <span th:text="|${product.buyNowPrice}원|" id="current-price-1"></span></p>
-                            <p class="card-text">경매 시작가: <span th:text="|${product.auctionStartPrice}원|" id="starting-price-1"></span></p>
+                            <p class="card-text">경매 종료 일자: <span th:text="${product.auctionEndTime}" id="auction-end-1"></span></p>
+                            <p class="card-text" th:if="${product.buyNowPrice != null}">즉시 구매 가격: <span th:text="|${product.buyNowPrice}원|" id="current-price-1"></span></p>
+                            <p class="card-text" th:if="${product.auctionStartPrice != null}">경매 시작가: <span th:text="|${product.auctionStartPrice}원|" id="starting-price-1"></span></p>
                         </div>
                     </div>
                 </div>
@@ -203,6 +206,22 @@
             imgElement.setAttribute('alt', '관심 없음');
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 모든 경매 종료 시간 요소를 선택
+        const auctionEndTimes = document.querySelectorAll('[id^="auction-end-"]');
+
+        auctionEndTimes.forEach(function(element) {
+            let dateTime = element.textContent;
+
+            // T를 /로 대체
+            let formattedDateTime = dateTime.replace('T', ' / ');
+
+            // 변경된 내용을 다시 요소에 할당
+            element.textContent = formattedDateTime;
+        });
+    });
+
 </script>
 </body>
 </html>

@@ -1,5 +1,7 @@
 package com.ssg.bidssgket.user.domain.product.view;
 
+import com.ssg.bidssgket.user.domain.auction.domain.Auction;
+import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
@@ -11,7 +13,6 @@ import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,23 +30,26 @@ import java.util.Optional;
 
 @Slf4j
 @Controller
-//@RequestMapping("/user/product")
 @RequiredArgsConstructor
 public class ProductViewController {
 
     private final ProductService productService;
     private final MemberRepository memberRepository;
 
+
     @GetMapping("/register")
     public String registController(Model model, HttpSession httpSession) {
         String member = ((SessionMember) httpSession.getAttribute("member")).getEmail();
         Optional<Member> memberInfo = memberRepository.findByEmail(member);
         if (memberInfo.isPresent()) {
-            model.addAttribute("member", memberInfo.get().getMemberNo());
+            Long memberNo = memberInfo.get().getMemberNo();
+            model.addAttribute("registProductReqDto",RegistProductReqDto.builder()
+                    .memberNo(memberNo)
+                    .build());
+            System.out.println("memberNo = " + memberNo);;
+        } else {
+            throw new IllegalArgumentException("Member not found for email: " + member);
         }
-        System.out.println("memberInfo.get().getMemberNo() = " + memberInfo.get().getMemberNo());
-        model.addAttribute("member", member);
-        model.addAttribute("registProductReqDto",RegistProductReqDto.builder().build());
         return "user/product/register";
     }
 
@@ -53,9 +57,9 @@ public class ProductViewController {
     public String registProduct(@ModelAttribute RegistProductReqDto registProductReqDto,
                                 @RequestParam("productImages")List<MultipartFile> productImages,
                                 HttpSession httpSession) {
+        System.out.println("registProductReqDto.getMemberNo() = " + registProductReqDto.getMemberNo());
         productService.registProduct(registProductReqDto, productImages);
-        // fileDto -> entity로 바꿔서 DB에 파일 저장
-        return "redirect:/user/main/mainpage";
+        return "redirect:/list";
     }
 
     @GetMapping("/update/{productNo}")
@@ -138,14 +142,27 @@ public class ProductViewController {
         return "user/product/list";
     }
 
-//    @GetMapping("/detail")
-//    public String detailController(Model model, @PathVariable("productNo") Long productNo,
-//                                   HttpSession httpSession) {
-//        String member = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-//        Optional<Member> memberInfo = memberRepository.findByEmail(member);
-//        Long memberNo = memberInfo.get().getMemberNo();
-//        List<Product> products = productService.getProductsByMember(memberNo);
-//        return null;
-//    }
+    @GetMapping("/detail/{productNo}")
+    public String detailController(Model model, @PathVariable("productNo") Long productNo,
+                                   HttpSession httpSession) {
+        String member = ((SessionMember) httpSession.getAttribute("member")).getEmail();
+        Optional<Member> memberInfo = memberRepository.findByEmail(member);
+        Long memberNo = memberInfo.get().getMemberNo();
+        List<Product> products = productService.getProductsByMember(memberNo);
+        List<Auction> auctions = productService.findAllByProductNo(productNo);
+        boolean isSeller = products.stream()
+                                    .anyMatch(product -> product.getProductNo().equals(productNo));
+        boolean isAuction = auctions.stream()
+                                    .anyMatch(auction -> auction.getMember().getMemberNo().equals(memberNo));
+        if (isSeller) {
+            return "redirect:/detailSeller/" + productNo;
+        }else {
+            if (isAuction) {
+                return "redirect:/detailAuction/" + productNo;
+            } else {
+                return "redirect:/detailBuyer/" + productNo;
+            }
+        }
+    }
 
 }

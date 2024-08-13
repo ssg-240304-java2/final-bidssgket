@@ -2,6 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head>
     <link rel="stylesheet" type="text/css" href="/user/css/style.css">
+    <style>
+        /* 배경색이 흰색인 경우 검색 버튼 색상도 흰색으로 설정 */
+        .btn-search {
+            background-color: black; /* 배경색과 일치 */
+            color: white; /* 텍스트 색상 */
+            border: 1px solid black; /* 부드러운 테두리 */
+        }
+    </style>
 </head>
 <body>
 <div th:fragment="headerFragment" class="header" style="max-width: 1440px;">
@@ -37,13 +45,16 @@
                     </div>
                 </div>
                 <div class="auction">
-                    <a href="#">경매</a>
+                    <a href="/auction/auctionMain">경매</a>
                 </div>
                 <div class="product_regist">
-                    <a href="/user/product/register">상품등록</a>
+                    <a href="/register">상품등록</a>
                 </div>
             </nav>
-            <input type="text" placeholder="Search">
+            <form action="/search" method="get"  class="d-flex align-items-center">
+                <input type="text" name="search" class="form-control me-2" placeholder="Search" th:value="${search}" style="flex: 1;">
+                <button class="btn btn-search" type="submit">검색</button>
+            </form>
         </div>
     </div>
     <script>
