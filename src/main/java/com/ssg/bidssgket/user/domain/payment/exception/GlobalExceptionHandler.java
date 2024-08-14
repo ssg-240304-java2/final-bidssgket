@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 
         log.error((Supplier<String>) () -> "처리할 수없는 예외가 발생했습니다.", e);
 
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getStackTrace().toString());
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
