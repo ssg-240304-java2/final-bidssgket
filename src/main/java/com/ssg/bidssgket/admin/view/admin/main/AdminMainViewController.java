@@ -16,7 +16,7 @@ public class AdminMainViewController {
     /**
      * 메인 페이지
      */
-//    @GetMapping("")
+    @GetMapping("")
     public String mainPage() {
 
         return "admin/content/main";

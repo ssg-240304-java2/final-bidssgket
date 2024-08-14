@@ -34,13 +34,13 @@ public class QParcel extends EntityPathBase<Parcel> {
     //inherited
     public final BooleanPath isDeleted = _super.isDeleted;
 
-    public final NumberPath<Integer> parcelNo = createNumber("parcelNo", Integer.class);
+    public final com.ssg.bidssgket.user.domain.member.domain.QMember member;
+
+    public final NumberPath<Long> parcelNo = createNumber("parcelNo", Long.class);
 
     public final QPurchaseOrder purchaseOrder;
 
     public final QSaleOrder saleOrder;
-
-    public final com.ssg.bidssgket.user.domain.member.domain.QMember seller;
 
     public final StringPath trackingNum = createString("trackingNum");
 
@@ -65,9 +65,9 @@ public class QParcel extends EntityPathBase<Parcel> {
 
     public QParcel(Class<? extends Parcel> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.member = inits.isInitialized("member") ? new com.ssg.bidssgket.user.domain.member.domain.QMember(forProperty("member"), inits.get("member")) : null;
         this.purchaseOrder = inits.isInitialized("purchaseOrder") ? new QPurchaseOrder(forProperty("purchaseOrder"), inits.get("purchaseOrder")) : null;
         this.saleOrder = inits.isInitialized("saleOrder") ? new QSaleOrder(forProperty("saleOrder"), inits.get("saleOrder")) : null;
-        this.seller = inits.isInitialized("seller") ? new com.ssg.bidssgket.user.domain.member.domain.QMember(forProperty("seller"), inits.get("seller")) : null;
     }
 
 }

@@ -36,7 +36,7 @@ public class QPayment extends EntityPathBase<Payment> {
 
     public final QPayChange payChange;
 
-    public final NumberPath<Integer> paymentNo = createNumber("paymentNo", Integer.class);
+    public final NumberPath<Long> paymentNo = createNumber("paymentNo", Long.class);
 
     public final EnumPath<com.ssg.bidssgket.user.domain.payment.domain.enums.PaymentStatus> paymentStatus = createEnum("paymentStatus", com.ssg.bidssgket.user.domain.payment.domain.enums.PaymentStatus.class);
 

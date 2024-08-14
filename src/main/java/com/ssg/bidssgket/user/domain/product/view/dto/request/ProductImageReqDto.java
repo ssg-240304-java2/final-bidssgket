@@ -11,5 +11,5 @@ public class ProductImageReqDto {
     private Long productImgNo;
     private String productImg;
     private boolean productThumbnail;
-    private int productNo;
+    private Long productNo;
 }

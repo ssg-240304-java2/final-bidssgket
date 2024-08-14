@@ -13,7 +13,11 @@
 </th:block>
 
 <div layout:fragment="content">
-
+	<style>
+		a:link{color:black;text-decoration:none;}
+		a:visited{color:black;text-decoration:none;}
+		a:hover{color:blue;text-decoration:none;}
+	</style>
 
 	<h1 class="mt-4">상품 목록</h1>
 <!--	<ol class="breadcrumb mb-4">-->
@@ -21,132 +25,133 @@
 <!--	</ol>-->
 
 	<div class="section">
-		<div class="container">
-			<div class="row">
-					<div class="row">
-						<div class="wrapper" >
-							<table id="productListSpace" class="table table-bordered">
+		<div class="container" style="width: 100%">
+			<div class="row" style="width: 100%">
+				<div class="wrapper" >
+					<table id="productListSpace" class="table table-bordered" style="text-align: center">
 
-							</table>
-						</div>
-					</div>
-					<br>
-					<br>
-					<div class="row" style="width: 100%; text-align: center">
-						<div class="pagination" id="pagination">
-							<script>
-								function clickPage(page){
+					</table>
+				</div>
+			</div>
+			<br>
+			<br>
+			<div class="row" style="width: 100%; text-align: center">
+					<div class="pagination" id="pagination" style="display: block; text-align: center;">
+						<script>
+							function clickPage(page){
 
-									$.ajax({
-										type: "GET",
-										url: "/admin/api/product/list?page="+page,
-										// url: "/sales-history?page="+page,
-										// dataType: "json",
-										success: function (productList) {
-											const option = {
-												maximumFractionDigits: 4
-											};
+								$.ajax({
+									type: "GET",
+									url: "/admin/api/product/list?page="+page,
+									// url: "/sales-history?page="+page,
+									// dataType: "json",
+									success: function (productList) {
+										const option = {
+											maximumFractionDigits: 4
+										};
 
-											let productListSpace = $("#productListSpace");
-											productListSpace.empty();
-											makePagenation(productList);
+										let productListSpace = $("#productListSpace");
+										productListSpace.empty();
+										makePagenation(productList);
 
-											console.log(productList);
+										console.log(productList);
 
+										productListSpace.append(
+												`
+												<tr>
+													<th scope="col">상품번호</th>
+													<th scope="col">상품명</th>
+													<th scope="col">카테고리</th>
+													<th scope="col">판매상태</th>
+													<th scope="col">즉시구매설정여부</th>
+													<th scope="col">즉시구매가격</th>
+													<th scope="col">경매설정여부</th>
+													<th scope="col">경매시작일</th>
+													<th scope="col">경매마감일</th>
+													<th scope="col">상품등록일</th>
+													<th scope="col">판매자 회원번호</th>
+												</tr>
+												`
+										)
+
+										productList.content.forEach(function(product){
 											productListSpace.append(
 													`
-													<tr>
-														<th scope="col">상품번호</th>
-														<th scope="col">상품명</th>
-														<th scope="col">카테고리</th>
-														<th scope="col">판매상태</th>
-														<th scope="col">즉시구매설정여부</th>
-														<th scope="col">즉시구매가격</th>
-														<th scope="col">경매설정여부</th>
-														<th scope="col">경매시작일</th>
-														<th scope="col">경매마감일</th>
-														<th scope="col">상품등록일</th>
-														<th scope="col">판매자 회원번호</th>
+													<tr onclick= "location.href='/admin/product/info/${product.productNo}'" style="color: black; cursor: pointer">
+														<th scope="col">${product.productNo}</th>
+														<th scope="col">${product.productName}</th>
+														<th scope="col">${product.category}</th>
+														<th scope="col">${product.salesStatus}</th>
+														<th scope="col">${product.imdPurchase}</th>
+														<th scope="col">${product.buyNowPrice}</th>
+														<th scope="col">${product.auctionSelected}</th>
+														<th scope="col">${product.auctionStartTime}</th>
+														<th scope="col">${product.auctionEndTime}</th>
+														<th scope="col">${product.createdAt}</th>
+														<th scope="col">${product.memberNo}</th>
 													</tr>
 													`
-											)
+											);
 
-											productList.content.forEach(function(product){
-												productListSpace.append(
-														`
-														<tr>
-															<a href="/admin/user/info${payment.paymentNo}" style="color: black">
-																<th scope="col">${payment.paymentNo}</th>
-																<th scope="col">${payment.paymentType}</th>
-																<th scope="col">${payment.amount}</th>
-																<th scope="col">${payment.paymentStatus}</th>
-																<th scope="col">${payment.createdAt}</th>
-																<th scope="col">${payment.isDeleted}</th>
-																<th scope="col">${payment.userName}</th>
-															</a>
-														</tr>
-														`
-												);
+										})
 
-											})
-
-										},
-										error: function () {
-											// alert("error");
-										}
-									})
-								}
-
-								function makePagenation(page){
-									let pagination = $("#pagination");
-									pagination.empty();
-
-									let curr = page.number; // 0 부터임
-
-									console.log("curr : " +curr);
-									let endPage = Math.ceil((curr+1) / 10.0) * 10; // 1~10
-									let startPage = endPage - 9; // 1~10
-
-									console.log("start : " +startPage);
-									console.log("end : " +endPage);
-
-									if(endPage > page.totalPages-1){ // totalPage는 1부터 셈(Page는 0부터 시작이니 1 빼기)
-										endPage = page.totalPages;
+									},
+									error: function () {
+										// alert("error");
 									}
-
-									if(curr > 0){ // 이전버튼(<<) &laquo
-										pagination.append(`<a onclick="clickPage(${curr-1}); return false;" href="javascript:void(0)" >&lt;</a>`)
-									}
-
-									for(let i = startPage; i <= endPage; i++){
-										if(curr == i-1){ // active 설정
-											pagination.append(`<a class="active" onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
-										}
-										else{
-											pagination.append(`<a onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
-										}
-									}
-
-									if(curr + 1 < page.totalPages){ // 이후버튼(>>) &raquo
-										pagination.append(`<a onclick="clickPage(${curr+1}); return false;" href="javascript:void(0)">&gt;</a>`)
-									}
-
-									window.scrollTo(0,0); // 맨 위로 이동
-
-								}
-
-								// 처음 들어올 때
-								$(document).ready(function (){
-									console.log("첫 진입")
-									clickPage(0);
 								})
+							}
 
-							</script>
-						</div>
+							function makePagenation(page){
+								let pagination = $("#pagination");
+								pagination.empty();
+
+								let curr = page.number; // 0 부터임
+
+								console.log("curr : " +curr);
+								let endPage = Math.ceil((curr+1) / 10.0) * 10; // 1~10
+								let startPage = endPage - 9; // 1~10
+
+								console.log("start : " +startPage);
+								console.log("end : " +endPage);
+
+								if(endPage > page.totalPages-1){ // totalPage는 1부터 셈(Page는 0부터 시작이니 1 빼기)
+									endPage = page.totalPages;
+								}
+
+								if(curr > 0){ // 이전버튼(<<) &laquo
+									pagination.append(`<a onclick="clickPage(${curr-1}); return false;" href="javascript:void(0)" >&lt;</a>`)
+								}
+
+								for(let i = startPage; i <= endPage; i++){
+									if(curr == i-1){ // active 설정
+										pagination.append(`<a class="active" onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
+									}
+									else{
+										pagination.append(`<a onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
+									}
+								}
+
+								if(curr + 1 < page.totalPages){ // 이후버튼(>>) &raquo
+									pagination.append(`<a onclick="clickPage(${curr+1}); return false;" href="javascript:void(0)">&gt;</a>`)
+								}
+
+								window.scrollTo(0,0); // 맨 위로 이동
+
+							}
+
+							// 처음 들어올 때
+							$(document).ready(function (){
+								console.log("첫 진입")
+								clickPage(0);
+							})
+
+						</script>
 					</div>
-				<br>
-				<br>
+				</div>
 			</div>
+			<br>
+			<br>
 		</div>
 	</div>
 

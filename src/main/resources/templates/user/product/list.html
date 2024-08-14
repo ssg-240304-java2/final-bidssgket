@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/user/fragments/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/user/main/css/mainpage.css">
+    <title>전체 상품</title>
+</head>
+<body layout:fragment="content">
+<main class="container mt-5">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="realtime-tab" data-bs-toggle="tab" data-bs-target="#realtime" type="button" role="tab" aria-controls="realtime" aria-selected="true">최근 등록순</button>
+        </li>
+        <!--        <li class="nav-item" role="presentation">-->
+        <!--            <button class="nav-link" id="closing-soon-tab" data-bs-toggle="tab" data-bs-target="#closing-soon" type="button" role="tab" aria-controls="closing-soon" aria-selected="false">실시간 경매</button>-->
+        <!--        </li>-->
+    </ul>
+    <br>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="realtime" role="tabpanel" aria-labelledby="realtime-tab">
+            <div class="row row-cols-1 row-cols-md-5 g-4">
+                <div th:each="product : ${products}" class="col">
+                    <div class="card h-100">
+                        <div th:id="'carouselExample' + ${product.productNo}" class="carousel slide carousel-product" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div th:each="productImage, iterStat : ${product.productImages}" class="carousel-item" th:classappend="${iterStat.index == 0} ? ' active'">
+                                    <a th:href="@{/detail/{productNo}(productNo=${product.productNo})}">
+                                    <img th:src="@{${productImage.productImg}}" class="d-block w-100 card-img-top" th:alt="'이미지 ' + ${iterStat.index + 1}">
+                                    </a>
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample0" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample0" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a th:href="@{/detail/{productNo}(productNo=${product.productNo})}" th:text="${product.productName}" style="text-decoration-line: none; color: black;"></a>
+                                <button class="wishheartbtn" onclick="toggleHeart(this)">
+                                    <img src="/user/main/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                </button>
+                            </h5>
+                            <p class="card-text">경매 종료 일자: <span th:text="${product.auctionEndTime}" id="auction-end-1"></span></p>
+                            <p class="card-text" th:if="${product.buyNowPrice != null}">즉시 구매 가격: <span th:text="|${product.buyNowPrice}원|" id="current-price-1"></span></p>
+                            <p class="card-text" th:if="${product.auctionStartPrice != null}">경매 시작가: <span th:text="|${product.auctionStartPrice}원|" id="starting-price-1"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade show" id="closing-soon" role="tabpanel" aria-labelledby="closing-soon-tab">
+            <div class="row row-cols-1 row-cols-md-5 g-4">
+                <div class="col">
+                    <div class="card h-100">
+                        <div id="carouselExample0" class="carousel slide carousel-product" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="이미지 1">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="이미지 2">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/user/main/images/pradabag.jpg" class="d-block w-100 card-img-top" alt="이미지 3">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample0" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample0" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">프라다 버킷백
+                                <button class="wishheartbtn" onclick="toggleHeart(this)">
+                                    <img src="/user/main/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                </button>
+                            </h5>
+                            <p class="card-text">경매 종료: <span id="auction-end-1">2023-12-31 23:59:59</span></p>
+                            <p class="card-text">현재 가격: <span id="current-price-1">4,803,000원</span></p>
+                            <p class="card-text">경매 시작가: <span id="starting-price-1">4,000,000원</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+</main>
+
+<!-- Bootstrap JS (for tab functionality) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleHeart(button) {
+        const emptyHeart = "/user/images/empty_heart2.png";
+        const filledHeart = "/user/images/heart.png";
+        const imgElement = button.querySelector('.wishheart');
+        const currentSrc = imgElement.getAttribute('src');
+
+        if (currentSrc === emptyHeart) {
+            imgElement.setAttribute('src', filledHeart);
+            imgElement.setAttribute('alt', '관심 있음');
+            console.log("하트가 채워짐");
+        } else {
+            imgElement.setAttribute('src', emptyHeart);
+            imgElement.setAttribute('alt', '관심 없음');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 모든 경매 종료 시간 요소를 선택
+        const auctionEndTimes = document.querySelectorAll('[id^="auction-end-"]');
+
+        auctionEndTimes.forEach(function(element) {
+            let dateTime = element.textContent;
+
+            // T를 /로 대체
+            let formattedDateTime = dateTime.replace('T', ' / ');
+
+            // 변경된 내용을 다시 요소에 할당
+            element.textContent = formattedDateTime;
+        });
+    });
+
+</script>
+</body>
+</html>
