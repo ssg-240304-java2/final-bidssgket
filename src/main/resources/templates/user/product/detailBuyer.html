@@ -188,21 +188,14 @@
       }, 1000);
     }
 
-    function submitEndAuctionForm() {
-      var productNo = [[${product.productNo}]];
-      var form = document.createElement('form');
-      form.method = 'POST';
-      form.action = '/auction/endAuction/' + productNo;
-
-      document.body.appendChild(form);
-      form.submit();
-    }
-
     window.onload = function () {
       var auctionendtime = "[[${product.auctionEndTime}]]";
       var auctionstarttime = new Date().getTime();
       var endTimeMs = new Date(auctionendtime).getTime();
       var duration = (endTimeMs - auctionstarttime) / 1000;
+      if (duration < 0) {
+        duration = 0;
+      }
       var display = document.querySelector('#timer');
       startTimer(duration, display);
     };

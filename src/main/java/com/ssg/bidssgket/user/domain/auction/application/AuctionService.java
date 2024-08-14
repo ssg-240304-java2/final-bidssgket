@@ -9,12 +9,14 @@ import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
+import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuctionService {
@@ -86,9 +88,11 @@ public class AuctionService {
 
         List<Auction> auction = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
         if (!auction.isEmpty()) {
-            Auction winningBid = auction.size() > 1 ? auction.get(1) : auction.get(0);
-            winningBid.updateBidSuccess(true);
-            product.setBidSuccessPrice(winningBid.getMinTenderPrice());
+            Auction firstBid = auction.get(0);
+            Auction secondBid = auction.size() > 1 ? auction.get(1) : firstBid;
+
+            firstBid.updateBidSuccess(true);
+            product.setBidSuccessPrice(secondBid.getMinTenderPrice());
         }
 
         productRepository.save(product);
@@ -101,6 +105,22 @@ public class AuctionService {
 
     public boolean isSeller(Long memberNo, Long productNo) {
         return productRepository.existsByMemberAndProductNo(memberNo, productNo) > 0? true: false;
+    }
+
+    @Transactional
+    public void abandonBid(Long productNo) {
+        Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+        product.setSalesStatus(SalesStatus.sale_pause);
+        productRepository.save(product);
+    }
+
+    public boolean isWinningBidder(Long memberNo, Long productNo) {
+        List<Auction> auction = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
+        if (!auction.isEmpty()) {
+            Auction topAuction = auction.get(0);
+            return topAuction.getMember().getMemberNo().equals(memberNo) && !topAuction.getTenderDeleted();
+        }
+        return false;
     }
 }
 

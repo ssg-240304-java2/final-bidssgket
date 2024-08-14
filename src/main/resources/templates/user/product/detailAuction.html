@@ -86,10 +86,10 @@
             <h3 th:text="|${product.auctionStartPrice}원|"></h3>
             <div class="button-group d-flex justify-content-center mb-3"> <!-- 버튼들을 수평으로 정렬 -->
               <a th:href="@{/auction/auctionregistmodify/{productNo}(productNo=${product.productNo})}">
-                <button type="button" class="btn btn-primary" th:disabled="${product.salesStatus != 'selling'}">입찰 수정</button>
+                <button type="button" class="btn btn-primary" id="modifyAuction" th:disabled="${product.salesStatus != 'selling'}">입찰 수정</button>
               </a>
               <form th:action="@{/auction/delete/{productNo}(productNo=${product.productNo})}" method="post">
-                <button type="submit" class="btn btn-danger" th:disabled="${product.salesStatus != 'selling'}">입찰 삭제</button>
+                <button type="submit" id="deleteAuction" class="btn btn-danger" th:disabled="${product.salesStatus != 'selling'}">입찰 삭제</button>
               </form>
             </div>
           </div>
@@ -128,8 +128,8 @@
         <canvas id="priceChart" class="chart-table"></canvas>
       </div>
       <div class="col-md-6"> <!-- 표를 위한 넓은 열 -->
-        <h4>입찰 현황</h4>
-        <div class="table-responsive chart-table"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
+          <h4>입찰 현황</h4>
+          <div class="table-responsive chart-table"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
           <table class="table table-bordered">
             <thead>
             <tr>
@@ -188,8 +188,15 @@
       console.log(auctionstarttime);
       console.log(endTimeMs);
       var duration = (endTimeMs - auctionstarttime) / 1000;
+      if (duration < 0) {
+        duration = 0;
+      }
       var display = document.querySelector('#timer');
       startTimer(duration, display);
+      if (duration === 0 || "[[${product.salesStatus}]]" !== 'selling') {
+        document.getElementById('deleteAuction').disabled = true;
+        document.getElementById('modifyAuction').disabled = true;
+      }
     };
 
     var ctx = document.getElementById('priceChart').getContext('2d');
