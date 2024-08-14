@@ -15,6 +15,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    private final CustomOAuth2UserService customOAuth2UserService;
+
+    public WebSecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
+        this.customOAuth2UserService = customOAuth2UserService;
+    }
+
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
@@ -29,12 +35,6 @@ public class WebSecurityConfig {
                 );    //static관련 핸들러 메소드에서 필터링 제외시킴.
     }
 
-    private final CustomOAuth2UserService customOAuth2UserService;
-
-    public WebSecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
-        this.customOAuth2UserService = customOAuth2UserService;
-    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -42,7 +42,7 @@ public class WebSecurityConfig {
                 .headers(headerConfig -> headerConfig.frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()))
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/", "/main", "/login", "/oauth2/**").permitAll()
+                                .requestMatchers("/", "/main", "/login", "/oauth2/**", "/chat", "/ws/**").permitAll()
                                 .requestMatchers("/auction/**").permitAll()
                                 .requestMatchers("/user/**").permitAll()
                                 .anyRequest().authenticated()
@@ -50,13 +50,13 @@ public class WebSecurityConfig {
                 .logout(logout ->
                         logout
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                                .logoutSuccessUrl("/main")
+                                .logoutSuccessUrl("/")
                 )
                 .oauth2Login(oauth ->
                         oauth
                                 .userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
                                 .loginPage("/login")
-                                .defaultSuccessUrl("/main",true)
+                                .defaultSuccessUrl("/",true)
                 );
         return http.build();
     }
