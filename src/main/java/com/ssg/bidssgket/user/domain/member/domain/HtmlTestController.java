@@ -14,6 +14,12 @@ import java.security.Principal;
 @Controller
 public class HtmlTestController {
 
+    @GetMapping("/login")
+    public String loginPage() {
+        return "user/member/login";
+    }
+
+
 //    @GetMapping("/private")
 //    public String privatePage() {
 //        return "user/main/mainpage";
@@ -24,25 +30,11 @@ public class HtmlTestController {
 //        return "user/member/review_seller.admin";
 //    }
 
-
-      @GetMapping("/login")
-      public String loginPage() {
-          return "user/member/login";
-      }
-
-      @GetMapping("/main")
-      public String showReviewPage(Principal principal, HttpSession httpSession) {
+//      @GetMapping()
+//      public String showReviewPage(Principal principal, HttpSession httpSession) {
 //          System.out.println("principal = " + principal);
 //          SessionMember member = (SessionMember) httpSession.getAttribute("member");
 //          System.out.println("---->"+member); //--> 세션확인용
-          return "user/main/mainpage";
-      }
-
-//    @GetMapping("/")
-//    public String home(Model model) {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        boolean isAuthenticated = auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser");
-//        model.addAttribute("isAuthenticated", isAuthenticated);
-//        return "user/main/mainpage";
-//    }
+//          return "";
+//      }
 }
