@@ -1,7 +1,9 @@
 package com.ssg.bidssgket.user.domain.main.view;
 
+import com.ssg.bidssgket.user.domain.eventAuction.application.EventAuctionService;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -12,12 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class mainViewController {
-    private final ProductService productService;
 
-    public mainViewController(ProductService productService) {
-        this.productService = productService;
-    }
+    private final ProductService productService;
+    private final EventAuctionService eventAuctionService;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -26,7 +27,9 @@ public class mainViewController {
         model.addAttribute("isAuthenticated", isAuthenticated);
         List<Product> products = productService.getMainpageProduct();
         model.addAttribute("products", products);
-        System.out.println("products.toString() = " + products.toString());
+        List<Product> eventProducts = eventAuctionService.getEventProductsMain();
+        model.addAttribute("eventProducts", eventProducts);
+
         return "user/main/mainpage";
     }
 
@@ -48,5 +51,4 @@ public class mainViewController {
         model.addAttribute("products", products);
         return "user/product/list";
     }
-
 }

@@ -131,11 +131,13 @@ body {
 }
 
 /* 새로운 스타일 추가 */
-.category-container {
+.category-container,
+.auction-container {
     position: relative;
 }
 
-.category-link {
+.category-link,
+.auction-link {
     position: relative;
     display: inline-block;
 }
@@ -167,7 +169,8 @@ body {
     background-color: #f1f1f1;
 }
 
-.category-container:hover .dropdown-main {
+.category-container:hover .dropdown-main,
+.auction-container:hover .dropdown-main {
     display: block;
 }
 
