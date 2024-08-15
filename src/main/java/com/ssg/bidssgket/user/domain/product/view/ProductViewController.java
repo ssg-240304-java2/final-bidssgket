@@ -9,6 +9,7 @@ import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Category;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
+import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import jakarta.servlet.http.HttpSession;
@@ -99,6 +100,9 @@ public class ProductViewController {
         System.out.println("memberNo = " + memberNo);
         model.addAttribute("product", product);
         List<Auction> auctions = productService.findAuctionByProductNo(productNo);
+        if(product.getSalesStatus().equals(SalesStatus.trading.toString())){
+            return "redirect:/";
+        }
         model.addAttribute("auctions", auctions);
         return "user/product/detailAuction";
     }
@@ -118,8 +122,15 @@ public class ProductViewController {
         log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
         List<Auction> auctions = productService.findAuctionByProductNo(productNo);
+
         model.addAttribute("auctions", auctions);
         model.addAttribute("product", product);
+        log.info("상품 상태 확인 {}", product.getSalesStatus());
+        if (product.getSalesStatus().equals(SalesStatus.sale_pause.toString())) {
+            System.out.println("product.getSalesStatus() = " + product.getSalesStatus());
+            System.out.println("유찰된 상품 처리");
+            return "redirect:/auction/bidFailed/" + productNo;
+        }
         return "user/product/detailSeller";
     }
 

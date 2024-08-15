@@ -4,31 +4,46 @@ import com.ssg.bidssgket.user.domain.auction.application.AuctionService;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionReqDto;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
+import com.ssg.bidssgket.user.domain.member.application.MemberService;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
+import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
+import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import com.sun.tools.jconsole.JConsoleContext;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/auction")
 public class AuctionViewController {
-
     @Autowired
     private AuctionService auctionService;
-
     @Autowired
     private ProductService productService;
+    private final MemberRepository memberRepository;
+
+    /*private final AuctionService auctionService;
+    private final ProductService productService;
+    private final MemberRepository memberRepository;*/
+
 
     /***
      * 경매 등록 폼 불러오기
@@ -37,17 +52,15 @@ public class AuctionViewController {
      */
     @GetMapping("/auctionregistform/{productNo}")
     public String showAuctionRegistForm(Model model,  @PathVariable Long productNo, HttpSession httpSession) {
-        log.info("productNo >>>>> {}", productNo);
+//        log.info("productNo >>>>> {}", productNo);
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-        System.out.println(email);
-
+//        System.out.println(email);
         Member member = auctionService.getMemberByEmail(email);
-        log.info("member >>>>>>>>>>. {}", member);
+//        log.info("member >>>>>>>>>>. {}", member);
         Product product = auctionService.getProductById(productNo);
-        log.info("product >>>>>>>>>>. {}", product);
-
+//        log.info("product >>>>>>>>>>. {}", product);
         int minBidValue = auctionService.getMinBid(productNo);
-        log.info("minBidValue >>>>>> {}", minBidValue);
+//        log.info("minBidValue >>>>>> {}", minBidValue);
 
         Auction auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
 
@@ -67,13 +80,13 @@ public class AuctionViewController {
      */
     @PostMapping("/auctionregist/{productNo}")
     public String registerAuction(@PathVariable("productNo") Long productNo, @RequestParam(required = false) int minTenderPrice, @RequestParam(required = false) int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
-        System.out.println("productNo = " + productNo);
-        System.out.println("minTenderPrice = " + minTenderPrice);
-        System.out.println("maxTenderPrice = " + maxTenderPrice);
-        System.out.println(((SessionMember) httpSession.getAttribute("member")).getEmail());
+//        System.out.println("productNo = " + productNo);
+//        System.out.println("minTenderPrice = " + minTenderPrice);
+//        System.out.println("maxTenderPrice = " + maxTenderPrice);
+//        System.out.println(((SessionMember) httpSession.getAttribute("member")).getEmail());
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-            System.out.println(email);
+//            System.out.println(email);
             int auctionCount = auctionService.countAuctionsByMemberAndProduct(email, productNo);
             if (auctionCount >= 2) {
                 redirectAttributes.addFlashAttribute("message", "입찰은 최대 2번까지 가능합니다.");
@@ -99,9 +112,9 @@ public class AuctionViewController {
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
 
         Member member = auctionService.getMemberByEmail(email);
-        log.info("member >>>>>>>>>>. {}", member);
+//        log.info("member >>>>>>>>>>. {}", member);
         Product product = auctionService.getProductById(productNo);
-        log.info("product >>>>>>>>>>. {}", product);
+//        log.info("product >>>>>>>>>>. {}", product);
 
         Auction auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
 
@@ -121,7 +134,7 @@ public class AuctionViewController {
      */
     @PostMapping("/auctionregistmodify/{productNo}")
     public String modifyAuction(@PathVariable("productNo") Long productNo, @RequestParam int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
-        log.info("productNo >>>>> {}", productNo);
+//        log.info("productNo >>>>> {}", productNo);
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
             auctionService.modifyAuction(email, productNo, maxTenderPrice);
@@ -133,6 +146,13 @@ public class AuctionViewController {
         }
     }
 
+    /***
+     * 경매 입찰 등록 삭제
+     * @param productNo
+     * @param redirectAttributes
+     * @param httpSession
+     * @return
+     */
     @PostMapping("/delete/{productNo}")
     public String deleteAuction(@PathVariable("productNo") Long productNo, RedirectAttributes redirectAttributes, HttpSession httpSession) {
         try {
@@ -145,4 +165,146 @@ public class AuctionViewController {
             return "redirect:/detailAuction/" + productNo;
         }
     }
+
+    /***
+     * 경매 종료 시 상태 변경
+     * @param productNo
+     * @param httpSession
+     * @param redirectAttributes
+     * @return
+     */
+    @GetMapping("/endAuction/{productNo}")
+    public String endAuction(@PathVariable("productNo") Long productNo, HttpSession httpSession, RedirectAttributes redirectAttributes) {
+        log.info("productNo =====> {}", productNo);
+        String email = null;
+        Long memberNo = null;
+        if (httpSession.getAttribute("member") != null) {
+            email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
+            System.out.println("email = " + email);
+            memberNo = auctionService.getMemberByEmail(email).getMemberNo();
+        }
+
+        ProductResDto product = productService.findProductByNo(productNo);
+
+        boolean isAuctionEnded = product.getAuctionEndTime().isBefore(LocalDateTime.now());
+        boolean isSeller = auctionService.isSeller(memberNo, productNo);
+        boolean isAuctionParticipant = auctionService.isAuctionParticipant(memberNo, productNo);
+
+        System.out.println("isAuctionEnded = " + isAuctionEnded);
+        System.out.println("isSeller = " + isSeller);
+        System.out.println("isAuctionParticipant = " + isAuctionParticipant);
+
+        if (isSeller) {
+            /*if (product.getSalesStatus().equals(SalesStatus.sale_pause)) {
+                System.out.println("product.getSalesStatus() = " + product.getSalesStatus());
+                System.out.println("유찰된 상품 처리");
+                return "redirect:/auction/bidFailed/" + productNo;
+            }*/
+            if (isAuctionEnded) {
+                auctionService.endAuction(productNo);
+                redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
+                return "redirect:/detailSeller/" + productNo;
+            }
+        }
+        /*if (isSeller && isAuctionEnded) {
+            auctionService.endAuction(productNo);
+            redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
+            return "redirect:/detailSeller/" + productNo;
+        }*/
+
+        if (isAuctionParticipant && isAuctionEnded) {
+            boolean isWinningBidder = auctionService.isWinningBidder(memberNo, productNo);
+            auctionService.endAuction(productNo);
+            if (isWinningBidder) {
+                redirectAttributes.addFlashAttribute("message", "경매에 낙찰되었습니다.");
+                return "redirect:/auction/bidSuccess/" + productNo;
+            } else {
+                redirectAttributes.addFlashAttribute("message", "경매에 낙찰되지 않았습니다.");
+                return "redirect:/detailAuction/"+productNo;
+            }
+        }
+
+        if (isAuctionEnded) {
+//            auctionService.endAuction(productNo);
+//            redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
+            return "redirect:/detailBuyer/" + productNo;
+        }
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/checkStatus/{productNo}")
+    @ResponseBody
+    public String checkAuctionStatus(@PathVariable("productNo") Long productNo) {
+        ProductResDto product = productService.findProductByNo(productNo);
+        return product.getSalesStatus().toString();
+    }
+    /***
+     * 낙찰자가 보는 페이지
+     * @param productNo
+     * @param model
+     * @param httpSession
+     * @return
+     */
+    @GetMapping("/bidSuccess/{productNo}")
+    public String bidSuccess(@PathVariable("productNo") Long productNo, Model model, HttpSession httpSession){
+        String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
+        ProductResDto product = productService.findProductByNo(productNo);
+        List<Auction> auction = productService.findAuctionByProductNo(productNo);
+        Optional<Member> memberInfo = memberRepository.findByEmail(email);
+        Long memberNo = memberInfo.get().getMemberNo();
+
+        model.addAttribute("memberNo", memberNo);
+        model.addAttribute("product", product);
+        model.addAttribute("auction", auction);
+        return "user/product/bidSuccess";
+    }
+
+    /***
+     * 낙찰자의 낙찰 포기
+     * @param productNo
+     * @return
+     */
+    @PostMapping("/abandonBid/{productNo}")
+    public String abandonBid(@PathVariable("productNo") Long productNo, HttpSession httpSession,  RedirectAttributes redirectAttributes){
+        String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
+        auctionService.abandonBid(productNo);
+        ProductResDto product = productService.findProductByNo(productNo);
+        System.out.println("product.getSalesStatus() = " + product.getSalesStatus());
+
+        return "redirect:/";
+    }
+
+    /***
+     * 낙찰자의 주문 - 준영님 페이지 연결
+     * @param productNo
+     * @return
+     */
+    @PostMapping("/confirmPurchase/{productNo}")
+    public String confirmPurchase(@PathVariable("productNo") Long productNo){
+        return "user/order/purchases/pending";
+    }
+
+    /***
+     * 유찰된 상품에 대한 판매자 페이지
+     * @param productNo
+     * @return
+     */
+    @GetMapping("/bidFailed/{productNo}")
+    public String bidFailed(@PathVariable("productNo") Long productNo, Model model, HttpSession httpSession){
+        System.out.println("유찰된 상품");
+        String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
+        ProductResDto product = productService.findProductByNo(productNo);
+        List<Auction> auction = productService.findAuctionByProductNo(productNo);
+        Optional<Member> memberInfo = memberRepository.findByEmail(email);
+        Long memberNo = memberInfo.get().getMemberNo();
+
+        model.addAttribute("memberNo", memberNo);
+        model.addAttribute("product", product);
+        model.addAttribute("auction", auction);
+        return "user/product/bidFailed";
+    }
+
+
+
 }

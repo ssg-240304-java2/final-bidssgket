@@ -121,12 +121,9 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-
-    var duration = /*[[${durationMillis}]]*/ 0;
-
     function startTimer(duration, display) {
       var timer = duration, days, hours, minutes, seconds;
-      setInterval(function () {
+      var intervalId = setInterval(function () {
         days = parseInt(timer / (3600 * 24), 10);
         hours = parseInt((timer % (3600 * 24)) / 3600, 10);
         minutes = parseInt((timer % 3600) / 60, 10);
@@ -138,16 +135,35 @@
         seconds = seconds < 10 ? "0" + seconds : seconds;
 
         display.textContent = days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
-
+        let cnt = 0;
         if (--timer < 0) {
-          timer = duration;
+          clearInterval(intervalId);
+          if(cnt != 0){
+            display.textContent = "경매가 종료되었습니다.";
+            location.href = '/auction/endAuction/'+ [[${product.productNo}]];
+          }
+          cnt++;
         }
       }, 1000);
     }
 
+
     window.onload = function () {
+      var auctionendtime = "[[${product.auctionEndTime}]]";
+      var auctionstarttime = new Date().getTime();
+      var endTimeMs = new Date(auctionendtime).getTime();
+      var duration = (endTimeMs - auctionstarttime) / 1000;
+
+      if (duration < 0) {
+        duration = 0;
+      }
       var display = document.querySelector('#timer');
       startTimer(duration, display);
+
+      if (duration === 0 || "[[${product.salesStatus}]]" !== 'selling') {
+        document.getElementById('updateBtn').disabled = true;
+        document.getElementById('deleteBtn').disabled = true;
+      }
     };
 
     var ctx = document.getElementById('priceChart').getContext('2d');
