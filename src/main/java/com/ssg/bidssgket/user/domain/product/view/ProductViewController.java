@@ -2,6 +2,7 @@ package com.ssg.bidssgket.user.domain.product.view;
 
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
+import com.ssg.bidssgket.user.domain.eventAuction.application.EventAuctionService;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
@@ -36,6 +37,7 @@ public class ProductViewController {
 
     private final ProductService productService;
     private final MemberRepository memberRepository;
+    private final EventAuctionService eventAuctionService;
 
 
     @GetMapping("/register")
@@ -158,23 +160,30 @@ public class ProductViewController {
         List<Product> products = productService.getProductsByMember(memberNo);
         List<Auction> auctions = productService.findAllByProductNo(productNo);
         List<Auction> onAuctions = productService.findDeleteAuction(memberNo);
+        List<Product> eventProducts = eventAuctionService.getEventAuctionProducts(productNo);
         model.addAttribute("memberNo", memberNo);
         System.out.println("memberNo = " + memberNo);
         model.addAttribute("member", member);
         boolean isSeller = products.stream()
-                                    .anyMatch(product -> product.getProductNo().equals(productNo));
+                .anyMatch(product -> product.getProductNo().equals(productNo));
         boolean isAuction = auctions.stream()
-                                    .anyMatch(auction -> auction.getMember().getMemberNo().equals(memberNo));
+                .anyMatch(auction -> auction.getMember().getMemberNo().equals(memberNo));
         boolean onAuction = onAuctions.stream()
                 .anyMatch(auction -> auction.getTenderDeleted().equals(false));
+        boolean eventAuction = eventProducts.stream()
+                .anyMatch(product -> product.getProductNo().equals(productNo));
 
-        if (isSeller) {
-            return "redirect:/detailSeller/" + productNo;
-        }else {
-            if (isAuction && onAuction) {
-                return "redirect:/detailAuction/" + productNo;
+        if (eventAuction) {
+                return "redirect:/eventAuction/detail/" + productNo;
+        } else {
+            if (isSeller) {
+                return "redirect:/detailSeller/" + productNo;
             } else {
-                return "redirect:/detailBuyer/" + productNo;
+                if (isAuction && onAuction) {
+                    return "redirect:/detailAuction/" + productNo;
+                } else {
+                    return "redirect:/detailBuyer/" + productNo;
+                }
             }
         }
     }
