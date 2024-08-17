@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/fragments/layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상품 상세_판매자</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/user/product/css/detail_auction.css" rel="stylesheet">
+  <style>
+    /* 차트와 표의 폭을 넓히는 CSS */
+    .chart-table,
+    .table-responsive {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+<main class="contents" layout:fragment="content">
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-4"> <!-- 이미지 슬라이드를 위한 1/3 열 -->
+        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner">
+            <div th:each="productImage, iterStat : ${product.productImages}"
+                 th:classappend="${iterStat.index == 0} ? 'active' : ''"
+                 class="carousel-item">
+              <img th:src="@{${productImage.productImg}}" class="d-block w-100" alt="...">
+            </div>
+          </div>
+          <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">이전</span>
+          </a>
+          <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">다음</span>
+          </a>
+        </div>
+      </div>
+      <div class="col-md-8 d-flex flex-column justify-content-center"> <!-- 버튼들을 위한 넓은 열 -->
+        <div class="d-flex align-items-center justify-content-between"> <!-- 타이머와 버튼을 같은 행에 배치 -->
+        <div class="d-flex align-items-center">
+          <h3>경매 종료:</h3>
+          <h3 id="timer" class="ml-3"></h3>
+        </div>
+          <button class="btn btn-success">채팅하기</button> <!-- 채팅하기 버튼 추가 -->
+        </div>
+        <div class="auction-header">
+          <select id="auctionType" class="form-control mb-3" th:value="${product.salesStatus}" disabled>
+            <option value="selling" th:selected="${product.salesStatus == 'selling'}">판매중</option>
+            <option value="sale_completed" th:selected="${product.salesStatus == 'sale_completed'}">판매완료</option>
+            <option value="trading" th:selected="${product.salesStatus == 'trading'}">예약중</option>
+            <option value="sale_pause" th:selected="${product.salesStatus == 'sale_pause'}">판매중지</option>
+          </select>
+          <h4 th:text="${product.productName}"></h4>
+        </div>
+        <h5>카테고리</h5>
+        <div>
+          <select class="form-select" id="category" name="category" readonly>
+            <option selected th:if="${product.category == 'tradingCard'}" >트레이딩 카드</option>
+            <option selected th:if="${product.category == 'uniform'}">유니폼</option>
+            <option selected th:if="${product.category == 'shoes'}">신발</option>
+            <option selected th:if="${product.category == 'artToy'}">아트토이</option>
+            <option selected th:if="${product.category == 'watch'}">시계</option>
+            <option selected th:if="${product.category == 'bag'}">가방</option>
+            <option selected th:if="${product.category == 'camera'}">카메라</option>
+            <option selected th:if="${product.category == 'interior'}">인테리어</option>
+          </select>
+        </div>
+        <h5>상품 설명</h5>
+        <p th:text="${product.productDesc}"></p>
+        <div class="price-sections"> <!-- 새로운 컨테이너 추가 -->
+          <div class="auction-start-section text-center">
+            <h5>경매 시작가</h5>
+            <h3 th:if="${product.auctionStartPrice != null}" th:text="|${product.auctionStartPrice}원|"></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+
+    var duration = /*[[${durationMillis}]]*/ 0;
+
+    function startTimer(duration, display) {
+      var timer = duration, days, hours, minutes, seconds;
+      setInterval(function () {
+        days = parseInt(timer / (3600 * 24), 10);
+        hours = parseInt((timer % (3600 * 24)) / 3600, 10);
+        minutes = parseInt((timer % 3600) / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        days = days < 10 ? "0" + days : days;
+        hours = hours < 10 ? "0" + hours : hours;
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
+
+        if (--timer < 0) {
+          timer = duration;
+        }
+      }, 1000);
+    }
+
+    window.onload = function () {
+      var display = document.querySelector('#timer');
+      startTimer(duration, display);
+    };
+
+
+    document.getElementById('updateBtn').addEventListener('click',function (){
+      let productNo = [[${product.productNo}]];
+      location.href = '/update/'+ productNo;
+    });
+
+    document.getElementById('deleteBtn').addEventListener('click',function (){
+      let productNo = [[${product.productNo}]];
+      $.ajax({
+        url: '/api/products/delete?productNo=' + productNo,
+        type: 'delete',
+        data: productNo,
+        success: function (){
+          alert("삭제에 성공하였습니다!!🚮")
+          location.href = '/';
+        },
+        error: function () {
+          alert("삭제 실패!!!!!")
+        }
+      });
+    });
+  </script>
+</main>
+</body>
+</html>

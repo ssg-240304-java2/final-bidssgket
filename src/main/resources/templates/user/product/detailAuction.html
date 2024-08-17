@@ -86,10 +86,10 @@
             <h3 th:text="|${product.auctionStartPrice}원|"></h3>
             <div class="button-group d-flex justify-content-center mb-3"> <!-- 버튼들을 수평으로 정렬 -->
               <a th:href="@{/auction/auctionregistmodify/{productNo}(productNo=${product.productNo})}">
-                <button type="button" class="btn btn-primary btn-block">입찰 수정</button>
+                <button type="button" class="btn btn-primary" id="modifyAuction" th:disabled="${product.salesStatus != 'selling'}">입찰 수정</button>
               </a>
               <form th:action="@{/auction/delete/{productNo}(productNo=${product.productNo})}" method="post">
-                <button type="submit" class="btn btn-danger btn-block ml-2">입찰 삭제</button>
+                <button type="submit" id="deleteAuction" class="btn btn-danger" th:disabled="${product.salesStatus != 'selling'}">입찰 삭제</button>
               </form>
             </div>
           </div>
@@ -128,8 +128,8 @@
         <canvas id="priceChart" class="chart-table"></canvas>
       </div>
       <div class="col-md-6"> <!-- 표를 위한 넓은 열 -->
-        <h4>입찰 현황</h4>
-        <div class="table-responsive chart-table"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
+          <h4>입찰 현황</h4>
+          <div class="table-responsive chart-table"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
           <table class="table table-bordered">
             <thead>
             <tr>
@@ -156,12 +156,9 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-
-    var duration = /*[[${durationMillis}]]*/ 0;
-
     function startTimer(duration, display) {
       var timer = duration, days, hours, minutes, seconds;
-      setInterval(function () {
+      var intervalId = setInterval(function () {
         days = parseInt(timer / (3600 * 24), 10);
         hours = parseInt((timer % (3600 * 24)) / 3600, 10);
         minutes = parseInt((timer % 3600) / 60, 10);
@@ -175,14 +172,31 @@
         display.textContent = days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
 
         if (--timer < 0) {
-          timer = duration;
+          clearInterval(intervalId);
+          display.textContent = "경매가 종료되었습니다.";
+          location.href = '/auction/endAuction/'+ [[${product.productNo}]];
         }
       }, 1000);
     }
 
     window.onload = function () {
+      var auctionendtime = "[[${product.auctionEndTime}]]";
+      var auctionstarttime = new Date().getTime();
+      console.log(auctionstarttime);
+      var endTimeMs = new Date(auctionendtime).getTime();
+      console.log(auctionendtime);
+      console.log(auctionstarttime);
+      console.log(endTimeMs);
+      var duration = (endTimeMs - auctionstarttime) / 1000;
+      if (duration < 0) {
+        duration = 0;
+      }
       var display = document.querySelector('#timer');
       startTimer(duration, display);
+      if (duration === 0 || "[[${product.salesStatus}]]" !== 'selling') {
+        document.getElementById('deleteAuction').disabled = true;
+        document.getElementById('modifyAuction').disabled = true;
+      }
     };
 
     var ctx = document.getElementById('priceChart').getContext('2d');

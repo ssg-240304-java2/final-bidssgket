@@ -22,6 +22,8 @@ public class QProductReport extends EntityPathBase<ProductReport> {
 
     public static final QProductReport productReport = new QProductReport("productReport");
 
+    public final EnumPath<Acceptance> acceptance = createEnum("acceptance", Acceptance.class);
+
     public final StringPath complainContent = createString("complainContent");
 
     public final DateTimePath<java.time.LocalDateTime> complainDate = createDateTime("complainDate", java.time.LocalDateTime.class);

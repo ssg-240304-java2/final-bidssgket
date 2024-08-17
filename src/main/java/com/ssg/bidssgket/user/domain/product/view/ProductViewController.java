@@ -2,6 +2,7 @@ package com.ssg.bidssgket.user.domain.product.view;
 
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
+import com.ssg.bidssgket.user.domain.eventAuction.application.EventAuctionService;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
@@ -9,6 +10,7 @@ import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Category;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
+import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import jakarta.servlet.http.HttpSession;
@@ -35,6 +37,7 @@ public class ProductViewController {
 
     private final ProductService productService;
     private final MemberRepository memberRepository;
+    private final EventAuctionService eventAuctionService;
 
 
     @GetMapping("/register")
@@ -99,6 +102,9 @@ public class ProductViewController {
         System.out.println("memberNo = " + memberNo);
         model.addAttribute("product", product);
         List<Auction> auctions = productService.findAuctionByProductNo(productNo);
+        if(product.getSalesStatus().equals(SalesStatus.trading.toString())){
+            return "redirect:/";
+        }
         model.addAttribute("auctions", auctions);
         return "user/product/detailAuction";
     }
@@ -118,8 +124,15 @@ public class ProductViewController {
         log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
         List<Auction> auctions = productService.findAuctionByProductNo(productNo);
+
         model.addAttribute("auctions", auctions);
         model.addAttribute("product", product);
+        log.info("상품 상태 확인 {}", product.getSalesStatus());
+        if (product.getSalesStatus().equals(SalesStatus.sale_pause.toString())) {
+            System.out.println("product.getSalesStatus() = " + product.getSalesStatus());
+            System.out.println("유찰된 상품 처리");
+            return "redirect:/auction/bidFailed/" + productNo;
+        }
         return "user/product/detailSeller";
     }
 
@@ -147,23 +160,30 @@ public class ProductViewController {
         List<Product> products = productService.getProductsByMember(memberNo);
         List<Auction> auctions = productService.findAllByProductNo(productNo);
         List<Auction> onAuctions = productService.findDeleteAuction(memberNo);
+        List<Product> eventProducts = eventAuctionService.getEventAuctionProducts(productNo);
         model.addAttribute("memberNo", memberNo);
         System.out.println("memberNo = " + memberNo);
         model.addAttribute("member", member);
         boolean isSeller = products.stream()
-                                    .anyMatch(product -> product.getProductNo().equals(productNo));
+                .anyMatch(product -> product.getProductNo().equals(productNo));
         boolean isAuction = auctions.stream()
-                                    .anyMatch(auction -> auction.getMember().getMemberNo().equals(memberNo));
+                .anyMatch(auction -> auction.getMember().getMemberNo().equals(memberNo));
         boolean onAuction = onAuctions.stream()
                 .anyMatch(auction -> auction.getTenderDeleted().equals(false));
+        boolean eventAuction = eventProducts.stream()
+                .anyMatch(product -> product.getProductNo().equals(productNo));
 
-        if (isSeller) {
-            return "redirect:/detailSeller/" + productNo;
-        }else {
-            if (isAuction && onAuction) {
-                return "redirect:/detailAuction/" + productNo;
+        if (eventAuction) {
+                return "redirect:/eventAuction/detail/" + productNo;
+        } else {
+            if (isSeller) {
+                return "redirect:/detailSeller/" + productNo;
             } else {
-                return "redirect:/detailBuyer/" + productNo;
+                if (isAuction && onAuction) {
+                    return "redirect:/detailAuction/" + productNo;
+                } else {
+                    return "redirect:/detailBuyer/" + productNo;
+                }
             }
         }
     }

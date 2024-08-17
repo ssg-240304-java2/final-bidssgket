@@ -1,6 +1,7 @@
 package com.ssg.bidssgket.user.domain.member.domain;
 
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
+import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember;
 import com.ssg.bidssgket.user.domain.member.view.DTO.MemberDto;
 import com.ssg.bidssgket.user.domain.order.domain.Parcel;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
@@ -81,6 +82,9 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
+
     @OneToOne(mappedBy = "member", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private Pay pay;
 
@@ -106,18 +110,18 @@ public class Member implements UserDetails {
         this.isPenalty = isPenalty == null? false:isPenalty;
     }
 
-    public static Member createMember(MemberDto memberDto) {
-        return Member.builder()
-                .memberName(memberDto.getMemberName())
-                .memberId(memberDto.getMemberId())
-                .pwd(memberDto.getPwd())
-                .memberNickname(memberDto.getMemberNickname())
-                .biscuit(memberDto.getBiscuit())
-                .address(memberDto.getAddress())
-                .isDeleted(memberDto.getIsDeleted())
-                .isPenalty(memberDto.getIsPenalty())
-                .build();
-    }
+//    public static Member createMember(MemberDto memberDto) {
+//        return Member.builder()
+//                .memberName(memberDto.getMemberName())
+//                .memberId(memberDto.getMemberId())
+//                .pwd(memberDto.getPwd())
+//                .memberNickname(memberDto.getMemberNickname())
+//                .biscuit(memberDto.getBiscuit())
+//                .address(memberDto.getAddress())
+//                .isDeleted(memberDto.getIsDeleted())
+//                .isPenalty(memberDto.getIsPenalty())
+//                .build();
+//    }
 
     public String getRoleKey() {
         return this.role.getKey();

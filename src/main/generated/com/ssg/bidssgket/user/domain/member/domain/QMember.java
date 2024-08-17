@@ -28,7 +28,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public final NumberPath<Integer> biscuit = createNumber("biscuit", Integer.class);
 
-    public final QChatContent chatContent;
+    public final ListPath<com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember, com.ssg.bidssgket.user.domain.member.api.chat.model.QChatRoomMember> chatRoomMembers = this.<com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember, com.ssg.bidssgket.user.domain.member.api.chat.model.QChatRoomMember>createList("chatRoomMembers", com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember.class, com.ssg.bidssgket.user.domain.member.api.chat.model.QChatRoomMember.class, PathInits.DIRECT2);
 
     public final StringPath email = createString("email");
 
@@ -56,17 +56,13 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath pwd = createString("pwd");
 
-    public final QChatRoom receiver;
-
     public final QReview reviewee;
 
     public final QReview reviewer;
 
-    public final StringPath role = createString("role");
+    public final EnumPath<Role> role = createEnum("role", Role.class);
 
     public final ListPath<com.ssg.bidssgket.user.domain.order.domain.SaleOrder, com.ssg.bidssgket.user.domain.order.domain.QSaleOrder> saleOrders = this.<com.ssg.bidssgket.user.domain.order.domain.SaleOrder, com.ssg.bidssgket.user.domain.order.domain.QSaleOrder>createList("saleOrders", com.ssg.bidssgket.user.domain.order.domain.SaleOrder.class, com.ssg.bidssgket.user.domain.order.domain.QSaleOrder.class, PathInits.DIRECT2);
-
-    public final QChatRoom sender;
 
     public final ListPath<Wish, QWish> wishList = this.<Wish, QWish>createList("wishList", Wish.class, QWish.class, PathInits.DIRECT2);
 
@@ -89,12 +85,9 @@ public class QMember extends EntityPathBase<Member> {
     public QMember(Class<? extends Member> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.address = inits.isInitialized("address") ? new QAddress(forProperty("address")) : null;
-        this.chatContent = inits.isInitialized("chatContent") ? new QChatContent(forProperty("chatContent"), inits.get("chatContent")) : null;
         this.pay = inits.isInitialized("pay") ? new com.ssg.bidssgket.user.domain.payment.domain.QPay(forProperty("pay"), inits.get("pay")) : null;
-        this.receiver = inits.isInitialized("receiver") ? new QChatRoom(forProperty("receiver"), inits.get("receiver")) : null;
         this.reviewee = inits.isInitialized("reviewee") ? new QReview(forProperty("reviewee"), inits.get("reviewee")) : null;
         this.reviewer = inits.isInitialized("reviewer") ? new QReview(forProperty("reviewer"), inits.get("reviewer")) : null;
-        this.sender = inits.isInitialized("sender") ? new QChatRoom(forProperty("sender"), inits.get("sender")) : null;
     }
 
 }
