@@ -28,6 +28,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final NumberPath<Integer> biscuit = createNumber("biscuit", Integer.class);
 
+    public final ListPath<com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember, com.ssg.bidssgket.user.domain.member.api.chat.model.QChatRoomMember> chatRoomMembers = this.<com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember, com.ssg.bidssgket.user.domain.member.api.chat.model.QChatRoomMember>createList("chatRoomMembers", com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember.class, com.ssg.bidssgket.user.domain.member.api.chat.model.QChatRoomMember.class, PathInits.DIRECT2);
+
     public final StringPath email = createString("email");
 
     public final BooleanPath isDeleted = createBoolean("isDeleted");
