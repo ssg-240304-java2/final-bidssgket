@@ -13,132 +13,10 @@
 </th:block>
 
 <div layout:fragment="content">
-
 	<style>
-		.sort_type span {
-			cursor: pointer;
-			text-transform: uppercase;
-			width: 6rem;
-			display: inline-block;
-			/*border: 2px solid #ddd;*/
-			text-align: center;
-			height: 32px;
-			line-height: 28px;
-			font-size: 14px;
-			margin-bottom: 3px;
-			color: black;
-			font-weight: lighter;
-		}
-
-		.sort_type span.active {
-			/*edited hun*/
-			/*border-color: #525151;*/
-			color: black;
-			font-weight: bold;
-			/*color: #fff;*/
-		}
-
-		.tags a.active {
-			color: white;
-			background-color: #001c63;
-		}
-
-		/*mobile*/
-		@media (max-width: 767px) {
-			#search-menu div[class^="col-"] {
-				width: 100%;
-			}
-		}
-
-		/**************************************** sold 시작 */
-
-		.sold_wrap{
-			display: grid;
-			grid-template-columns: repeat(4, 1fr);
-			column-gap: 20px;
-			row-gap: 40px;
-		}
-
-		.sold_wrap li{
-			list-style-type: none;
-			list-style: none;
-		}
-		.sold_wrap li a{
-		    max-width: 200px;
-		    width: 100%;
-		    display: flex;
-		    flex-direction: column;
-		    align-items: center;
-		    gap: 20px;
-		}
-		a:link { color: black; text-decoration: none;}
-		a:visited { color: black; text-decoration: none;}
-		a:hover { color: blue; text-decoration: underline;}
-
-
-
-		.sold_thumb{
-			max-width: 200px;
-			height: 120px;
-			width: 100%;
-			overflow: hidden;
-		}
-
-		.sold_thumb img{
-			object-fit: contain;
-		}
-
-		.sold_cap{
-			max-width: 200px;
-			width: 100%;
-			text-align: center;
-		}
-
-
-		.sold_price{
-			color: #d9531e;
-			font-size: 1.0em;
-			word-break: break-all;
-		}
-
-
-		@media screen and (max-width: 540px) {
-
-			.sold_wrap {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-			}
-		}
-
-		/**************************************** sold */
-
-		/* page */
-		.pagination {
-			display: inline-block;
-			width: 100%;
-			text-align: center;
-		}
-
-		.pagination a {
-			color: black;
-			float: none;
-			padding: 8px 16px;
-			text-decoration: none;
-			transition: background-color .3s;
-			border: 1px solid #ddd;
-			margin: 0 4px;
-		}
-
-		.pagination a.active {
-			background-color: #33388e;
-			color: white;
-			border: 1px solid #33388e;
-		}
-
-		.pagination a:hover:not(.active) {background-color: #ddd;}
-
-
+		a:link{color:black;text-decoration:none;}
+		a:visited{color:black;text-decoration:none;}
+		a:hover{color:blue;text-decoration:none;}
 	</style>
 
 	<h1 class="mt-4">상품 목록</h1>
@@ -147,119 +25,133 @@
 <!--	</ol>-->
 
 	<div class="section">
-		<div class="container">
-			<div class="row">
-					<div class="row">
-						<div class="wrapper" >
-							<ul class="sold_wrap" id="productListSpace" >
-								<!--                                    <li th:each="car: ${carList}">-->
-								<!--                                        <div class="sold_thumb">-->
-								<!--                                            <img th:src="@{${car.imgLink}}" alt="no image">-->
-								<!--                                        </div>-->
-								<!--                                        <div class="sold_cap">-->
-								<!--                                            <span class="sold_title" th:text="${car.carName}">PALISADE</span><br>-->
-								<!--                                            <span class="sold_price" th:text="${car.price}">50,000 USD</span>-->
-								<!--                                            <spant th:text="${carStat.index}"></spant>-->
-								<!--                                        </div>-->
-								<!--                                    </li>-->
-							</ul>
-						</div>
-					</div>
-					<br>
-					<br>
-					<div class="row" style="width: 100%; text-align: center">
-						<div class="pagination" id="pagination">
-							<script>
-								function clickPage(page){
+		<div class="container" style="width: 100%">
+			<div class="row" style="width: 100%">
+				<div class="wrapper" >
+					<table id="productListSpace" class="table table-bordered" style="text-align: center">
 
-									$.ajax({
-										type: "GET",
-										url: "/admin/api/product/list?page="+page,
-										// url: "/sales-history?page="+page,
-										// dataType: "json",
-										success: function (productList) {
-											const option = {
-												maximumFractionDigits: 4
-											};
-
-											let carListSpace = $("#productListSpace");
-											carListSpace.empty();
-											makePagenation(productList);
-
-											console.log(productList);
-
-											productList.content.forEach(function(product){
-												carListSpace.append(
-														`<li>
-														<a href="/admin/car/info/${product.carId}">
-                                                        <div class="sold_thumb">
-                                                        <img src="${product.imgLink}" alt="no image"> <!--이미지 정의되면 그때-->
-                                                    </div>
-                                                    <div class="sold_cap">
-                                                    <span class="sold_title">${product.productName}</span><br>
-                                                    </div>
-                                                    </a>
-                                                </li>`);
-
-											})
-
-										},
-										error: function () {
-											// alert("error");
-										}
-									})
-								}
-
-								function makePagenation(page){
-									let pagination = $("#pagination");
-									pagination.empty();
-
-									let curr = page.number; // 0 부터임
-
-									console.log("curr : " +curr);
-									let endPage = Math.ceil((curr+1) / 10.0) * 10; // 1~10
-									let startPage = endPage - 9; // 1~10
-
-									console.log("start : " +startPage);
-									console.log("end : " +endPage);
-
-									if(endPage > page.totalPages-1){ // totalPage는 1부터 셈(Page는 0부터 시작이니 1 빼기)
-										endPage = page.totalPages;
-									}
-
-									if(curr > 0){ // 이전버튼(<<) &laquo
-										pagination.append(`<a onclick="clickPage(${curr-1}); return false;" href="javascript:void(0)" >&lt;</a>`)
-									}
-
-									for(let i = startPage; i <= endPage; i++){
-										if(curr == i-1){ // active 설정
-											pagination.append(`<a class="active" onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
-										}
-										else{
-											pagination.append(`<a onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
-										}
-									}
-
-									if(curr + 1 < page.totalPages){ // 이후버튼(>>) &raquo
-										pagination.append(`<a onclick="clickPage(${curr+1}); return false;" href="javascript:void(0)">&gt;</a>`)
-									}
-
-									window.scrollTo(0,0); // 맨 위로 이동
-
-								}
-
-								// 처음 들어올 때
-								$(document).ready(function (){
-									console.log("첫 진입")
-									clickPage(0);
-								})
-
-							</script>
-						</div>
-					</div>
-				<br>
-				<br>
+					</table>
+				</div>
 			</div>
+			<br>
+			<br>
+			<div class="row" style="width: 100%; text-align: center">
+					<div class="pagination" id="pagination" style="display: block; text-align: center;">
+						<script>
+							function clickPage(page){
+
+								$.ajax({
+									type: "GET",
+									url: "/admin/api/product/list?page="+page,
+									// url: "/sales-history?page="+page,
+									// dataType: "json",
+									success: function (productList) {
+										const option = {
+											maximumFractionDigits: 4
+										};
+
+										let productListSpace = $("#productListSpace");
+										productListSpace.empty();
+										makePagenation(productList);
+
+										console.log(productList);
+
+										productListSpace.append(
+												`
+												<tr>
+													<th scope="col">상품번호</th>
+													<th scope="col">상품명</th>
+													<th scope="col">카테고리</th>
+													<th scope="col">판매상태</th>
+													<th scope="col">즉시구매설정여부</th>
+													<th scope="col">즉시구매가격</th>
+													<th scope="col">경매설정여부</th>
+													<th scope="col">경매시작일</th>
+													<th scope="col">경매마감일</th>
+													<th scope="col">상품등록일</th>
+													<th scope="col">판매자 회원번호</th>
+												</tr>
+												`
+										)
+
+										productList.content.forEach(function(product){
+											productListSpace.append(
+													`
+													<tr onclick= "location.href='/admin/product/info/${product.productNo}'" style="color: black; cursor: pointer">
+														<th scope="col">${product.productNo}</th>
+														<th scope="col">${product.productName}</th>
+														<th scope="col">${product.category}</th>
+														<th scope="col">${product.salesStatus}</th>
+														<th scope="col">${product.imdPurchase}</th>
+														<th scope="col">${product.buyNowPrice}</th>
+														<th scope="col">${product.auctionSelected}</th>
+														<th scope="col">${product.auctionStartTime}</th>
+														<th scope="col">${product.auctionEndTime}</th>
+														<th scope="col">${product.createdAt}</th>
+														<th scope="col">${product.memberNo}</th>
+													</tr>
+													`
+											);
+
+										})
+
+									},
+									error: function () {
+										// alert("error");
+									}
+								})
+							}
+
+							function makePagenation(page){
+								let pagination = $("#pagination");
+								pagination.empty();
+
+								let curr = page.number; // 0 부터임
+
+								console.log("curr : " +curr);
+								let endPage = Math.ceil((curr+1) / 10.0) * 10; // 1~10
+								let startPage = endPage - 9; // 1~10
+
+								console.log("start : " +startPage);
+								console.log("end : " +endPage);
+
+								if(endPage > page.totalPages-1){ // totalPage는 1부터 셈(Page는 0부터 시작이니 1 빼기)
+									endPage = page.totalPages;
+								}
+
+								if(curr > 0){ // 이전버튼(<<) &laquo
+									pagination.append(`<a onclick="clickPage(${curr-1}); return false;" href="javascript:void(0)" >&lt;</a>`)
+								}
+
+								for(let i = startPage; i <= endPage; i++){
+									if(curr == i-1){ // active 설정
+										pagination.append(`<a class="active" onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
+									}
+									else{
+										pagination.append(`<a onclick="clickPage(${i-1}); return false;" href="javascript:void(0)">${i}</a>`)
+									}
+								}
+
+								if(curr + 1 < page.totalPages){ // 이후버튼(>>) &raquo
+									pagination.append(`<a onclick="clickPage(${curr+1}); return false;" href="javascript:void(0)">&gt;</a>`)
+								}
+
+								window.scrollTo(0,0); // 맨 위로 이동
+
+							}
+
+							// 처음 들어올 때
+							$(document).ready(function (){
+								console.log("첫 진입")
+								clickPage(0);
+							})
+
+						</script>
+					</div>
+				</div>
+			</div>
+			<br>
+			<br>
 		</div>
 	</div>
 

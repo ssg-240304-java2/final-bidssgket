@@ -1,0 +1,94 @@
+h3, h4 {
+    color: #333;
+}
+
+h3 {
+    margin-bottom: 15px;
+}
+
+h4 {
+    margin-bottom: 20px;
+}
+
+.carousel-item img {
+    width: 100%; /* 이미지를 전체 너비로 설정 */
+    height: auto; /* 높이를 자동으로 조정하여 비율 유지 */
+    max-width: 300px; /* 최대 너비를 300px로 설정 */
+    max-height: 300px; /* 최대 높이를 300px로 설정 */
+    object-fit: cover;
+    margin: 0 auto;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+}
+
+.table tbody td {
+    background-color: #ffffff;
+}
+
+.btn-primary, .btn-secondary {
+    width: 120px;
+    height: 40px;
+    font-size: 14px;
+}
+
+.buy-now-section h3, .auction-start-section h3 {
+    font-size: 20px;
+}
+
+/* 테이블의 높이를 고정하고 스크롤 가능하게 설정 */
+.chart-table {
+    height: 300px;
+    overflow-y: auto;
+}
+
+/* 경매 타입과 제목을 수평으로 배치 */
+.auction-header {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.auction-header select {
+    margin-right: 10px;
+    width: 150px;
+    height: 35px;
+    font-size: 14px;
+}
+
+/* 경매 시작가 및 즉시 구매가 섹션을 수평으로 배치 */
+.buy-now-section, .auction-start-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 두 섹션을 수평으로 나란히 배치 */
+.price-sections {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* 버튼을 수평으로 배치 */
+.button-group {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+.buy-now-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+}
+
+.btn-secondary{
+    background-color: rgba(0, 0, 0, 0);
+    color: black;
+}

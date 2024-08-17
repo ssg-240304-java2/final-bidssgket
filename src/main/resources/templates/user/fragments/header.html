@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head>
+    <link rel="stylesheet" type="text/css" href="/user/css/style.css">
+    <style>
+        /* 배경색이 흰색인 경우 검색 버튼 색상도 흰색으로 설정 */
+        .btn-search {
+            background-color: black; /* 배경색과 일치 */
+            color: white; /* 텍스트 색상 */
+            border: 1px solid black; /* 부드러운 테두리 */
+        }
+    </style>
+</head>
+<body>
+<div th:fragment="headerFragment" class="header" style="max-width: 1440px;">
+    <div class="header-top">
+        <div class="logo">
+            <a href="/">Bidssgket</a>
+        </div>
+    </div>
+    <div class="header-bottom">
+        <div class="header-links">
+            <a href="/user/mypage">마이페이지</a>
+            <a href="#">알림</a>
+            <!-- 로그인 상태에 따라 링크 표시 -->
+            <a id="login-link" href="/login">로그인</a>
+            <a id="logout-link" href="/logout" style="display: none;">로그아웃</a>
+
+        </div>
+        <div class="search-container">
+            <nav class="nav">
+                <div class="category-container">
+                    <a href="/" class="category-link">카테고리</a>
+                    <div class="dropdown-main">
+                        <div class="dropdown-main-content">
+                            <a href="/category/tradingCard">트레이딩 카드</a>
+                            <a href="/category/uniform">유니폼</a>
+                            <a href="/category/shoes">신발</a>
+                            <a href="/category/artToy">아트토이</a>
+                            <a href="/category/watch">시계</a>
+                            <a href="/category/bag">가방</a>
+                            <a href="/category/camera">카메라</a>
+                            <a href="/category/interior">인테리어</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="auction">
+                    <a href="/">경매</a>
+                    <div class="dropdown-main">
+                        <div class="dropdown-main-content">
+                            <a href="/auction/auctionMain">일반 경매</a>
+                            <a href="/category/uniform">번개 경매</a>
+                            <a href="/category/shoes">번개 경매 등록</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="product_regist">
+                    <a href="/register">상품등록</a>
+                </div>
+            </nav>
+            <form action="/search" method="get"  class="d-flex align-items-center">
+                <input type="text" name="search" class="form-control me-2" placeholder="Search" th:value="${search}" style="flex: 1;">
+                <button class="btn btn-search" type="submit">검색</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded',function (){
+            var isAuthenticated = '[[${session.member}]]';
+            var loginLink = document.getElementById('login-link');
+            var logoutLink = document.getElementById('logout-link');
+            if (isAuthenticated) {
+                loginLink.style.display = 'none';
+                logoutLink.style.display = 'inline';
+            } else {
+                loginLink.style.display = 'inline';
+                logoutLink.style.display = 'none';
+            }
+        });
+    </script>
+</div>
+</body>
+</html>

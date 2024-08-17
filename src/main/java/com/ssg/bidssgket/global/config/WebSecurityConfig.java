@@ -1,66 +1,59 @@
 package com.ssg.bidssgket.global.config;
 
-import lombok.RequiredArgsConstructor;
+
+import com.ssg.bidssgket.user.domain.member.api.googleLogin.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
-
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class WebSecurityConfig {
 
-
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-
-        return authConfig.getAuthenticationManager();
+    public WebSecurityCustomizer configure() {
+        return (web) -> web.ignoring()
+                .requestMatchers(
+                        new AntPathRequestMatcher("/admin/**"),
+                        new AntPathRequestMatcher("/user/**"),
+                        new AntPathRequestMatcher("/error")
+                );    //static관련 핸들러 메소드에서 필터링 제외시킴.
     }
 
+    private final CustomOAuth2UserService customOAuth2UserService;
 
+    public WebSecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
+        this.customOAuth2UserService = customOAuth2UserService;
+    }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-
-
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .httpBasic(HttpBasicConfigurer::disable)
-//                .cors(corsConfigurationSource -> corsConfigurationSource.configurationSource(corsConfigurationSource()))
-                .cors(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-
-                // disable session
-                .sessionManagement((sessionManagement) ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authorizeHttpRequests(authorizeRequest ->
-                        authorizeRequest
-                                .requestMatchers("/**").permitAll()
-                                .requestMatchers("/favicon.ico").permitAll()
-                                .requestMatchers("/swagger-ui/**").permitAll()
-                                .requestMatchers("/api-docs/**").permitAll()
-                                .requestMatchers("/error/**").permitAll()
+                .csrf(csrfConfig -> csrfConfig.disable())
+                .headers(headerConfig -> headerConfig.frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()))
+                .authorizeRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/", "/main", "/login", "/oauth2/**").permitAll()
+                                .requestMatchers("/auction/**").permitAll()
+                                .requestMatchers("/user/**").permitAll()
                                 .anyRequest().authenticated()
+                )
+                .logout(logout ->
+                        logout
+                                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                                .logoutSuccessUrl("/main")
+                )
+                .oauth2Login(oauth ->
+                        oauth
+                                .userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
+                                .loginPage("/login")
+                                .defaultSuccessUrl("/main",true)
                 );
-//                .exceptionHandling(handling -> handling.authenticationEntryPoint());
-
-
-//        http.addFilterBefore(new AuthTokenFilter(jwtUtils, customUserDetailsService, tokenService), UsernamePasswordAuthenticationFilter.class); // 여기서 jwt 인증
-//        http.addFilterBefore(jwtExceptionHandlerFilter, AuthTokenFilter.class); // jwt 예외처리 필터
-
         return http.build();
-
     }
-
-
-
-
 }

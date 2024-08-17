@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <style>
+    .postal-container {
+      display: flex;
+      align-items: center;
+      width: 270px; /* 원하는 너비 */
+      margin: 10px 0;
+    }
+
+    .postal-container input[type="text"] {
+      flex: 1; /* 입력칸이 가능한 공간을 모두 차지하게 함 */
+      padding: 12px 15px;
+      margin-right: 10px; /* 버튼과 입력칸 사이의 간격 조정 */
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .postal-container button {
+      border-radius: 5px;
+      background-color: #D8D8D8;
+      color: #FFFFFF;
+      border: none;
+      font-size: 12px;
+      padding: 8px 15px; /* 버튼 패딩 조정 */
+      cursor: pointer;
+      height: 40px; /* 버튼 높이 조정 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cookie-container {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 100px;
+      height: 100px;
+      overflow: hidden;
+    }
+
+    .cookie-image {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 90%;
+      height: 90%;
+      object-fit: cover;
+      clip-path: polygon(100% 0, 100% 0, 100% 0, 100% 0); /* 초기 상태: 보이지 않음 */
+      transition: clip-path 0.5s ease-in-out;
+    }
+
+    .show {
+      clip-path: polygon(
+              0% 0%, 100% 0%, 100% 100%, 0% 100%, /* 전체 보이는 상태 */
+              0% 50%, 100% 50%, 100% 50%, 0% 50%
+      );
+    }
+    .form-check-container {
+      display: flex;
+      align-items: center;
+    }
+    .form-check-input {
+      margin-left: -90px;
+      margin-right: -75px; /* 체크박스와 레이블 사이의 간격 설정 */
+      transform: scale(1.6); /* 체크박스 크기 조정 */
+      width: 8px;
+    }
+    .form-check-label {
+      font-size: 15px; /* 레이블의 폰트 크기 조정 */
+      width: 250px;
+    }
+    .input-container {
+      position: relative;
+      width: 280px; /* 원하는 너비 */
+      margin: 10px;
+    }
+    .input-container input[type="password"] {
+      width: 100%;
+      padding-right: 50px; /* 아이콘을 위한 패딩 */
+      box-sizing: border-box;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+    .input-group-text {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 1; /* 입력 필드 위에 배치 */
+    }
+    .input-group-text svg {
+      width: 30px; /* 아이콘 크기 조정 */
+      height: 30px; /* 아이콘 크기 조정 */
+      color: lightgrey;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      background: #F6F5F7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-family: "Montserrat", sans-serif;
+      height: 100vh;
+      margin: -20px 0 50px;
+    }
+    h1 {
+      font-weight: bold;
+      margin: 0;
+    }
+    h2 {
+      text-align: center;
+    }
+    p {
+      font-size: 14px;
+      font-weight: 100;
+      line-height: 20px;
+      letter-spacing: 0.5px;
+      margin: 20px 0 30px;
+    }
+    span {
+      font-size: 12px;
+    }
+    a {
+      color: #333;
+      font-size: 14px;
+      text-decoration: none;
+      margin: 15px 0;
+    }
+    button {
+      border-radius: 20px;
+      background-color: #D8D8D8;
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 12px 45px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: transform 80ms ease-in;
+    }
+    button:active {
+      transform: scale(0.95);
+    }
+    button:focus {
+      outline: none;
+    }
+    button.ghost {
+      background-color: transparent;
+      border-color: #FFFFFF;
+      margin-top: 20px;
+    }
+    form {
+      background-color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 0 50px;
+      height: 100%;
+      text-align: center;
+    }
+    input {
+      background-color: #eee;
+      border: none;
+      padding: 12px 15px;
+      margin: 8px 0;
+      width: 100%;
+    }
+    .container {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+      0 10px 10px rgba(0, 0, 0, 0.22);
+      position: relative;
+      overflow: hidden;
+      width: 768px;
+      max-width: 100%;
+      min-height: 480px;
+    }
+    .form-container {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      transition: all 0.6s ease-in-out;
+    }
+    .sign-in-container {
+      left: 0;
+      width: 50%;
+      z-index: 2;
+    }
+    .container.right-panel-active .sign-in-container {
+      transform: translateX(100%);
+    }
+    .sign-up-container {
+      left: 0;
+      width: 50%;
+      opacity: 0;
+      z-index: 1;
+    }
+    .container.right-panel-active .sign-up-container {
+      transform: translateX(100%);
+      opacity: 1;
+      z-index: 5;
+      animation: show 0.6s;
+    }
+    @keyframes show {
+      0%,
+      49.99% {
+        opacity: 0;
+        z-index: 1;
+      }
+      50%,
+      100% {
+        opacity: 1;
+        z-index: 5;
+      }
+    }
+    .overlay-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+      transition: transform 0.6s ease-in-out;
+      z-index: 100;
+    }
+    .container.right-panel-active .overlay-container {
+      transform: translateX(-100%);
+    }
+    .overlay {
+      background: #EADBC8;
+      background: -webkit-linear-gradient(to right, #DFD3C3, #DFD3C3);
+      background: linear-gradient(to right, #EADBC8, #EADBC8);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: 0 0;
+      color: #FFFFFF;
+      position: relative;
+      left: -100%;
+      height: 100%;
+      width: 200%;
+      transform: translateX(0);
+      transition: transform 0.6s ease-in-out;
+    }
+    .container.right-panel-active .overlay {
+      transform: translateX(50%);
+    }
+    .overlay-panel {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 0 40px;
+      text-align: center;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      transform: translateX(0);
+      transition: transform 0.6s ease-in-out;
+    }
+    .overlay-left {
+      transform: translateX(-20%);
+    }
+    .container.right-panel-active .overlay-left {
+      transform: translateX(0);
+    }
+    .overlay-right {
+      right: 0;
+      transform: translateX(0);
+    }
+    .container.right-panel-active .overlay-right {
+      transform: translateX(20%);
+    }
+    .social-container {
+      margin: 20px 0;
+    }
+    .social-container a {
+      border: 1px solid #DDDDDD;
+      border-radius: 50%;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 5px;
+      height: 40px;
+      width: 40px;
+    }
+    footer {
+      background-color: #222;
+      color: #fff;
+      font-size: 14px;
+      bottom: 0;
+      position: fixed;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 999;
+    }
+    footer p {
+      margin: 10px 0;
+    }
+    footer i {
+      color: red;
+    }
+    footer a {
+      color: #3C97BF;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+
+<body layout:fragment="content">
+
+<div class="container" id="container">
+  <div class="form-container sign-up-container" style="overflow: scroll">
+    <form action="#" style="height: 700px">
+      <h1>Create Account</h1>
+      <br>
+      <input type="text" placeholder="이름" />
+      <input type="email" placeholder="아이디" />
+      <input type="password" placeholder="비밀번호" />
+      <div class="id">
+        <input type="text" placeholder="주민등록번호" maxlength="6" style="width: 45%;" />
+        <span style="margin: 0 5px;">-</span>
+        <input type="text" maxlength="7" style="width: 45%;" />
+      </div>
+      <input type="text" placeholder="닉네임" />
+      <input type="text" placeholder="전화번호('-'제외)" />
+      <div class="postal-container">
+        <input type="text" placeholder="우편번호" id="postalCode" />
+        <button type="button" id="addressSearch">주소찾기</button>
+      </div>
+      <input type="text" placeholder="도로명주소" />
+      <input type="text" placeholder="상세주소" />
+      <button style="margin-top: 20px">sign up</button>
+    </form>
+  </div>
+  <div class="form-container sign-in-container">
+    <form action="#">
+      <h1>Sign In</h1>
+      <div class="social-container">
+        <a href="/oauth2/authorization/google">google</a>
+        <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+      <input type="text" placeholder="아이디" />
+      <div class="form-check-container">
+        <input class="form-check-input" type="checkbox" id="rememberMe" />
+        <label class="form-check-label" for="rememberMe">ID 기억하기</label>
+      </div>
+      <div class="input-container">
+        <input type="password" id="password" placeholder="비밀번호" />
+        <span class="input-group-text" id="passwordShow">
+              <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="30"
+                      height="30"
+                      id="passwordShowIcon"
+                      fill="currentColor"
+                      class="bi bi-eye"
+                      viewBox="0 0 16 16"
+              >
+                <path
+                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"
+                />
+                <path
+                        d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"
+                />
+              </svg>
+            </span>
+      </div>
+      <button id="tbt">sign in</button>
+      <div class="cookie-container">
+      <img src="/css/cookie.png" id="cookieImage" class="cookie-image" alt="Cookie Image">
+      </div>
+
+      <script>
+        document.getElementById("tbt").addEventListener("mouseenter", foo);
+        document.getElementById("tbt").addEventListener("mouseout", bar);
+        function foo() {
+          document.getElementById("tbt").style.background = "#DFD3C3";
+        }
+        function bar() {
+          document.getElementById("tbt").style.background = "#D8D8D8";
+        }
+      </script>
+    </form>
+  </div>
+  <div class="overlay-container">
+    <div class="overlay">
+      <div class="overlay-panel overlay-left">
+        <h1>Welcome to bidssgket world!</h1>
+        <button class="ghost" id="signIn">sign in</button>
+      </div>
+      <div class="overlay-panel overlay-right">
+        <h1>Hello! <br>We're bidssgket!</h1>
+        <p>Wanna join with us?</p>
+        <button class="ghost" id="signUp">sign up</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const signUpButton = document.getElementById("signUp");
+  const signInButton = document.getElementById("signIn");
+  const container = document.getElementById("container");
+  signUpButton.addEventListener("click", () => {
+    container.classList.add("right-panel-active");
+    // 쿠키 DISPLAY NONE
+    document.getElementById('cookieImage').style.display = 'none';
+  });
+  signInButton.addEventListener("click", () => {
+    container.classList.remove("right-panel-active");
+    document.getElementById('cookieImage').style.display = '';
+  });
+  /*비밀번호 아이콘*/
+  document
+          .getElementById("passwordShow")
+          .addEventListener("click", function () {
+            let passwordInput = document.getElementById("password");
+            let icon = document.getElementById("passwordShowIcon");
+            if (passwordInput.type === "password") {
+              passwordInput.type = "text";
+              icon.style.color = "black"; // 비밀번호 보이는 상태일 때 아이콘 색상
+            } else {
+              passwordInput.type = "password";
+              icon.style.color = "lightgrey"; // 비밀번호 숨기는 상태일 때 아이콘 색상
+            }
+          });
+
+  // Show/hide cookie image based on password input
+  // Show cookie image based on password input
+  const passwordInput = document.getElementById("password");
+  const cookieImage = document.getElementById("cookieImage");
+
+  passwordInput.addEventListener("input", function() {
+    const length = passwordInput.value.length;
+    const percentage = Math.min(length * 10 , 100); // Limit to 100%
+    const rotation = (length * 36) % 360; // Rotation degree (360 degrees total)
+
+    // Update clip-path to show image in a clock-wise manner
+    cookieImage.style.clipPath = `polygon(
+        ${percentage}% 0%, 100% 0%, 100% ${percentage}%, ${percentage}% ${percentage}%,
+        0% ${percentage}%, 0% 0%, 100% 0%, 100% ${percentage}%
+      )`;
+    cookieImage.style.transform = `rotate(${rotation}deg)`;
+  });
+</script>
+</body>
+</html>

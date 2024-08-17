@@ -14,24 +14,46 @@ public class AdminOrderViewController {
 
 
     /**
-     * 결제 목록 조회 페이지
+     * 구매 주문 목록 조회 페이지
      */
-    @GetMapping("/list")
-    public String userListPage() {
-        log.info("===== order list page =====");
+    @GetMapping("/purchase/list")
+    public String purchaseOrderListPage() {
+        log.info("===== purchase order list page =====");
 
-        return "admin/content/pages/order/order-list";
+        return "admin/content/pages/order/purchase-order-list";
+    }
+
+    /**
+     * 판매 주문 목록 조회 페이지
+     */
+    @GetMapping("/sale/list")
+    public String salesOrderListPage() {
+        log.info("===== sale order list page =====");
+
+        return "admin/content/pages/order/sale-order-list";
     }
 
 
     /**
-     * 결제 상세 조회 페이지
+     * 주문 상세 조회 페이지
      */
-    @GetMapping("/info/{}")
-    public String userInfoPage() {
+    @GetMapping("/sale/info/{}")
+    public String saleOrderInfoPage() {
         log.info("===== user list page =====");
 
-        return "admin/content/pages/user/user-list";
+//        return "admin/content/pages/user/user-list";
+        return null;
+    }
+
+    /**
+     * 주문 상세 조회 페이지
+     */
+    @GetMapping("/purchase/info/{}")
+    public String purchaseOrderInfoPage() {
+        log.info("===== user list page =====");
+
+//        return "admin/content/pages/user/user-list";
+        return null;
     }
 
 
