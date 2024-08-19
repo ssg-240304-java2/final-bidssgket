@@ -1,4 +1,4 @@
-package com.ssg.bidssgket.user.domain.member.api.chat.Controller;
+package com.ssg.bidssgket.user.domain.member.api.chat.controller;
 
 import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatMessage;
 import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoom;
@@ -39,7 +39,7 @@ public class ChatController {
     private final ChatRoomMemberRepository chatRoomMemberRepository;
 
     @GetMapping
-    public String getChatPage(Model model, HttpServletRequest request) { // 사용자의 채팅목록 전부 불러옴
+    public String getChatPage(Model model, HttpServletRequest request) { // 사용자의 채팅방 목록 조회
 
         SessionMember sessionMember = (SessionMember) request.getSession().getAttribute("member");
         Member member = memberRepository.findByEmail(sessionMember.getEmail()).orElseThrow();
@@ -55,15 +55,18 @@ public class ChatController {
     }
 
     @GetMapping("/{chatRoomMemberNo}")
-    public String getMessagePage(@PathVariable Long chatRoomMemberNo, Model model, HttpServletRequest request) {
+    public String getMessagePage(@PathVariable Long chatRoomMemberNo, Model model, HttpServletRequest request) { // 각 채팅방별 내용 불러오기
         SessionMember sessionMember = (SessionMember) request.getSession().getAttribute("member");
         Member member = memberRepository.findByEmail(sessionMember.getEmail()).orElseThrow();
         List<ChatRoomMember> chatRoomMembers = member.getChatRoomMembers();
+
         ChatRoomMember chatRoomMember = chatRoomMemberRepository.findById(chatRoomMemberNo).orElseThrow();
         ChatRoom chatRoom = chatRoomMember.getChatRoom();
 
         Long chatRoomNo = chatRoom.getChatRoomNo();
+
         List<ChatMessage> messages = chatMessageService.findMessagesByChatRoomNo(chatRoomNo);
+
         Long memberNo = member.getMemberNo();
 
         String chatRoomName = chatRoom.getName();
