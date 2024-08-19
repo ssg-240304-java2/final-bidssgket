@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction, Long> {
@@ -32,4 +33,5 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
     @Query(value = "SELECT a.* FROM auction a WHERE a.product_no = :productNo AND a.tender_deleted = 'false' ORDER BY a.tender_date ASC", nativeQuery = true)
     List<Auction> findAuctionByProductNo(Long productNo);
 
+    Optional<Auction> findByProductAndBidSuccessTrue(Product product);
 }
