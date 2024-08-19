@@ -3,6 +3,7 @@ package com.ssg.bidssgket.user.domain.auction.view;
 import com.ssg.bidssgket.user.domain.auction.application.AuctionService;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionReqDto;
+import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionResponseDto;
 import com.ssg.bidssgket.user.domain.auction.view.dto.FailedProductReqDto;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.application.MemberService;
@@ -59,17 +60,17 @@ public class AuctionViewController {
 //        System.out.println(email);
         Member member = auctionService.getMemberByEmail(email);
 //        log.info("member >>>>>>>>>>. {}", member);
-        Product product = auctionService.getProductById(productNo);
+        ProductResDto product = auctionService.getProductById(productNo);
 //        log.info("product >>>>>>>>>>. {}", product);
         int minBidValue = auctionService.getMinBid(productNo);
 //        log.info("minBidValue >>>>>> {}", minBidValue);
 
-        Auction auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
+//        Auction auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
 
         model.addAttribute("member", member);
         model.addAttribute("product", product);
         model.addAttribute("minBid", minBidValue);
-        model.addAttribute("auction", auction);
+//        model.addAttribute("auction", auction);
         return "user/auction/auctionregist";
     }
 
@@ -82,13 +83,8 @@ public class AuctionViewController {
      */
     @PostMapping("/auctionregist/{productNo}")
     public String registerAuction(@PathVariable("productNo") Long productNo, @RequestParam(required = false) int minTenderPrice, @RequestParam(required = false) int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
-//        System.out.println("productNo = " + productNo);
-//        System.out.println("minTenderPrice = " + minTenderPrice);
-//        System.out.println("maxTenderPrice = " + maxTenderPrice);
-//        System.out.println(((SessionMember) httpSession.getAttribute("member")).getEmail());
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-//            System.out.println(email);
             int auctionCount = auctionService.countAuctionsByMemberAndProduct(email, productNo);
             if (auctionCount >= 2) {
                 redirectAttributes.addFlashAttribute("message", "입찰은 최대 2번까지 가능합니다.");
@@ -114,11 +110,8 @@ public class AuctionViewController {
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
 
         Member member = auctionService.getMemberByEmail(email);
-//        log.info("member >>>>>>>>>>. {}", member);
-        Product product = auctionService.getProductById(productNo);
-//        log.info("product >>>>>>>>>>. {}", product);
-
-        Auction auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
+        ProductResDto product = auctionService.getProductById(productNo);
+        AuctionResponseDto auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
 
         model.addAttribute("member", member);
         model.addAttribute("product", product);
