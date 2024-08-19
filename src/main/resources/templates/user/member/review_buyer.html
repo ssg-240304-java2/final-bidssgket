@@ -2,161 +2,229 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{/user/fragments/layout}">
+      layout:decorate="~{user/fragments/layout}">
+
 <head>
     <meta charset="UTF-8">
-    <title>Review</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리뷰</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .Review-font {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-left: 8.5rem;
+            margin-bottom: 2rem;
+        }
 
-<style>
-    body {
-        font-family: Arial, sans-serif; /* 기본 글꼴 설정 */
-        margin: 0;
-        color: #333;
-    }
+        .Review-font img {
+            margin-right: 1rem;
+            margin-top: 0;
+        }
 
+        .Review-font h1 {
+            margin: 0;
+            white-space: nowrap;
+            font-size: 1.5rem;
+        }
 
+        .container {
+            margin: 2rem;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+        }
 
-    .Review-font {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start; /* 왼쪽 정렬 */
-        margin-left:-4rem;
-        margin-bottom: 5rem;
+        .rating-section,
+        .feedback-section {
+            margin-bottom: 2rem;
+        }
 
-    }
+        .rating-section label,
+        .feedback-section label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
 
-    .Review-font img {
-        margin-right: 1rem; /* 이미지와 텍스트 사이의 간격 조절 */
-        margin-top: 0; /* 이미지의 상단 여백 제거 */
-    }
+        .star-rating {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 2rem;
+        }
 
-    .Review-font h1 {
-        /* h1 태그의 기본 여백 제거 */
-        margin:0;
-        white-space: nowrap;
-        font-size: 1.5rem;
+        .star {
+            cursor: pointer;
+            color: #ddd;
+        }
 
-    }
+        .star.selected {
+            color: #f39c12;
+        }
 
+        .feedback-section input[type="number"] {
+            width: 400px;
+            height: 50px;
+            padding: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
 
-    .container {
-        margin-left: 32rem;
-        margin-top: 2rem;
-        background-color: #fff;
-        padding: 2rem;
-        border-radius: 8px;
-        width: 100%;
-        max-width: 500px;
-    }
+        .feedback-section textarea {
+            width: 400px;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 200px;
+        }
 
+        .submit-button {
+            display: block;
+            width: 50%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            background-color: #000;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-left: 5.5rem;
+        }
 
-    .rating-section,
-    .feedback-section {
-        margin-bottom: 2rem;
-    }
+        .submit-button:hover {
+            background-color: #fff;
+            color: #000;
+        }
 
-    .rating-section label,
-    .feedback-section label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: bold;
-        font-size: 1rem;
-        margin-top: 2rem;
-    }
+        .review-container {
+            margin-left: 20rem;
+        }
 
-    .star-rating {
-        display: flex;
-        gap: 0.5rem;
-        font-size: 2rem;
-    }
-
-    .star {
-        cursor: pointer;
-        color: #ddd;
-    }
-
-    .star.selected {
-        color: #f39c12;
-    }
-
-    .feedback-section input[type="number"] {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 1rem;
-    }
-
-    .feedback-section textarea {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 1rem;
-        resize: vertical;
-        min-height: 100px;
-    }
-
-    .submit-button {
-        display: block;
-        width: 50%;
-        padding: 0.75rem;
-        border: none;
-        border-radius: 4px;
-        color: #fff;
-        background-color: #000;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        margin-left: 8rem;
-    }
-
-    .submit-button:hover {
-        background-color: #fff;
-        color: #000;
-    }
-</style>
+        .review-box {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-right: 23rem;
+            margin-left: -5rem;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+    </style>
 </head>
+
 <body>
+<main class="contents" layout:fragment="content">
+    <div class="container mx-auto" style="max-width: 1440px; display: flex; gap: 2rem;">
+        <aside class="w-1/4">
+            <a href="/user/mypage" class="block">
+                <h2 class="text-2xl font-bold mb-4 transform hover:scale-105 transition-transform duration-300">마이 페이지</h2>
+            </a>
+            <ul class="space-y-2">
+                <li>
+                    <a href="/user/mypage" class="block text-left w-full font-bold text-black transform hover:scale-105 transition-transform duration-300">쇼핑 정보</a>
+                </li>
+                <li>
+                    <a href="/user/order/purchases/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">구매 내역</a>
+                </li>
+                <li>
+                    <a href="/user/order/sales/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">판매 내역</a>
+                </li>
+                <li>
+                    <a href="/user/payment/info" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">결제</a>
+                </li>
+                <li>
+                    <a href="/chat" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">채팅</a>
+                </li>
+            </ul>
+        </aside>
 
-    <div class="container" layout:fragment="content">
-        <div class="rating-section">
-            <div class="Review-font">
-                <img src="/user/member/review.png" alt="Review Icon" width="50" height="50">
-                <h1>리뷰</h1>
+        <div class="review-container w-3/4">
+            <div class="review-box">
+                <div class="rating-section">
+                    <div class="Review-font">
+                        <img src="/user/member/review.png" alt="Review Icon" width="50" height="50">
+                        <h1>리뷰</h1>
+                    </div>
+                    <form id="review-form" action="/submit-buyer-review" method="post">
+                        <label for="product-rating">상품 만족도</label>
+                        <div id="product-rating" class="star-rating">
+                            <span class="star" data-value="1">&#9733;</span>
+                            <span class="star" data-value="2">&#9733;</span>
+                            <span class="star" data-value="3">&#9733;</span>
+                            <span class="star" data-value="4">&#9733;</span>
+                            <span class="star" data-value="5">&#9733;</span>
+                        </div>
+                        <input type="hidden" id="product-rating-value" name="product-rating" value="0">
+
+                        <div class="feedback-section">
+                            <label for="seller-rating">판매자 만족도 (1~100)</label>
+                            <input type="number" id="seller-rating" name="seller-rating" th:value="${sellerRatingValue}" min="1" max="100" step="1" required >
+                            <span id="error-message" class="error-message"></span>
+                            <label for="comments">코멘트</label>
+                            <textarea id="comments" name="comments" rows="5" cols="50" placeholder="코멘트를 남겨주세요..." required th:text="${comments}"></textarea>
+
+                        </div>
+                        <input type="hidden" name="productNo" th:value="${productNo}">
+                        <button type="submit" class="submit-button">제출</button>
+                    </form>
+                </div>
             </div>
-    <form>
-            <label for="product-rating">상품 만족도</label>
-            <div id="product-rating" class="star-rating">
-                <span class="star" data-value="1">&#9733;</span>
-                <span class="star" data-value="2">&#9733;</span>
-                <span class="star" data-value="3">&#9733;</span>
-                <span class="star" data-value="4">&#9733;</span>
-                <span class="star" data-value="5">&#9733;</span>
-            </div>
-
-
-        <div class="feedback-section">
-            <label for="seller-rating">판매자 만족도 (1~100)</label>
-            <input type="number" id="seller-rating" name="seller-rating" min="1" max="100" step="1" required>
-            <label for="comments">코멘트</label>
-            <textarea id="comments" name="comments" placeholder="코멘트를 남겨주세요..." required></textarea>
         </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const stars = document.querySelectorAll('#product-rating .star');
+            const sellerRatingInput = document.getElementById('seller-rating');
+            const productRatingValue = document.getElementById('product-rating-value');
+            const errorMessage = document.getElementById('error-message');
 
-        <button type="submit" class="submit-button">제출</button>
-    </form>
-</div>
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const value = star.getAttribute('data-value');
+                    stars.forEach(s => {
+                        if (s.getAttribute('data-value') <= value) {
+                            s.classList.add('selected');
+                        } else {
+                            s.classList.remove('selected');
+                        }
+                    });
+                    productRatingValue.value = value;
+                });
+            });
 
-<script>
-    // JavaScript for star rating functionality
-    document.querySelectorAll('.star-rating .star').forEach(star => {
-        star.addEventListener('click', () => {
-            const value = star.getAttribute('data-value');
-            document.querySelectorAll('.star-rating .star').forEach(star => {
-                star.classList.toggle('selected', star.getAttribute('data-value') <= value);
+            sellerRatingInput.addEventListener('input', () => {
+                const value = parseInt(sellerRatingInput.value, 10);
+                if (isNaN(value) || value < 1 || value > 100) {
+                    errorMessage.textContent = '숫자를 다시 입력해 주세요.';
+                } else {
+                    errorMessage.textContent = '';
+                }
+            });
+
+            document.getElementById('review-form').addEventListener('submit', (e) => {
+                const value = parseInt(sellerRatingInput.value, 10);
+                if (isNaN(value) || value < 1 || value > 100) {
+                    e.preventDefault(); // 폼 제출 방지
+                    errorMessage.textContent = '1에서 100 사이의 숫자를 입력해 주세요.';
+                }
             });
         });
-    });
-</script>
+    </script>
+</main>
+
 </body>
 </html>
