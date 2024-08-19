@@ -100,7 +100,7 @@ input[readonly] {
     gap: 10px;
 }
 
-.btn {
+.btn , .cancel-btn, .submit-btn{
     padding: 10px 10px;
     border: none;
     border-radius: 5px;
