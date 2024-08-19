@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{user/fragments/layout}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{user/fragments/layout}">
 <head>
   <meta charset="UTF-8">
-  <title>회원 정보</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원정보</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+  <script src="/javascript/popup_2.js"></script>
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <style>
     body {
       margin: 0;
@@ -40,34 +44,38 @@
       border-radius: 4px;
     }
     .info-container {
-      width: 90%;
-      max-width: 900px; /* 최대 너비 설정 */
-      margin: 2rem auto;
+      width: 80%;
+      max-width: 800px; /* 최대 너비 설정 */
+      margin-top: -8rem;
+      margin-left: 25rem;
+      margin-bottom: 10rem;
       padding: 2rem;
       background-color: #fff;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      font-size: 1.2rem; /* 기본 폰트 크기 증가 */
+      font-size: 1.2rem;
     }
     .info-header {
-      margin-bottom: 1.5rem;
+      margin-bottom: -1rem;
+      margin-top: -4rem;
       border-bottom: 2px solid #000;
       padding-bottom: 0.5rem;
     }
     .info-header h1 {
       margin: 0;
-      font-size: 2.5rem; /* 제목 크기 증가 */
+      font-size: 2rem; /* 제목 크기 증가 */
       color: #000;
     }
     .info-form {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.5rem;
     }
     .form-group {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+      margin-bottom: -5rem;
     }
     .form-group label {
       font-weight: bold;
@@ -76,10 +84,10 @@
     }
     .form-group input,
     .form-group textarea {
-      padding: 1rem; /* 패딩 증가 */
+      padding: 1rem;
       border: 1px solid #ccc;
       border-radius: 4px;
-      font-size: 1.2rem; /* 폰트 크기 증가 */
+      font-size: 1.2rem;
       box-sizing: border-box;
     }
     .info-form textarea {
@@ -110,65 +118,165 @@
     .cancel-button:hover {
       background-color: #444;
     }
+    .form-group {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .address-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    textarea {
+      width: 100%;
+      padding-right: 80px;
+      box-sizing: border-box;
+    }
+
+    .search-address-button {
+      position: absolute;
+      right: 10px;
+      top: 50%; /* 수직 중앙 정렬 */
+      transform: translateY(-50%); /* 중앙 정렬 */
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      border: none;
+      background-color: #666; /* 버튼 배경색 */
+      color: #fff; /* 버튼 글자색 */
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 10; /* 버튼이 텍스트 영역 위에 나타나게 함 */
+    }
+
+    .search-address-button:hover {
+      background-color: #333;
+    }
+    input[readonly], textarea[readonly] {
+      background-color: #f0f0f0; /* 회색 배경색 */
+      cursor: not-allowed; /* 커서 모양 변경 */
+    }
   </style>
 </head>
 <body>
+<main class="contents" layout:fragment="content">
+  <div class="container mx-auto" style="max-width: 1440px;">
+    <aside>
+      <a href="/user/mypage" class="block">
+        <h2 class="text-2xl font-bold mb-4 transform hover:scale-105 transition-transform duration-300">마이 페이지</h2>
+      </a>
+      <ul class="space-y-2">
+        <li>
+          <a href="/user/mypage" class="block text-left w-full font-bold text-black transform hover:scale-105 transition-transform duration-300">쇼핑 정보</a>
+        </li>
+        <li>
+          <a href="/user/order/purchases/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">구매 내역</a>
+        </li>
+        <li>
+          <a href="/user/order/sales/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">판매 내역</a>
+        </li>
+        <li>
+          <a href="/user/payment/info" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">결제</a>
+        </li>
+        <li>
+          <a href="/chat" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">채팅</a>
+        </li>
+      </ul>
+    </aside>
 
-<div class="info-container">
-  <div class="info-header">
-    <br><br>
-    <h1>회원 정보</h1>
+    <div class="info-container">
+      <div class="info-header">
+        <br><br>
+        <h1>회원 정보</h1>
+      </div>
+      <section class="info-section">
+        <form action="/user/info/update" method="post" class="info-form">
+          <br>
+          <div class="form-group">
+            <label for="memberName">사용자 이름</label>
+            <input type="text" id="memberName" name="memberName" placeholder="이름을 입력하세요" th:value="${memberName != null ? memberName : ''}"/>
+          </div>
+          <div class="form-group">
+            <label for="nickname">닉네임</label>
+            <input type="text" id="nickname" name="nickname" th:value="${nickname}" readonly>
+          </div>
+          <div class="form-group">
+            <label for="biscuit">비스킷 온도</label>
+            <input type="number" id="biscuit" name="biscuit" th:value="${biscuit}" readonly>
+          </div>
+          <div class="form-group">
+            <label for="phone">전화번호</label>
+            <input type="tel" id="phone" name="phone" placeholder="'-'를 포함한 전화번호 11자리를 입력하세요" th:value="${phone != null ? phone : ''}"/>
+          </div>
+          <div class="form-group">
+            <label for="address">주소</label>
+            <div class="address-container">
+              <input type="text" id="postcode" name="postcode" placeholder="우편번호" th:value="${address != null ? address.postcode : ''}"/>
+              <button type="button" onclick="sample6_execDaumPostcode()" id="search-address-button" class="search-address-button">주소 찾기</button>
+            </div>
+            <input type="text" id="address" name="address" placeholder="주소" th:value="${address != null ? address.address : ''}"/>
+            <input type="text" id="detailAddress" name="detailAddress" placeholder="상세주소" th:value="${address != null ? address.detailAddress : ''}"/>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="edit-button">정보 수정</button>
+            <button type="button" class="cancel-button">계정 탈퇴</button>
+          </div>
+        </form>
+      </section>
+    </div>
   </div>
-  <section class="info-section">
-    <form action="#" method="post" class="info-form">
-      <br>
-      <div class="form-group">
-        <label for="username">사용자 이름</label>
-        <input type="text" id="username" name="username" value="홍길동" readonly>
-      </div>
-      <div class="form-group">
-        <label for="id">아이디</label>
-        <input type="text" id="id" name="id" value="홍길동" readonly>
-      </div>
-      <div class="form-group">
-        <label for="nickname">닉네임</label>
-        <input type="text" id="nickname" name="nickname" value="홍홍홍" readonly>
-      </div>
-      <div class="form-group">
-        <label for="bisket">비스킷 온도</label>
-        <input type="number" id="bisket" name="bisket" value="hong@example.com" readonly>
-      </div>
-      <div class="form-group">
-        <label for="phone">전화번호</label>
-        <input type="tel" id="phone" name="phone" value="010-1234-5678" readonly>
-      </div>
-      <div class="form-group">
-        <label for="address">주소</label>
-        <textarea id="address" name="address" rows="4" readonly>서울특별시 강남구 역삼동</textarea>
-      </div>
-      <div class="form-actions">
-        <button type="button" class="edit-button">정보 수정</button>
-        <button type="button" class="cancel-button">계정 탈퇴</button>
-      </div>
-    </form>
-  </section>
-</div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 수정 불가한 입력 필드 요소를 선택
+      const readOnlyFields = document.querySelectorAll('input[readonly], textarea[readonly]');
 
-<!-- Optional JavaScript for form interactions -->
-<script>
-  document.querySelector('.edit-button').addEventListener('click', function() {
-    const inputs = document.querySelectorAll('.info-form input, .info-form textarea');
-    inputs.forEach(input => input.removeAttribute('readonly'));
-    this.style.display = 'none';
-    document.querySelector('.cancel-button').style.display = 'inline-block';
-  });
+      readOnlyFields.forEach(function(field) {
+        field.addEventListener('focus', function(event) {
+          alert('이 필드는 수정할 수 없습니다.');
+          event.target.blur();
+        });
+      });
+    });
 
-  document.querySelector('.cancel-button').addEventListener('click', function() {
-    const inputs = document.querySelectorAll('.info-form input, .info-form textarea');
-    inputs.forEach(input => input.setAttribute('readonly', 'true'));
-    this.style.display = 'none';
-    document.querySelector('.edit-button').style.display = 'inline-block';
-  });
-</script>
+    function sample6_execDaumPostcode() {
+      new daum.Postcode({
+        oncomplete: function(data) {
+          var addr = ''; // 주소 변수
+          var extraAddr = ''; // 참고항목 변수
+
+          if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+            addr = data.roadAddress;
+          } else { // 사용자가 지번 주소를 선택했을 경우(J)
+            addr = data.jibunAddress;
+          }
+
+          // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+          if (data.userSelectedType === 'R') {
+            // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+            if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+              extraAddr += data.bname;
+            }
+            // 건물명이 있고, 공동주택일 경우 추가한다.
+            if (data.buildingName !== '' && data.apartment === 'Y') {
+              extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+            }
+            // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+            if (extraAddr !== '') {
+              extraAddr = ' (' + extraAddr + ')';
+            }
+          } else {
+            extraAddr = '';
+          }
+
+          // 우편번호와 주소 정보를 필드에 넣기
+          document.getElementById('postcode').value = data.zonecode;
+          document.getElementById('address').value = addr + extraAddr; // 주소와 참고항목을 결합하여 입력
+          document.getElementById('detailAddress').focus();
+        }
+      }).open();
+    }
+  </script>
+</main>
 </body>
 </html>

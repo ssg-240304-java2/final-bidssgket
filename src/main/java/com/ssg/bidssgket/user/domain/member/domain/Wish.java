@@ -2,9 +2,10 @@ package com.ssg.bidssgket.user.domain.member.domain;
 
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.List;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
