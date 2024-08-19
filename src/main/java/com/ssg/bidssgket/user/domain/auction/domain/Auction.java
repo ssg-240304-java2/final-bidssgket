@@ -65,4 +65,8 @@ public class Auction{
     public void updateTenderDeleted(boolean tenderDeleted) {
         this.tenderDeleted = tenderDeleted;
     }
+
+    public void updateBidSuccess(boolean bidSuccess) {
+        this.bidSuccess = bidSuccess;
+    }
 }

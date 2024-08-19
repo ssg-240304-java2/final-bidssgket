@@ -9,41 +9,6 @@
     <link rel="stylesheet" href="/user/auction/css/auctionregist.css">
 
     <script>
-        /*function validateBids() {
-            const maxBidInput = document.getElementById('maxTenderPrice');
-            const submitBtn = document.querySelector('.submit-btn');
-            const errorMessage = document.getElementById('error-message');
-            const productNoField = document.getElementById('productNoField');
-            const minBidValue = parseFloat(document.getElementById('minTenderPrice').value) || 0;
-
-            function validateMaxBid() {
-                const maxBidValue = parseFloat(maxBidInput.value) || 0;
-
-                if (maxBidValue <= minBidValue) {
-                    maxBidInput.setCustomValidity('최대 입찰가는 최소 입찰가보다 커야 합니다.');
-                    errorMessage.textContent = '최대 입찰가는 최소 입찰가보다 커야 합니다.';
-                } else {
-                    maxBidInput.setCustomValidity('');
-                    errorMessage.textContent = '';
-                }
-            }
-
-            maxBidInput.addEventListener('input', validateMaxBid);
-
-            submitBtn.addEventListener('click', function(event) {
-                if (!maxBidInput.checkValidity() || maxBidInput.value.trim() === "") {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    errorMessage.textContent = '최대 입찰가는 필수 입력 항목입니다.';
-                } else {
-                    document.getElementById('auctionForm').submit();
-                }
-            });
-
-            validateMaxBid();
-        }
-
-        document.addEventListener('DOMContentLoaded', validateBids);*/
         document.addEventListener('DOMContentLoaded', function () {
             const maxTenderPriceInput = document.getElementById('maxTenderPrice');
             const maxTenderPriceField = document.getElementById('maxTenderPriceField');

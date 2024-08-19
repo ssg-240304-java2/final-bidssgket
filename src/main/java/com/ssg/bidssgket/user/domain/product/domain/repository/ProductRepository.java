@@ -9,13 +9,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -41,7 +38,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByAuctionSelected(@Param("now") LocalDateTime now);
 
     @Query("SELECT p FROM Product p WHERE p.auctionEndTime > :now AND p.salesStatus = 'selling' AND p.member.memberNo = :memberNo")
-    List<Product> findByMemberNo(@Param("memberNo") Long memberNo, @Param("now") LocalDateTime now);
+    List<Product> findByMemberNo(Long memberNo, @Param("now") LocalDateTime now);
 
     @Query("SELECT p FROM Product p WHERE p.auctionEndTime > :now AND p.productName LIKE %:search% OR p.productDesc LIKE %:search% AND p.salesStatus = 'selling' ORDER BY p.createdAt ASC ")
     List<Product> searchBySearch(@Param("search") String search, @Param("now") LocalDateTime now);
@@ -49,4 +46,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.auctionEndTime > :now AND p.salesStatus = 'selling' ORDER BY p.createdAt DESC ")
     List<Product> findAllProduct( @Param("now") LocalDateTime now);
 
+    @Query(value = "SELECT CASE WHEN count(*)>0 THEN TRUE ELSE FALSE END FROM product p WHERE p.member_no= :memberNo AND p.product_no= :productNo", nativeQuery = true)
+    Long existsByMemberAndProductNo(Long memberNo, Long productNo);
+    @Query("SELECT p FROM Product p WHERE p.auctionEndTime > :now AND p.eventAuction = true AND p.salesStatus = 'selling' ORDER BY p.auctionEndTime ASC")
+    List<Product> findByEventAuction(@Param("now") LocalDateTime now);
+
+    @Query("SELECT p FROM Product p WHERE p.auctionEndTime > :now AND p.salesStatus = 'selling' AND p.member.memberNo = :memberNo AND p.eventAuction = true")
+    List<Product> findEventProductsByMemberNo(Long memberNo, @Param("now") LocalDateTime now);
+
+    @Query("SELECT p FROM Product p WHERE p.productNo = :productNo AND p.eventAuction = true")
+    Product findEventById(@Param("productNo") Long productNo);
+
+    @Query("SELECT p FROM Product p WHERE p.auctionEndTime > :now AND p.salesStatus = 'selling' AND p.eventAuction = true ORDER BY p.auctionEndTime ASC")
+    List<Product> findTop10ByEventAuctionEndDateClosest(@Param("now") LocalDateTime now, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.auctionEndTime > :now AND p.eventAuction = true AND p.salesStatus = 'selling' AND p.productNo = :productNo ORDER BY p.auctionEndTime ASC")
+    List<Product> findByEventAuctionProducts(@Param("productNo") Long productNo, @Param("now") LocalDateTime now);
 }
