@@ -58,8 +58,8 @@ public class Member implements UserDetails {
     @Column(name = "is_penalty")
     private boolean isPenalty; // 패널티 여부
 
-//    @Embedded
-//    private Address address; // 주소
+    @Embedded
+    private Address address; // 주소
 
 //    private String provider;
 //    private String providerId;
@@ -106,7 +106,7 @@ public class Member implements UserDetails {
 //        this.provider = provider;
 //        this.providerId = providerId;
         this.biscuit = biscuit == null? 50 :biscuit;
-//        this.address = address;
+        this.address = address;
         this.isDeleted = isDeleted == null? false:isDeleted;
         this.isPenalty = isPenalty == null? false:isPenalty;
     }
