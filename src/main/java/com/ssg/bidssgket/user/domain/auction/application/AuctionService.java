@@ -122,5 +122,10 @@ public class AuctionService {
         }
         return false;
     }
+
+    public boolean hasBidders(Long productNo) {
+        List<Auction> auctions = auctionRepository.findAuctionByProductNo(productNo);
+        return !auctions.isEmpty();
+    }
 }
 

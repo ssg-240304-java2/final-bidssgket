@@ -3,6 +3,7 @@ package com.ssg.bidssgket.user.domain.auction.view;
 import com.ssg.bidssgket.user.domain.auction.application.AuctionService;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionReqDto;
+import com.ssg.bidssgket.user.domain.auction.view.dto.FailedProductReqDto;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.application.MemberService;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
@@ -10,6 +11,7 @@ import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
+import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import com.sun.tools.jconsole.JConsoleContext;
 import jakarta.servlet.http.HttpSession;
@@ -189,21 +191,23 @@ public class AuctionViewController {
         boolean isAuctionEnded = product.getAuctionEndTime().isBefore(LocalDateTime.now());
         boolean isSeller = auctionService.isSeller(memberNo, productNo);
         boolean isAuctionParticipant = auctionService.isAuctionParticipant(memberNo, productNo);
+        boolean hasBidders = auctionService.hasBidders(productNo);
 
         System.out.println("isAuctionEnded = " + isAuctionEnded);
         System.out.println("isSeller = " + isSeller);
         System.out.println("isAuctionParticipant = " + isAuctionParticipant);
+        System.out.println("hasBidders = " + hasBidders);
 
         if (isSeller) {
-            /*if (product.getSalesStatus().equals(SalesStatus.sale_pause)) {
-                System.out.println("product.getSalesStatus() = " + product.getSalesStatus());
-                System.out.println("유찰된 상품 처리");
-                return "redirect:/auction/bidFailed/" + productNo;
-            }*/
             if (isAuctionEnded) {
-                auctionService.endAuction(productNo);
-                redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
-                return "redirect:/detailSeller/" + productNo;
+                if (!hasBidders) {
+                    redirectAttributes.addFlashAttribute("message", "경매가 종료되었으나 입찰자가 없어 판매 중지 상태로 변경되었습니다.");
+                    return "redirect:/auction/bidFailed/" + productNo;
+                } else {
+                    auctionService.endAuction(productNo);
+                    redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
+                    return "redirect:/detailSeller/" + productNo;
+                }
             }
         }
         /*if (isSeller && isAuctionEnded) {
@@ -211,7 +215,6 @@ public class AuctionViewController {
             redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
             return "redirect:/detailSeller/" + productNo;
         }*/
-
         if (isAuctionParticipant && isAuctionEnded) {
             boolean isWinningBidder = auctionService.isWinningBidder(memberNo, productNo);
             auctionService.endAuction(productNo);
@@ -305,6 +308,46 @@ public class AuctionViewController {
         return "user/product/bidFailed";
     }
 
+    /**
+     * 경매 재개 (update) 페이지로 이동하면서 판매 상태를 selling으로 변경
+     */
+    @GetMapping("/update/{productNo}")
+    public String updateAuction(@PathVariable("productNo") Long productNo, RedirectAttributes redirectAttributes) {
+        try {
+            productService.changeProductSalesStatus(productNo, SalesStatus.selling);
+            return "redirect:/auction/bidfailedupdate/" + productNo;
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "경매 재개에 실패했습니다.");
+            return "redirect:/auction/bidFailed/" + productNo;
+        }
+    }
 
+    /**
+     * 상품 삭제
+     */
+    @PostMapping("/failbiddelete/{productNo}")
+    public String deleteProduct(@PathVariable("productNo") Long productNo, RedirectAttributes redirectAttributes) {
+        try {
+            productService.deleteProductByNo(productNo);
+            redirectAttributes.addFlashAttribute("message", "상품이 성공적으로 삭제되었습니다.");
+            return "redirect:/";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "상품 삭제에 실패했습니다.");
+            return "redirect:/auction/bidFailed/" + productNo;
+        }
+    }
+
+    @GetMapping("/bidfailedupdate/{productNo}")
+    public String failedProductUpdate(@PathVariable("productNo") Long productNo, Model model){
+        ProductResDto product = productService.findProductByNo(productNo);
+        model.addAttribute("product", product);
+        return "user/auction/bidfailedupdate";
+    }
+
+    @PostMapping("/bidfailedupdate/{productNo}")
+    public String failedBidProductUpdate(@PathVariable("productNo") Long productNo, @ModelAttribute FailedProductReqDto failedProductReqDto) {
+        productService.updateFailedBidProduct(failedProductReqDto);
+        return "redirect:/detailSeller/"+ productNo;
+    }
 
 }
