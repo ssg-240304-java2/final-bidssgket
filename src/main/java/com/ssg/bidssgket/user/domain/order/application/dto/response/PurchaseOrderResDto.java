@@ -3,7 +3,7 @@ package com.ssg.bidssgket.user.domain.order.application.dto.response;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
 import com.ssg.bidssgket.user.domain.order.domain.enums.DeliveryType;
 import com.ssg.bidssgket.user.domain.order.domain.enums.OrderStatus;
-import com.ssg.bidssgket.user.domain.order.domain.enums.TransactionType;
+import com.ssg.bidssgket.user.domain.order.domain.enums.OrderTransactionType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PurchaseOrderResDto {
     private Long purchaseOrderNo;
-    private TransactionType transactionType;
+    private OrderTransactionType orderTransactionType;
     private DeliveryType deliveryType;
     private OrderStatus orderStatus;
     private LocalDateTime createdAt;
@@ -27,7 +27,7 @@ public class PurchaseOrderResDto {
 
     public PurchaseOrderResDto(PurchaseOrder purchaseOrder) {
         this.purchaseOrderNo = purchaseOrder.getPurchaseOrderNo();
-        this.transactionType = purchaseOrder.getTransactionType();
+        this.orderTransactionType = purchaseOrder.getOrderTransactionType();
         this.deliveryType = purchaseOrder.getDeliveryType();
         this.orderStatus = purchaseOrder.getOrderStatus();
         this.createdAt = purchaseOrder.getCreatedAt();

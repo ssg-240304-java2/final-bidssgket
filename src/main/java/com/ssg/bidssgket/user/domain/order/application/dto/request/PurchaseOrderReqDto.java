@@ -2,7 +2,7 @@ package com.ssg.bidssgket.user.domain.order.application.dto.request;
 
 import com.ssg.bidssgket.user.domain.order.domain.enums.DeliveryType;
 import com.ssg.bidssgket.user.domain.order.domain.enums.OrderStatus;
-import com.ssg.bidssgket.user.domain.payment.domain.enums.TransactionType;
+import com.ssg.bidssgket.user.domain.order.domain.enums.OrderTransactionType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PurchaseOrderReqDto {
-    private TransactionType transactionType;
+    private OrderTransactionType orderTransactionType;
     private DeliveryType deliveryType;
     private OrderStatus orderStatus;
 
@@ -18,8 +18,8 @@ public class PurchaseOrderReqDto {
     private Long productNo;
     private Long paymentNo;
 
-    public PurchaseOrderReqDto(TransactionType transactionType, DeliveryType deliveryType, OrderStatus orderStatus, Long buyerNo, Long productNo, Long paymentNo) {
-        this.transactionType = transactionType;
+    public PurchaseOrderReqDto(OrderTransactionType orderTransactionType, DeliveryType deliveryType, OrderStatus orderStatus, Long buyerNo, Long productNo, Long paymentNo) {
+        this.orderTransactionType = orderTransactionType;
         this.deliveryType = deliveryType;
         this.orderStatus = orderStatus;
 
