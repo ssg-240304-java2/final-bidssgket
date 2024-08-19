@@ -153,4 +153,3 @@ public class AuctionService {
         return !auctions.isEmpty();
     }
 }
-
