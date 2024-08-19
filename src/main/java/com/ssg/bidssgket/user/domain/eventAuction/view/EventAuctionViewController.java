@@ -2,6 +2,7 @@ package com.ssg.bidssgket.user.domain.eventAuction.view;
 
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.eventAuction.application.EventAuctionService;
+import com.ssg.bidssgket.user.domain.eventAuction.view.dto.BidMessage;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
@@ -12,6 +13,10 @@ import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +34,14 @@ public class EventAuctionViewController {
     private final EventAuctionService eventAuctionService;
     private final MemberRepository memberRepository;
     private final ProductService productService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-
+    /***
+     * 번개 경매 상품 등록 화면
+     * @param model
+     * @param httpSession
+     * @return
+     */
     @GetMapping("/regist")
     public String registEventProduct(Model model, HttpSession httpSession) {
         String member = ((SessionMember) httpSession.getAttribute("member")).getEmail();
@@ -47,6 +58,15 @@ public class EventAuctionViewController {
         return "user/eventAuction/regist";
     }
 
+    /***
+     * 번개 경매 상품 등록
+     * @param model
+     * @param httpSession
+     * @param registProductReqDto
+     * @param auctionDuration
+     * @param productImages
+     * @return
+     */
     @PostMapping("/regist")
     public String registEventProduct(Model model, HttpSession httpSession, @ModelAttribute RegistProductReqDto registProductReqDto,
                          @RequestParam("auctionDuration")int auctionDuration, @RequestParam("productImages") List<MultipartFile> productImages) {
@@ -54,6 +74,11 @@ public class EventAuctionViewController {
         return "redirect:/eventAuction/lists";
     }
 
+    /***
+     * 번개 경매 전체 상품 조회
+     * @param model
+     * @return
+     */
     @GetMapping("/lists")
     public String eventAuctionList(Model model) {
         List<Product> eventProducts = eventAuctionService.getEventProducts();
@@ -61,6 +86,13 @@ public class EventAuctionViewController {
         return "user/eventAuction/lists";
     }
 
+    /***
+     * 번개 경매 상세 조회 분기 처리
+     * @param model
+     * @param productNo
+     * @param httpSession
+     * @return
+     */
     @GetMapping("/detail/{productNo}")
     public String detailController(Model model, @PathVariable("productNo") Long productNo,
                                    HttpSession httpSession) {
@@ -88,6 +120,13 @@ public class EventAuctionViewController {
         }
     }
 
+    /***
+     * 번개 경매 판매자 상세 조회
+     * @param model
+     * @param productNo
+     * @param httpSession
+     * @return
+     */
     @GetMapping("/detailSeller/{productNo}")
     public String detailEventAuction(Model model, @PathVariable("productNo") Long productNo,HttpSession httpSession) {
         log.info("productNo: {}", productNo);
@@ -103,6 +142,13 @@ public class EventAuctionViewController {
         return "user/eventAuction/detailAuction";
     }
 
+    /***
+     * 번개 경매 경매 참여자 상세페이지 조회
+     * @param model
+     * @param productNo
+     * @param httpSession
+     * @return
+     */
     @GetMapping("/detailAuction/{productNo}")
     public String detailAuctionController(Model model, @PathVariable("productNo") Long productNo,HttpSession httpSession) {
         log.info("productNo: {}", productNo);
@@ -118,6 +164,12 @@ public class EventAuctionViewController {
         return "user/eventAuction/detailAuction";
     }
 
+    /***
+     * 번개 경매 구매자 상세페이지 조회
+     * @param model
+     * @param productNo
+     * @return
+     */
     @GetMapping("/detailBuyer/{productNo}")
     public String detailBuyerController(Model model, @PathVariable("productNo") Long productNo) {
         log.info("productNo: {}", productNo);
@@ -128,4 +180,11 @@ public class EventAuctionViewController {
         return "user/eventAuction/detailBuyer";
     }
 
+    @MessageMapping("{productNo}")
+    @SendTo("/pro/{productNo}")
+    public BidMessage handleBidMessage(@Payload BidMessage bidMessage, @PathVariable("productNo") Long productNo){
+        log.info("Received bid for product {}: {}", productNo, bidMessage.getMaxTenderPrice());
+//        messagingTemplate.convertAndSend("/detail/" + productNo, bidMessage);
+        return bidMessage;
+    }
 }
