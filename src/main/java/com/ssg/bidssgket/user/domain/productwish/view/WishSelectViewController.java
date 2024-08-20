@@ -20,29 +20,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/wish")
 public class WishSelectViewController {
 
+/*
     @Autowired
     private ProductWishService productWishService;
     @Autowired
     private AuctionService auctionService;
+*/
 
-    @PostMapping("/add")
-    public String wishSelect(@RequestParam("productNo") Long productNo, HttpSession httpSession){
-        SessionMember sessionMember = (SessionMember) httpSession.getAttribute("member");
-        if (sessionMember != null) {
-            String email = sessionMember.getEmail();
-            productWishService.addWish(productNo, email);
-            return "added";
-        } else {
-            return "login";
-        }
-    }
 
-    @PostMapping("/delete")
-    public String removeWish(@RequestParam("productNo") Long productNo, HttpSession httpSession) {
-        String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-        Member member = auctionService.getMemberByEmail(email);
-        productWishService.removeWish(productNo, member.getMemberNo());
-
-        return "redirect:/";  // 필요한 리디렉션 경로로 변경하세요.
-    }
 }

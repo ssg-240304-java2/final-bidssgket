@@ -3,6 +3,7 @@ package com.ssg.bidssgket.user.domain.auction.view;
 import com.ssg.bidssgket.user.domain.auction.application.AuctionService;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionReqDto;
+import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionResponseDto;
 import com.ssg.bidssgket.user.domain.auction.view.dto.FailedProductReqDto;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.application.MemberService;
@@ -298,7 +299,8 @@ public class AuctionViewController {
         System.out.println("유찰된 상품");
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
         ProductResDto product = productService.findProductByNo(productNo);
-        List<Auction> auction = productService.findAuctionByProductNo(productNo);
+        List<AuctionResponseDto> auction = auctionService.findByProductNo(productNo);
+//        List<Auction> auction = productService.findAuctionByProductNo(productNo);
         Optional<Member> memberInfo = memberRepository.findByEmail(email);
         Long memberNo = memberInfo.get().getMemberNo();
 

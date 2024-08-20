@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AuctionService {
@@ -126,6 +127,20 @@ public class AuctionService {
     public boolean hasBidders(Long productNo) {
         List<Auction> auctions = auctionRepository.findAuctionByProductNo(productNo);
         return !auctions.isEmpty();
+    }
+
+    public List<AuctionResponseDto> findByProductNo(Long productNo) {
+        List<Auction> auctions = auctionRepository.findAuctionByProductNo(productNo);
+        return auctions.stream().map(auction -> new AuctionResponseDto(
+                auction.getBidNo(),
+                auction.getMinTenderPrice(),
+                auction.getMaxTenderPrice(),
+                auction.getTenderDate(),
+                auction.getBidSuccess(),
+                auction.getTenderDeleted(),
+                auction.getMember(),
+                auction.getProduct()
+        )).collect(Collectors.toList());
     }
 }
 
