@@ -11,7 +11,7 @@ public class PaymentResDto {
     private Long paymentNo;
     private Long memberNo;
     private String paymentType;
-    private String transactionType;
+    private String paymentTransactionType;
     private int amount;
     private String paymentStatus;
 
@@ -23,7 +23,7 @@ public class PaymentResDto {
         this.paymentNo = payment.getPaymentNo();
         this.memberNo = payment.getMember().getMemberNo();
         this.paymentType = payment.getPaymentType().name();
-        this.transactionType = payment.getTransactionType().name();
+        this.paymentTransactionType = payment.getPaymentTransactionType().name();
         this.amount = payment.getAmount();
         this.paymentStatus = payment.getPaymentStatus().name();
 

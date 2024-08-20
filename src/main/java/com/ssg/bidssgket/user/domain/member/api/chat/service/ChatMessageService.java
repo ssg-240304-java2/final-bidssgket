@@ -50,6 +50,4 @@ public class ChatMessageService {
 
         return chatMessageRepository.save(chatMessage);
     }
-
-
 }

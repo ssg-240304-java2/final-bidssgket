@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/fragments/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 | 비스킷 페이 충전</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .input-bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-gray">
+<main class="contents" layout:fragment="content">
+    <div class="container mx-auto flex" style="max-width: 1440px;">
+        <aside class="w-52 p-4" style="max-width: 210px;">
+            <a href="/user/mypage" class="block">
+                <h2 class="text-2xl font-bold mb-4 transform hover:scale-105 transition-transform duration-300">마이 페이지</h2>
+            </a>
+            <ul class="space-y-2">
+                <li>
+                    <a href="/user/mypage" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">쇼핑 정보</a>
+                </li>
+                <li>
+                    <a href="/user/order/purchases/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">구매 내역</a>
+                </li>
+                <li>
+                    <a href="/user/order/sales/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">판매 내역</a>
+                </li>
+                <li>
+                    <a href="/user/payment/info" class="block text-left w-full font-bold text-black transform hover:scale-105 transition-transform duration-300">결제</a>
+                </li>
+                <li>
+                    <a href="#" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">채팅</a>
+                </li>
+            </ul>
+        </aside>
+        <section class="flex-1 p-4" style="max-width: 1230px;">
+            <div class="max-w-4xl mx-auto bg-white p-6 mt-10 shadow-md rounded-md">
+                <div class="border-b pb-8 mb-4">
+                    <h1 class="text-2xl font-semibold mb-4">상품 정보</h1>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <img th:src="${product.productImages}" th:alt="'Product image of' + ${ product.productName }" class="w-25 h-25">
+                            <div>
+                                <a href="#" th:text="${product.productName}" class="text-lg font-semibold text-black hover:text-blue-700"></a>
+<!--                                <p class="text-lg text-gray-500">260</p>-->
+                            </div>
+                        </div>
+                        <table>
+                            <tr>
+                                <td class="text-lg font-semibold text-right">결제 금액</td>
+                            </tr>
+                            <tr>
+                                <td id="price" th:text="${product.buyNowPrice}" class="text-lg font-bold text-right"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-sm text-red-500 text-right">결제 만료일</td>
+                            </tr>
+                            <tr>
+                                <td id="timer" class="text-sm text-red-500 text-right"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="border-b pb-4">
+                    <h1 class="text-2xl font-semibold mb-4">배송 정보</h1>
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <div class="text-gray-900 mb-2">
+                                <span class="text-gray-400 mr-10">받는 분</span>
+                                <input id="receiverName" type="text" class="border rounded p-2" placeholder="이름을 입력하세요."/>
+                            </div>
+                            <div class="text-gray-900 mb-2">
+                                <span class="text-gray-400 mr-11">연락처</span>
+                                <input id="contactNumber" type="text" class="border rounded p-2" placeholder="전화번호를 입력하세요."/>
+                            </div>
+                            <div class="text-gray-900 mb-2">
+                                <span class="text-gray-400 mr-6">배송 주소</span>
+                                <span id="shippingAddress">
+<!--                                    <span th:text=""></span>-->
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <div class="text-right text-gray-400">
+                                <a href="#">새 주소 추가</a>
+                            </div>
+                            <br>
+                            <div class="text-gray-400">
+                                <button class="border border-gray-400 rounded px-2 py-1 text-gray-600">변경</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4" id="requestListContainer">
+                        <label for="deliveryRequest" class="text-gray-400">배송 요청 사항</label>
+                        <select id="deliveryRequest" name="deliveryRequest" class="border w-full p-3 rounded">
+                            <option value="문 앞에 놔주세요.">문 앞에 놔주세요.</option>
+                            <option value="경비실에 맡겨주세요.">경비실에 맡겨주세요.</option>
+                            <option value="배송 전에 전화주세요.">배송 전에 전화주세요.</option>
+                            <option value="직접 입력">판매자에게 직접 채팅으로 요청</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="border-b pt-4 pb-4 mb-4">
+                    <h1 class="text-2xl font-bold mb-4">비스킷 페이</h1>
+                    <div class="mb-2 text-lg">보유 잔액</div>
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="text-2xl font-bold text-gray-800">
+                            <span id="pay-balance" th:text="${member.getPay().getPayBalance()}">0원</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-6">
+                    <button id="btn-payment" class="bg-green-500 text-white text-lg px-8 py-4 rounded hover:bg-green-600">결제하기</button>
+                </div>
+            </div>
+
+            <!-- 결제하기 -->
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const priceElement = document.getElementById('price');
+                    const payBalanceElement = document.getElementById('pay-balance');
+                    const paymentButton = document.getElementById('btn-payment');
+
+                    // 결제 금액
+                    const paymentAmount = parseInt(priceElement.textContent.replace(/[^0-9]/g, ''), 10);
+                    // 보유 잔액
+                    const payBalance = parseInt(payBalanceElement.textContent.replace(/[^0-9]/g, ''), 10);
+
+                    // 버튼에 결제 금액 표시
+                    paymentButton.textContent = `${new Intl.NumberFormat('ko-KR').format(paymentAmount)}원 결제하기`;
+
+                    // 보유 잔액이 결제 금액보다 적을 경우, 충전 페이지로 이동하도록 버튼 변경
+                    if (payBalance < paymentAmount) {
+                        paymentButton.textContent = '페이 충전하기';
+                        paymentButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                        paymentButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
+
+                        paymentButton.addEventListener('click', function() {
+                            window.location.href = '/user/payment/deposit'; // 페이 충전 페이지로 이동
+                        });
+                    } else {
+                        // 결제 처리 이벤트 추가 (예시)
+                        paymentButton.addEventListener('click', function() {
+                            // 결제 처리 로직
+                            alert('결제가 완료되었습니다.');
+                        })
+                    }
+                })
+            </script>
+
+            <!-- 결제 타이머 -->
+            <script>
+                function startTimer(duration, display) {
+                    let timer = duration, hours, minutes, seconds;
+                    setInterval(function () {
+                        hours = parseInt(timer / 3600, 10);
+                        minutes = parseInt((timer % 3600) / 60, 10);
+                        seconds = parseInt(timer % 60, 10);
+
+                        hours = hours < 10 ? "0" + hours : hours;
+                        minutes = minutes < 10 ? "0" + minutes : minutes;
+                        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                        display.textContent = hours + "시간 " + minutes + "분 " + seconds + "초";
+
+                        if (--timer < 0) {
+                            timer = 0; // 타이머가 0이 되면 멈춤
+                            alert("결제 시간이 만료되었습니다.");
+                        }
+                    }, 1000); // 1초마다 업데이트
+                }
+
+                window.onload = function () {
+                    let twelveHours = 12 * 60 * 60; // 12시간을 초 단위로 변환
+                    let display = document.querySelector('#timer'); // 타이머를 표시할 요소 선택
+                    startTimer(twelveHours, display); // 타이머 시작
+                }
+            </script>
+
+            <!-- 보유 잔액 포맷팅 -->
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const payBalanceElement = document.getElementById('pay-balance');
+                    const payBalanceValue = parseInt(payBalanceElement.textContent, 10);
+                    payBalanceElement.textContent = new Intl.NumberFormat('ko-KR').format(payBalanceValue) + '원';
+                });
+            </script>
+
+            <!-- 가격 포맷팅 -->
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const priceElement = document.getElementById('price');
+                    const priceValue = parseInt(priceElement.textContent, 10);
+                    priceElement.textContent = new Intl.NumberFormat('ko-KR').format(priceValue) + '원';
+                })
+            </script>
+
+        </section>
+    </div>
+</main>
+</body>
+</html>

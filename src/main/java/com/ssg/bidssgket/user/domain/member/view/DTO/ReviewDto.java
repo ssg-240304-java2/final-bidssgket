@@ -12,17 +12,22 @@ public class ReviewDto {
     private Long reviewNo;
     private String comment;
     private Integer biscuitRating;
-    private String reviewer;
     private String reviewee;
     private String productNo;
+    private int productRating;
+    private int sellerRating;
+    private int buyerRating;
+
 
     @Builder
-    public ReviewDto(Long reviewNo, String comment, Integer biscuitRating, String reviewer, String reviewee,String productNo) {
+    public ReviewDto(Long reviewNo, String comment, Integer biscuitRating,String reviewee, String productNo, int productRating, int sellerRating,int buyerRating) {
         this.reviewNo = reviewNo;
         this.comment = comment;
         this.biscuitRating = biscuitRating;
-        this.reviewer = reviewer;
         this.reviewee = reviewee;
         this.productNo = productNo;
+        this.productRating = productRating;
+        this.sellerRating = sellerRating;
+        this.buyerRating = buyerRating;
     }
 }

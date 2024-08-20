@@ -108,8 +108,8 @@ aside {
     content: "";
     position: absolute;
     top: 50%;
-    left: 10px; /* 왼쪽 말풍선 삼각형 위치 */
-    border: 10px solid transparent;
+
+
     border-right-color: #f1f0f0; /* 말풍선 색상 */
     border-left: 0;
     border-top: 10px solid transparent;
