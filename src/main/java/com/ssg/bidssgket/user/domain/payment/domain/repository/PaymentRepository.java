@@ -1,4 +1,7 @@
 package com.ssg.bidssgket.user.domain.payment.domain.repository;
 
-public interface PaymentRepository {
+import com.ssg.bidssgket.user.domain.payment.domain.Payment;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PaymentRepository extends JpaRepository<Payment, Long> {
 }

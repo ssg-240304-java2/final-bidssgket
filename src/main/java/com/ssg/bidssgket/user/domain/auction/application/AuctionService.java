@@ -31,8 +31,10 @@ public class AuctionService {
     @Autowired
     private ProductRepository productRepository;
 
-    public Product getProductById(Long productNo) {
-        return productRepository.findById(productNo).orElseThrow(IllegalAccessError::new);
+    public ProductResDto getProductById(Long productNo) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productNo));
+        return new ProductResDto(product);
     }
 
     public Member getMemberByEmail(String email) {
@@ -42,21 +44,35 @@ public class AuctionService {
     public int getMinBid(Long productNo) {
         List<Auction> auctions = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
         if (auctions.isEmpty()) {
-            Product product = getProductById(productNo);
+            Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productNo));
             return (int) (product.getAuctionStartPrice() * 1.01);
         } else {
             return (int) (auctions.get(0).getMinTenderPrice() * 1.01);
         }
     }
 
-    public Auction getAuctionByMemberAndProduct(Long memberNo, Long productNo) {
-        return auctionRepository.findFirstByMemberAndProductNoOrderByBidNoDesc(memberNo, productNo);
+    public AuctionResponseDto getAuctionByMemberAndProduct(Long memberNo, Long productNo) {
+        Auction auction = auctionRepository.findFirstByMemberAndProductNoOrderByBidNoDesc(memberNo, productNo);
+        if (auction == null) {
+            return null;
+        }
+        return new AuctionResponseDto(
+                auction.getBidNo(),
+                auction.getMinTenderPrice(),
+                auction.getMaxTenderPrice(),
+                auction.getTenderDate(),
+                auction.getBidSuccess(),
+                auction.getTenderDeleted(),
+                auction.getMember(),
+                auction.getProduct()
+        );
     }
 
     @Transactional
     public void registerAuction(AuctionReqDto auctionReqDto, String email) {
         Member member = getMemberByEmail(email);
-        Product product = getProductById(auctionReqDto.getProductNo());
+        Product product = productRepository.findById(auctionReqDto.getProductNo())
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + auctionReqDto.getProductNo()));
         Auction auction = Auction.createAuction(auctionReqDto, member, product);
         auctionRepository.save(auction);
     }
@@ -64,7 +80,7 @@ public class AuctionService {
     @Transactional
     public void modifyAuction(String email, Long productNo, int maxTenderPrice) {
         Member member = getMemberByEmail(email);
-        Auction auction = getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
+        Auction auction = auctionRepository.findFirstByMemberAndProductNoOrderByBidNoDesc(member.getMemberNo(),productNo);
         auction.updateMaxTenderPrice(maxTenderPrice);
     }
 
@@ -76,7 +92,7 @@ public class AuctionService {
     @Transactional
     public void deleteAuction(String email, Long productNo) {
         Member member = getMemberByEmail(email);
-        Auction auction = getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
+        Auction auction = auctionRepository.findFirstByMemberAndProductNoOrderByBidNoDesc(member.getMemberNo(),productNo);
         auction.updateTenderDeleted(true);
         auctionRepository.save(auction);
     }
@@ -94,6 +110,9 @@ public class AuctionService {
 
             firstBid.updateBidSuccess(true);
             product.setBidSuccessPrice(secondBid.getMinTenderPrice());
+        } else {
+            product.setSalesStatus(SalesStatus.sale_pause);
+            auctionRepository.deleteAll(auction);
         }
 
         productRepository.save(product);
@@ -112,6 +131,12 @@ public class AuctionService {
     public void abandonBid(Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
         product.setSalesStatus(SalesStatus.sale_pause);
+
+        List<Auction> auctionsToDelete = auctionRepository.findAuctionByProductNo(productNo);
+        for (Auction auction : auctionsToDelete) {
+            auctionRepository.delete(auction);
+        }
+
         productRepository.save(product);
     }
 
@@ -143,4 +168,3 @@ public class AuctionService {
         )).collect(Collectors.toList());
     }
 }
-

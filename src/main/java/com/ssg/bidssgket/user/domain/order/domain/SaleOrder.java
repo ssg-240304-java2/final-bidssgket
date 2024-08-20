@@ -4,7 +4,7 @@ import com.ssg.bidssgket.common.domain.BaseTimeAndDeleteEntity;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.order.domain.enums.DeliveryType;
 import com.ssg.bidssgket.user.domain.order.domain.enums.OrderStatus;
-import com.ssg.bidssgket.user.domain.order.domain.enums.TransactionType;
+import com.ssg.bidssgket.user.domain.order.domain.enums.OrderTransactionType;
 import com.ssg.bidssgket.user.domain.payment.domain.Payment;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import jakarta.persistence.*;
@@ -24,7 +24,7 @@ public class SaleOrder extends BaseTimeAndDeleteEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TransactionType transactionType; // 경매, 즉시구매
+    private OrderTransactionType orderTransactionType; // 경매, 즉시구매
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -51,8 +51,8 @@ public class SaleOrder extends BaseTimeAndDeleteEntity {
     private Parcel parcel; // 택배 정보 [FK]
 
     @Builder
-    private SaleOrder(TransactionType transactionType, DeliveryType deliveryType, OrderStatus orderStatus, Member member, Product product, Payment payment, Parcel parcel) {
-        this.transactionType = transactionType;
+    private SaleOrder(OrderTransactionType orderTransactionType, DeliveryType deliveryType, OrderStatus orderStatus, Member member, Product product, Payment payment, Parcel parcel) {
+        this.orderTransactionType = orderTransactionType;
         this.deliveryType = deliveryType;
         this.orderStatus = orderStatus;
         this.member = member;
@@ -63,7 +63,7 @@ public class SaleOrder extends BaseTimeAndDeleteEntity {
 
     /**
      * 판매 주문 생성 메서드
-     * @param transactionType 거래 유형
+     * @param orderTransactionType 거래 유형
      * @param deliveryType 배송 유형
      * @param orderStatus 주문 상태
      * @param member 판매자
@@ -72,9 +72,9 @@ public class SaleOrder extends BaseTimeAndDeleteEntity {
      * @param parcel 택배 정보
      * @return 생성된 SaleOrder 객체
      */
-    public static SaleOrder addSaleOrder(TransactionType transactionType, DeliveryType deliveryType, OrderStatus orderStatus, Member member, Product product, Payment payment, Parcel parcel) {
+    public static SaleOrder addSaleOrder(OrderTransactionType orderTransactionType, DeliveryType deliveryType, OrderStatus orderStatus, Member member, Product product, Payment payment, Parcel parcel) {
         return SaleOrder.builder()
-                .transactionType(transactionType)
+                .orderTransactionType(orderTransactionType)
                 .deliveryType(deliveryType)
                 .orderStatus(orderStatus)
                 .member(member)
