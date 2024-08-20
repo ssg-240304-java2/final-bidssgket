@@ -1,7 +1,7 @@
 package com.ssg.bidssgket.user.domain.member.domain;
 
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
-import com.ssg.bidssgket.user.domain.member.view.DTO.MemberDto;
+import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember;
 import com.ssg.bidssgket.user.domain.order.domain.Parcel;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
 import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
@@ -10,7 +10,10 @@ import com.ssg.bidssgket.user.domain.payment.domain.Payment;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,6 +34,7 @@ public class Member implements UserDetails {
     private String memberName; // 사용자 이름
     private String memberId; // 사용자 아이디
     private String pwd; // 사용자 비밀번호
+    private String phone; // 핸드폰 번호
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
@@ -81,20 +85,21 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
+
     @OneToOne(mappedBy = "member", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private Pay pay;
 
-    @OneToOne(mappedBy = "reviewer", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-    private Review reviewer;
-
-    @OneToOne(mappedBy = "reviewee", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-    private Review reviewee;
+    @OneToMany(mappedBy = "reviewee", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 
     @Builder
-    private Member(String memberName, String memberId, String pwd, String memberNickname, String email, Role role, Integer biscuit, Address address, Boolean isDeleted, Boolean isPenalty) {
+    private Member(String memberName, String memberId, String phone, String pwd,String memberNickname, String email, Role role, Integer biscuit, Address address, Boolean isDeleted, Boolean isPenalty) {
         this.memberName = memberName;
         this.memberId = memberId;
         this.pwd = pwd;
+        this.phone = phone;
         this.memberNickname = memberNickname;
         this.email = email;
         this.role = role;
@@ -106,18 +111,18 @@ public class Member implements UserDetails {
         this.isPenalty = isPenalty == null? false:isPenalty;
     }
 
-    public static Member createMember(MemberDto memberDto) {
-        return Member.builder()
-                .memberName(memberDto.getMemberName())
-                .memberId(memberDto.getMemberId())
-                .pwd(memberDto.getPwd())
-                .memberNickname(memberDto.getMemberNickname())
-                .biscuit(memberDto.getBiscuit())
-                .address(memberDto.getAddress())
-                .isDeleted(memberDto.getIsDeleted())
-                .isPenalty(memberDto.getIsPenalty())
-                .build();
-    }
+//    public static Member createMember(MemberDto memberDto) {
+//        return Member.builder()
+//                .memberName(memberDto.getMemberName())
+//                .memberId(memberDto.getMemberId())
+//                .pwd(memberDto.getPwd())
+//                .memberNickname(memberDto.getMemberNickname())
+//                .biscuit(memberDto.getBiscuit())
+//                .address(memberDto.getAddress())
+//                .isDeleted(memberDto.getIsDeleted())
+//                .isPenalty(memberDto.getIsPenalty())
+//                .build();
+//    }
 
     public String getRoleKey() {
         return this.role.getKey();
@@ -126,6 +131,28 @@ public class Member implements UserDetails {
     public Member update(String memberNickname) {
         this.memberNickname = memberNickname;
         return this;
+    }
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setAddress(Address newAddress) {
+        this.address = newAddress;
+    }
+
+    public void setBiscuit(Integer biscuit) {
+        this.biscuit = biscuit;
+    }
+
+    public void incrementBiscuit() {
+        if (this.biscuit == null) {
+            this.biscuit = 50;
+        }
+        this.biscuit += 1;
     }
 
     /**
@@ -193,16 +220,6 @@ public class Member implements UserDetails {
         this.pay = pay;
     }
 
-    public void addReviewer(Review reviewer) {
-        reviewer.setReviewer(this);
-        this.reviewer = reviewer;
-    }
-
-    public void addReviewee(Review reviewee) {
-        reviewee.setReviewee(this);
-        this.reviewee = reviewee;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("member"));
@@ -238,5 +255,3 @@ public class Member implements UserDetails {
         return true;
     }
 }
-
-

@@ -9,6 +9,15 @@
   <title>상품 상세_유찰</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="/user/product/css/bid_failed.css" rel="stylesheet">
+  <script>
+    window.onload = function () {
+      let message = `[[${message}]]`;
+      // console.log(message);
+      if (message) {
+        window.alert(message);
+      }
+    }
+  </script>
 </head>
 <body>
   <main class="contents" layout:fragment="content">
@@ -40,36 +49,40 @@
         <div class="col-md-6">
           <div class="d-flex align-items-center">
             <h3>경매 종료:</h3>
-            <h3 id="timer" class="ml-3"></h3>
+            <h3 id="timer" class="ml-3">00일 00시 00분 00초</h3>
           </div>
           <div class="auction-header">
             <select id="auctionType" class="form-control" disabled>
               <option value="ongoing">경매 중</option>
               <option value="forSale">판매 중</option>
             </select>
-            <h4>유니폼 팝니다.</h4>
+            <h4 th:text="${product.productName}"></h4>
           </div>
-          <p>카테고리: 유니폼</p>
-          <p>상품 설명: 사인 유니폼 팝니다. 보관중이어서 상태가 좋습니다.</p>
+          <p>카테고리: [[${product.category}]]</p>
+          <p>상품 설명: [[${product.productDesc}]]</p>
           <div class="row">
             <div class="col-md-4">
               <div class="text-center buy-now-section">
                 <h5>즉시 구매가</h5>
-                <h3>127,000 원</h3>
+                <h3>[[${product.buyNowPrice}]] 원</h3>
               </div>
             </div>
             <div class="col-md-4">
               <div class="text-center auction-start-section">
                 <h5>경매 시작가</h5>
-                <h3>121,000 원</h3>
-                <button class="btn btn-secondary mt-2">경매 재개</button>
+                <h3>[[${product.auctionStartPrice}]] 원</h3>
+                <a th:href="@{/auction/update/{productNo}(productNo=${product.productNo})}">
+                  <button class="btn btn-secondary mt-2">경매 재개</button>
+                </a>
               </div>
             </div>
             <div class="col-md-4">
               <div class="text-center auction-start-section">
                 <h5>낙찰가</h5>
-                <h3>0 원</h3>
-                <button class="btn btn-primary mt-2">삭제하기</button>
+                <h3>[[${product.bidSuccessPrice != null ? product.bidSuccessPrice : 0}]] 원</h3>
+                <form th:action="@{/auction/failbiddelete/{productNo}(productNo=${product.productNo})}" method="post">
+                  <button id="deleteBtn" type="submit" class="btn btn-danger mt-2">삭제하기</button>
+                </form>
               </div>
             </div>
           </div>
@@ -82,7 +95,7 @@
         </div>
         <div class="col-md-6">
           <h4>입찰 현황</h4>
-          <div class="table-responsive chart-table">
+          <div class="table-responsive chart-table"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
             <table class="table table-bordered">
               <thead>
               <tr>
@@ -92,50 +105,10 @@
               </tr>
               </thead>
               <tbody>
-              <tr>
-                <td>f******t</td>
-                <td>5,769 원</td>
-                <td>2024.08.11 15시 34분 42초</td>
-              </tr>
-              <tr>
-                <td>d***e</td>
-                <td>4,300 원</td>
-                <td>2024.08.10 22시 11분 35초</td>
-              </tr>
-              <tr>
-                <td>f****7</td>
-                <td>4,186 원</td>
-                <td>2024.08.10 19시 52분 01초</td>
-              </tr>
-              <tr>
-                <td>f*****r</td>
-                <td>3,980 원</td>
-                <td>2024.08.11 15시 34분 42초</td>
-              </tr>
-              <tr>
-                <td>d***e</td>
-                <td>3,900 원</td>
-                <td>2024.08.10 22시 11분 35초</td>
-              </tr>
-              <tr>
-                <td>f****7</td>
-                <td>3,800 원</td>
-                <td>2024.08.10 19시 52분 01초</td>
-              </tr>
-              <tr>
-                <td>f******t</td>
-                <td>3,390 원</td>
-                <td>2024.08.11 15시 34분 42초</td>
-              </tr>
-              <tr>
-                <td>d***e</td>
-                <td>3,186 원</td>
-                <td>2024.08.10 22시 11분 35초</td>
-              </tr>
-              <tr>
-                <td>f****7</td>
-                <td>3,186 원</td>
-                <td>2024.08.10 19시 52분 01초</td>
+              <tr th:each="auction : ${auction}">
+                <td th:text="${auction.member.email.split('@')[0].length() > 4 ? auction.member.email.split('@')[0].substring(0, auction.member.email.split('@')[0].length() - 4) + '****' + '@' + auction.member.email.split('@')[1] : '****' + '@' + auction.member.email.split('@')[1]}"></td>
+                <td th:text="${#numbers.formatInteger(auction.minTenderPrice, 0)} + ' 원'"></td>
+                <td th:text="${#temporals.format(auction.tenderDate, 'yyyy.MM.dd HH:mm:ss')}"></td>
               </tr>
               </tbody>
             </table>
@@ -148,33 +121,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-      function startTimer(duration, display) {
-        var timer = duration, days, hours, minutes, seconds;
-        setInterval(function () {
-          days = parseInt(timer / (3600 * 24), 10);
-          hours = parseInt((timer % (3600 * 24)) / 3600, 10);
-          minutes = parseInt((timer % 3600) / 60, 10);
-          seconds = parseInt(timer % 60, 10);
-
-          days = days < 10 ? "0" + days : days;
-          hours = hours < 10 ? "0" + hours : hours;
-          minutes = minutes < 10 ? "0" + minutes : minutes;
-          seconds = seconds < 10 ? "0" + seconds : seconds;
-
-          display.textContent = days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
-
-          if (--timer < 0) {
-            timer = duration;
-          }
-        }, 1000);
-      }
-
-      window.onload = function () {
-        var duration = 1 * 24 * 3600 + 11 * 3600 + 15 * 60 + 31; // 1일 11시간 15분 31초
-        var display = document.querySelector('#timer');
-        startTimer(duration, display);
-      };
-
       var ctx = document.getElementById('priceChart').getContext('2d');
       var chart = new Chart(ctx, {
         type: 'line',

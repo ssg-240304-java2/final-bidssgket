@@ -28,6 +28,7 @@ public class ProductResDto {
     private LocalDateTime auctionStartTime;
     private LocalDateTime auctionEndTime;
     private List<ProductImage> productImages;
+    private Integer bidSuccessPrice;
 
     @Builder
     public ProductResDto(Product product) {
@@ -44,6 +45,7 @@ public class ProductResDto {
         this.auctionStartTime = product.getAuctionStartTime();
         this.auctionEndTime = product.getAuctionEndTime();
         this.productImages = product.getProductImages();
+        this.bidSuccessPrice = product.getBidSuccessPrice();
     }
 
 
@@ -67,6 +69,7 @@ public class ProductResDto {
                 ", auctionStartTime=" + auctionStartTime +
                 ", auctionEndTime=" + auctionEndTime +
                 ", productImages=" + productImages +
+                ", bidSuccessPrice=" + bidSuccessPrice +
                 '}';
     }
 }

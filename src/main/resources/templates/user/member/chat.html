@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/fragments/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채팅 목록</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+    <link rel="stylesheet" href="/user/css/chat.css">
+</head>
+<body>
+<main class="contents" layout:fragment="content">
+    <div class="container mx-auto" style="max-width: 1440px;">
+        <aside>
+            <a href="/user/mypage" class="block">
+                <h2 class="text-2xl font-bold mb-4 transform hover:scale-105 transition-transform duration-300">마이 페이지</h2>
+            </a>
+            <ul class="space-y-2">
+                <li>
+                    <a href="/user/mypage" class="block text-left w-full font-bold text-black transform hover:scale-105 transition-transform duration-300">쇼핑 정보</a>
+                </li>
+                <li>
+                    <a href="/user/order/purchases/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">구매 내역</a>
+                </li>
+                <li>
+                    <a href="/user/order/sales/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">판매 내역</a>
+                </li>
+                <li>
+                    <a href="/user/payment/info" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">결제</a>
+                </li>
+                <li>
+                    <a href="/chat" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">채팅</a>
+                </li>
+            </ul>
+        </aside>
+
+        <div class="chat-container">
+            <div class="chat-list">
+                <ul id="chatroom-list">
+                    <li class="chat-item" data-chatroom="1" th:each="chatRoomMember : ${chatRoomMembers}">
+                        <div class="chat-info">
+                            <a th:href="@{|/chat/${chatRoomMember.chatRoomMemberNo}|}">
+                                <span class="chat-title" th:text="${chatRoomMember.chatRoom.name}"></span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="chat-content">
+                <div class="chat-header">
+                    <span th:if="${chatRoomName == null}" id="chat-title">채팅방 선택</span>
+                    <span th:if="${chatRoomName != null}" th:text="${chatRoomName}" id="chat-title"></span>
+                </div>
+                <div id="chat-messages" class="chat-messages">
+                    <div th:each="message : ${messages}">
+                        <div class="message" th:classappend="${message.member.memberNo == memberNo} ? 'my-message' : 'your-message'">
+                            <div class="message-content" th:text="${message.message}"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="message-input" placeholder="메시지를 입력하세요">
+                    <button id="send-button">전송</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatList = document.querySelector('.chat-list');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatTitle = document.getElementById('chat-title');
+            const sendButton = document.getElementById('send-button');
+            const messageInput = document.getElementById('message-input');
+            let currentChatRoomNo = null;
+            let socket = new SockJS('/ws'); // WebSocket 연결
+            let stompClient = Stomp.over(socket);
+            let subscription = null; // 현재 채팅방의 구독을 저장
+
+            function connectToChatRoom(chatRoomNo) {
+                if (subscription) {
+                    subscription.unsubscribe(); // 기존 구독 해제
+                }
+
+                stompClient.connect({}, function (frame) {
+                    console.log('Connected: ' + frame);
+
+                    // WebSocket 메시지 수신 처리
+                    subscription = stompClient.subscribe('/topic/' + chatRoomNo, function (messageOutput) {
+                        const message = JSON.parse(messageOutput.body);
+                        if (message.chatRoomNo == chatRoomNo) {
+                            const messageClass = message.sender === '나' ? 'my-message' : 'other-message';
+                            chatMessages.innerHTML += `<div class="message ${messageClass}"><span class="sender">${message.sender}:</span> ${message.content}</div>`;
+                            chatMessages.scrollTop = chatMessages.scrollHeight; // 스크롤을 메시지 아래로 자동으로 이동
+                        }
+                    });
+                });
+            }
+
+            // 채팅방 목록 클릭 처리
+            chatList.addEventListener('click', function (event) {
+                const chatItem = event.target.closest('.chat-item');
+                if (chatItem) {
+                    const chatRoomNo = chatItem.getAttribute('data-chatroom');
+                    if (chatRoomNo !== currentChatRoomNo) {
+                        currentChatRoomNo = chatRoomNo;
+                        chatTitle.textContent = `채팅방 ${currentChatRoomNo}`;
+
+                        // 채팅방의 기존 메시지 로드
+                        fetch(`/chat/messages?chatRoomNo=${currentChatRoomNo}`)
+                            .then(response => response.json())
+                            .then(messages => {
+                                chatMessages.innerHTML = messages.map(message =>
+                                    `<div class="message ${message.sender === '나' ? 'my-message' : 'other-message'}">
+                            <span class="sender">${message.sender}:</span> ${message.message}
+                        </div>`
+                                ).join('');
+                                chatMessages.scrollTop = chatMessages.scrollHeight; // 스크롤을 메시지 아래로 자동으로 이동
+                            });
+
+                        // WebSocket 연결 및 구독
+                        connectToChatRoom(currentChatRoomNo);
+                    }
+                }
+            });
+
+            // 메시지 전송 처리
+            function sendMessage() {
+                const message = messageInput.value;
+                const currentChatRoomNo = [[${chatRoomNo}]];
+                const memberNo = [[${memberNo}]];
+                if (message && currentChatRoomNo) {
+                    // 서버에 메시지 전송
+                    fetch(`/chat/send?chatRoomNo=${currentChatRoomNo}&memberNo=${memberNo}&message=${encodeURIComponent(message)}`, {
+                        method: 'POST'
+                    }).then(response => {
+                        if (response.ok) {
+                            // WebSocket을 통해 서버에 메시지 전송
+                            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({
+                                chatRoomNo: currentChatRoomNo,
+                                sender: '나',
+                                content: message
+                            }));
+
+                            // 메시지 추가 및 입력 필드 초기화
+                            chatMessages.innerHTML += `<div class="message my-message"><span class="sender">나:</span> ${message}</div>`;
+                            messageInput.value = '';
+                            chatMessages.scrollTop = chatMessages.scrollHeight; // 스크롤을 메시지 아래로 자동으로 이동
+                        }
+                    });
+                }
+            }
+
+            sendButton.addEventListener('click', sendMessage);
+
+            // 입력 필드에서 Enter 키를 눌렀을 때 메시지 전송
+            messageInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    // Shift + Enter는 줄바꿈
+                    if (!event.shiftKey) {
+                        event.preventDefault(); // 기본 Enter 동작 방지 (줄바꿈)
+                        sendMessage();
+                    }
+                }
+            });
+        });
+    </script>
+</main>
+</body>
+</html>

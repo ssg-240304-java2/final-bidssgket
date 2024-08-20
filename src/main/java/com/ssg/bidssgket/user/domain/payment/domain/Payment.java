@@ -4,8 +4,8 @@ import com.ssg.bidssgket.common.domain.BaseTimeAndDeleteEntity;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
 import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
-import com.ssg.bidssgket.user.domain.order.domain.enums.TransactionType;
 import com.ssg.bidssgket.user.domain.payment.domain.enums.PaymentStatus;
+import com.ssg.bidssgket.user.domain.payment.domain.enums.PaymentTransactionType;
 import com.ssg.bidssgket.user.domain.payment.domain.enums.PaymentType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,7 +26,7 @@ public class Payment extends BaseTimeAndDeleteEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TransactionType transactionType; // 입금, 출금
+    private PaymentTransactionType paymentTransactionType; // 입금, 출금
 
     @Column(nullable = false)
     private int amount; // 결제 금액
@@ -50,19 +50,19 @@ public class Payment extends BaseTimeAndDeleteEntity {
     private SaleOrder saleOrder; // 판매 주문서 [FK]
 
     @Builder
-    public Payment(PaymentType paymentType, TransactionType transactionType, int amount, PaymentStatus paymentStatus, Member member, PayChange payChange) {
+    public Payment(PaymentType paymentType, PaymentTransactionType paymentTransactionType, int amount, PaymentStatus paymentStatus, Member member, PayChange payChange) {
         this.paymentType = paymentType;
-        this.transactionType = transactionType;
+        this.paymentTransactionType = paymentTransactionType;
         this.amount = amount;
         this.paymentStatus = paymentStatus;
         this.member = member;
         this.payChange = payChange;
     }
 
-    public static Payment addpayment(PaymentType paymentType, TransactionType transactionType, int amount, PaymentStatus paymentStatus, Member member, PayChange payChange) {
+    public static Payment addpayment(PaymentType paymentType, PaymentTransactionType paymentTransactionType, int amount, PaymentStatus paymentStatus, Member member, PayChange payChange) {
         return Payment.builder()
                 .paymentType(paymentType)
-                .transactionType(transactionType)
+                .paymentTransactionType(paymentTransactionType)
                 .amount(amount)
                 .paymentStatus(paymentStatus)
                 .member(member)

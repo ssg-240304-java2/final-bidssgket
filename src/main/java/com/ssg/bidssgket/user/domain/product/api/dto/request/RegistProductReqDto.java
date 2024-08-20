@@ -53,4 +53,12 @@ public class RegistProductReqDto extends FileDto{
     public void setMemberNo(Long memberNo) {
         this.memberNo = memberNo;
     }
+
+    public void setAuctionStartTime(LocalDateTime auctionStartTime) {
+        this.auctionStartTime = auctionStartTime;
+    }
+
+    public void setAuctionEndTime(LocalDateTime auctionEndTime) {
+        this.auctionEndTime = auctionEndTime;
+    }
 }
