@@ -49,9 +49,11 @@
                     <h1 class="text-2xl font-semibold mb-4">상품 정보</h1>
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-4">
-                            <img th:src="${product.productImages}" th:alt="'Product image of' + ${ product.productName }" class="w-25 h-25">
+                            <div th:each="productImage, iterStat : ${product.productImages}">
+                                <img th:src="${productImage.productImg}" th:alt="'Product image of' + ${ product.productName }" style="width: 150px; height: 150px;">
+                            </div>
                             <div>
-                                <a href="#" th:text="${product.productName}" class="text-lg font-semibold text-black hover:text-blue-700"></a>
+                                <a th:href="@{/detailBuyer/{no}(no=${product.productNo})}" th:text="${product.productName}" class="text-lg font-semibold text-black hover:text-blue-700"></a>
 <!--                                <p class="text-lg text-gray-500">260</p>-->
                             </div>
                         </div>
@@ -95,9 +97,9 @@
                                 <a href="#">새 주소 추가</a>
                             </div>
                             <br>
-                            <div class="text-gray-400">
-                                <button class="border border-gray-400 rounded px-2 py-1 text-gray-600">변경</button>
-                            </div>
+<!--                            <div class="text-gray-400">-->
+<!--                                <button class="border border-gray-400 rounded px-2 py-1 text-gray-600">변경</button>-->
+<!--                            </div>-->
                         </div>
                     </div>
                     <div class="mt-4" id="requestListContainer">
@@ -115,7 +117,7 @@
                     <div class="mb-2 text-lg">보유 잔액</div>
                     <div class="flex justify-between items-center mb-6">
                         <div class="text-2xl font-bold text-gray-800">
-                            <span id="pay-balance" th:text="${member.getPay().getPayBalance()}">0원</span>
+                            <span id="pay-balance" th:text="${pay.getPayBalance()}">0원</span>
                         </div>
                     </div>
                 </div>
@@ -131,6 +133,12 @@
                     const payBalanceElement = document.getElementById('pay-balance');
                     const paymentButton = document.getElementById('btn-payment');
 
+                    // 서버에서 전달된 사용자 및 제품 정보
+                    const memberEmail = '[[${member.email}]]';
+                    const productNo = '[[${product.productNo}]]';
+                    const deliveryType = 'ESCROW';
+                    const orderTransactionType = 'AUCTION';
+
                     // 결제 금액
                     const paymentAmount = parseInt(priceElement.textContent.replace(/[^0-9]/g, ''), 10);
                     // 보유 잔액
@@ -145,17 +153,49 @@
                         paymentButton.classList.remove('bg-green-500', 'hover:bg-green-600');
                         paymentButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
 
-                        paymentButton.addEventListener('click', function() {
+                        paymentButton.addEventListener('click', function () {
                             window.location.href = '/user/payment/deposit'; // 페이 충전 페이지로 이동
                         });
                     } else {
-                        // 결제 처리 이벤트 추가 (예시)
-                        paymentButton.addEventListener('click', function() {
+                        // 결제 처리 이벤트 추가
+                        paymentButton.addEventListener('click', function () {
                             // 결제 처리 로직
-                            alert('결제가 완료되었습니다.');
-                        })
+                            const paymentData = {
+                                email: memberEmail,
+                                productNo: productNo,
+                                paymentAmount: paymentAmount,
+                                paymentType: 'BISCUIT_PAY',
+                                paymentTransactionType: 'WITHDRAWAL',
+                                deliveryType: deliveryType,
+                                orderTransactionType: orderTransactionType
+                            };
+                            console.log('---->', JSON.stringify(paymentData));
+                            // 서버에 결제 요청을 보냅니다.
+                            fetch('/user/payment/process', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(paymentData)
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('결제 처리 중 오류가 발생했습니다.');
+                                }
+                                return response.json(); // 응답을 JSON으로 처리
+                            })
+                            .then(data => {
+                                // 결제가 성공적으로 처리된 경우
+                                alert(data.message);
+                                window.location.href = '/user/order/purchase/history/progress'; // 결제 완료 후 리다이렉션할 페이지
+                            })
+                            .catch(error => {
+                                // 결제 처리 중 오류가 발생한 경우
+                                alert(error.message);
+                            });
+                        });
                     }
-                })
+                });
             </script>
 
             <!-- 결제 타이머 -->
