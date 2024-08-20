@@ -7,6 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class BidMessage {
-    private Long bidNo;
+    private Long memberNo;
     private int maxTenderPrice;
+    private int minTenderPrice;
+    private Long ProductNo;
 }

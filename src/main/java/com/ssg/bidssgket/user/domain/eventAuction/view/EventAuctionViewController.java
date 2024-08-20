@@ -1,5 +1,6 @@
 package com.ssg.bidssgket.user.domain.eventAuction.view;
 
+import com.ssg.bidssgket.user.domain.auction.application.AuctionService;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.eventAuction.application.EventAuctionService;
 import com.ssg.bidssgket.user.domain.eventAuction.view.dto.BidMessage;
@@ -35,6 +36,7 @@ public class EventAuctionViewController {
     private final MemberRepository memberRepository;
     private final ProductService productService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final AuctionService auctionService;
 
     /***
      * 번개 경매 상품 등록 화면
@@ -113,7 +115,7 @@ public class EventAuctionViewController {
             return "redirect:/eventAuction/detailSeller/" + productNo;
         } else {
             if (isAuction) {
-                return "redirect:/eventAuction/detailAuction/" + productNo;
+                return "redirect:/eventAuction/detailBuyer/" + productNo;
             } else {
                 return "redirect:/eventAuction/detailBuyer/" + productNo;
             }
@@ -139,30 +141,9 @@ public class EventAuctionViewController {
         model.addAttribute("product", product);
         List<Auction> auctions = productService.findAuctionByProductNo(productNo);
         model.addAttribute("auctions", auctions);
-        return "user/eventAuction/detailAuction";
+        return "user/eventAuction/detailSeller";
     }
 
-    /***
-     * 번개 경매 경매 참여자 상세페이지 조회
-     * @param model
-     * @param productNo
-     * @param httpSession
-     * @return
-     */
-    @GetMapping("/detailAuction/{productNo}")
-    public String detailAuctionController(Model model, @PathVariable("productNo") Long productNo,HttpSession httpSession) {
-        log.info("productNo: {}", productNo);
-        ProductResDto product = productService.findProductByNo(productNo);
-        String member = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-        Optional<Member> memberInfo = memberRepository.findByEmail(member);
-        Long memberNo = memberInfo.get().getMemberNo();
-        model.addAttribute("memberNo", memberNo);
-        System.out.println("memberNo = " + memberNo);
-        model.addAttribute("product", product);
-        List<Auction> auctions = productService.findAuctionByProductNo(productNo);
-        model.addAttribute("auctions", auctions);
-        return "user/eventAuction/detailAuction";
-    }
 
     /***
      * 번개 경매 구매자 상세페이지 조회
@@ -171,20 +152,20 @@ public class EventAuctionViewController {
      * @return
      */
     @GetMapping("/detailBuyer/{productNo}")
-    public String detailBuyerController(Model model, @PathVariable("productNo") Long productNo) {
+    public String detailBuyerController(Model model, @PathVariable("productNo") Long productNo, HttpSession httpSession) {
         log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
         List<Auction> auctions = productService.findAuctionByProductNo(productNo);
+        int lastPrice = auctionService.getMinPrice(productNo);
+        String member = ((SessionMember) httpSession.getAttribute("member")).getEmail();
+        Optional<Member> memberInfo = memberRepository.findByEmail(member);
+        Long memberNo = memberInfo.get().getMemberNo();
+        System.out.println("lastPrice = " + lastPrice);
+        model.addAttribute("lastPrice", lastPrice);
+        model.addAttribute("member", member);
+        model.addAttribute("memberNo", memberNo);
         model.addAttribute("auctions", auctions);
         model.addAttribute("product", product);
         return "user/eventAuction/detailBuyer";
-    }
-
-    @MessageMapping("{productNo}")
-    @SendTo("/pro/{productNo}")
-    public BidMessage handleBidMessage(@Payload BidMessage bidMessage, @PathVariable("productNo") Long productNo){
-        log.info("Received bid for product {}: {}", productNo, bidMessage.getMaxTenderPrice());
-//        messagingTemplate.convertAndSend("/detail/" + productNo, bidMessage);
-        return bidMessage;
     }
 }

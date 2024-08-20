@@ -3,6 +3,7 @@ package com.ssg.bidssgket.user.domain.eventAuction.application;
 import com.ssg.bidssgket.global.util.ncps3.FileDto;
 import com.ssg.bidssgket.global.util.ncps3.FileService;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
+import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionReqDto;
 import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
@@ -93,5 +94,21 @@ public class EventAuctionService {
     public List<Product> getEventAuctionProducts(Long productNo) {
         LocalDateTime now = LocalDateTime.now();
         return productRepository.findByEventAuctionProducts(productNo,now);
+    }
+
+    public Auction saveBid(AuctionReqDto auctionReqDto, Long memberNo) {
+        // Member와 Product 객체를 가져옴
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid memberNo: " + memberNo));
+
+        Product product = productRepository.findById(auctionReqDto.getProductNo())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid productNo: " + auctionReqDto.getProductNo()));
+
+        // Auction 엔티티 생성
+        Auction auction = Auction.createAuction(auctionReqDto, member, product);
+
+        // Auction 엔티티 저장
+        return auctionRepository.save(auction);
+
     }
 }
