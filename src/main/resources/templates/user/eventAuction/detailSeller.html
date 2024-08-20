@@ -92,7 +92,7 @@
               <th style="width: 34%;">입찰 등록 날짜</th>
             </tr>
             </thead>
-            <tbody id="bidding" >
+            <tbody id="bidding">
             <tr th:each="auction : ${auctions}">
               <td th:text="${auction.member.email.split('@')[0].length() > 4 ? auction.member.email.split('@')[0].substring(0, auction.member.email.split('@')[0].length() - 4) + '****' + '@' + auction.member.email.split('@')[1] : '****' + '@' + auction.member.email.split('@')[1]}"></td>
               <td th:text="${#numbers.formatInteger(auction.maxTenderPrice, 0)} + ' 원'"></td>
