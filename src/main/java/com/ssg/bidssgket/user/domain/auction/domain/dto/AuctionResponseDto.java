@@ -32,5 +32,5 @@ public class AuctionResponseDto {
 
     public void updateTenderDeleted(boolean tenderDeleted) {
         this.tenderDeleted = tenderDeleted;
-    } 
+    }
 }
