@@ -10,6 +10,7 @@ import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
+import com.ssg.bidssgket.user.domain.productwish.domain.dto.MemberDTO;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,8 +38,26 @@ public class AuctionService {
         return new ProductResDto(product);
     }
 
-    public Member getMemberByEmail(String email) {
-        return memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("No member found with the given email"));
+    public MemberDTO getMemberByEmail(String email){
+        Optional<Member> member = memberRepository.findByEmail(email);
+        return member.map(this::convertToMemberDTO)
+                .orElseThrow(() -> new IllegalArgumentException("No member found with the given email"));
+    }
+
+    private MemberDTO convertToMemberDTO(Member member) {
+        return MemberDTO.builder()
+                .memberNo(member.getMemberNo())
+                .memberName(member.getMemberName())
+                .pwd(member.getPwd())
+                .memberId(member.getMemberId())
+                .phone(member.getPhone())
+                .email(member.getEmail())
+                .memberNickname(member.getMemberNickname())
+                .biscuit(member.getBiscuit())
+                .isDeleted(member.isDeleted())
+                .isPenalty(member.isPenalty())
+                .address(member.getAddress())
+                .build();
     }
 
     public int getMinBid(Long productNo) {
@@ -70,7 +89,8 @@ public class AuctionService {
 
     @Transactional
     public void registerAuction(AuctionReqDto auctionReqDto, String email) {
-        Member member = getMemberByEmail(email);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
         Product product = productRepository.findById(auctionReqDto.getProductNo())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + auctionReqDto.getProductNo()));
         Auction auction = Auction.createAuction(auctionReqDto, member, product);
@@ -79,19 +99,19 @@ public class AuctionService {
 
     @Transactional
     public void modifyAuction(String email, Long productNo, int maxTenderPrice) {
-        Member member = getMemberByEmail(email);
+        MemberDTO member = getMemberByEmail(email);
         Auction auction = auctionRepository.findFirstByMemberAndProductNoOrderByBidNoDesc(member.getMemberNo(),productNo);
         auction.updateMaxTenderPrice(maxTenderPrice);
     }
 
     public int countAuctionsByMemberAndProduct(String email, Long productNo) {
-        Member member = getMemberByEmail(email);
+        MemberDTO member = getMemberByEmail(email);
         return auctionRepository.countByMemberNoAndProductNo(member.getMemberNo(), productNo);
     }
 
     @Transactional
     public void deleteAuction(String email, Long productNo) {
-        Member member = getMemberByEmail(email);
+        MemberDTO member = getMemberByEmail(email);
         Auction auction = auctionRepository.findFirstByMemberAndProductNoOrderByBidNoDesc(member.getMemberNo(),productNo);
         auction.updateTenderDeleted(true);
         auctionRepository.save(auction);
