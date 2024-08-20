@@ -4,6 +4,7 @@ import com.ssg.bidssgket.global.util.ncps3.FileDto;
 import com.ssg.bidssgket.global.util.ncps3.FileService;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
+import com.ssg.bidssgket.user.domain.auction.view.dto.FailedProductReqDto;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto;
@@ -187,5 +188,39 @@ public class ProductService {
     public List<Auction> findAuctionByProductNo(Long productNo) {
         return auctionRepository.findAuctionByProductNo(productNo);
     }
+
+    /***
+     * 유찰된 상품 판매 재개 시 판매 상태 변화
+     * @param productNo
+     * @param salesStatus
+     */
+    @Transactional
+    public void changeProductSalesStatus(Long productNo, SalesStatus salesStatus) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. productNo: " + productNo));
+        product.setSalesStatus(salesStatus);
+        productRepository.save(product);
+    }
+
+    public void updateFailedBidProduct(FailedProductReqDto updateFailedBidProduct) {
+        Product failedproduct = productRepository.findById(updateFailedBidProduct.getProductNo())
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with productNo: " + updateFailedBidProduct.getProductNo()));
+
+        // Update product fields
+        failedproduct.setProductName(updateFailedBidProduct.getProductName());
+        failedproduct.setSalesStatus(updateFailedBidProduct.getSalesStatus());
+        failedproduct.setProductDesc(updateFailedBidProduct.getProductDesc());
+        failedproduct.setImdPurchase(updateFailedBidProduct.getImdPurchase());
+        failedproduct.setAuctionSelected(updateFailedBidProduct.getAuctionSelected());
+        failedproduct.setEventAuction(updateFailedBidProduct.getEventAuction());
+        failedproduct.setBuyNowPrice(updateFailedBidProduct.getBuyNowPrice());
+        failedproduct.setAuctionStartPrice(updateFailedBidProduct.getAuctionStartPrice());
+        failedproduct.setAuctionStartTime(updateFailedBidProduct.getAuctionStartTime());
+        failedproduct.setAuctionEndTime(updateFailedBidProduct.getAuctionEndTime());
+
+        // 업데이트된 제품 저장
+        productRepository.save(failedproduct);
+    }
+
 }
 

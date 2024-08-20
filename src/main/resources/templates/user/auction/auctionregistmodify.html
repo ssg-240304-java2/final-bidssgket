@@ -2,48 +2,13 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{/user/fragments/layout}">
+      layout:decorate="~{user/fragments/layout}">
 <head>
     <meta charset="UTF-8">
     <title>경매 입찰 수정</title>
     <link rel="stylesheet" href="/user/auction/css/auctionregist.css">
 
     <script>
-        /*function validateBids() {
-            const maxBidInput = document.getElementById('maxTenderPrice');
-            const submitBtn = document.querySelector('.submit-btn');
-            const errorMessage = document.getElementById('error-message');
-            const productNoField = document.getElementById('productNoField');
-            const minBidValue = parseFloat(document.getElementById('minTenderPrice').value) || 0;
-
-            function validateMaxBid() {
-                const maxBidValue = parseFloat(maxBidInput.value) || 0;
-
-                if (maxBidValue <= minBidValue) {
-                    maxBidInput.setCustomValidity('최대 입찰가는 최소 입찰가보다 커야 합니다.');
-                    errorMessage.textContent = '최대 입찰가는 최소 입찰가보다 커야 합니다.';
-                } else {
-                    maxBidInput.setCustomValidity('');
-                    errorMessage.textContent = '';
-                }
-            }
-
-            maxBidInput.addEventListener('input', validateMaxBid);
-
-            submitBtn.addEventListener('click', function(event) {
-                if (!maxBidInput.checkValidity() || maxBidInput.value.trim() === "") {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    errorMessage.textContent = '최대 입찰가는 필수 입력 항목입니다.';
-                } else {
-                    document.getElementById('auctionForm').submit();
-                }
-            });
-
-            validateMaxBid();
-        }
-
-        document.addEventListener('DOMContentLoaded', validateBids);*/
         document.addEventListener('DOMContentLoaded', function () {
             const maxTenderPriceInput = document.getElementById('maxTenderPrice');
             const maxTenderPriceField = document.getElementById('maxTenderPriceField');
@@ -125,7 +90,7 @@
                 </form>
             </div>
             </form>
-            <button type="button" class="btn cancel-btn" onclick="window.location.href='/main'">취소</button>
+            <button type="button" class="btn cancel-btn" onclick="window.location.href='/'">취소</button>
             <p class="disclaimer">입찰을 선택하면, 낙찰자가 될 경우 이 상품을 구매하기로 약정하는 것입니다.</p>
         </div>
     </div>

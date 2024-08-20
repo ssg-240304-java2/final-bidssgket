@@ -159,6 +159,11 @@
     function startTimer(duration, display) {
       var timer = duration, days, hours, minutes, seconds;
       var intervalId = setInterval(function () {
+        if ("[[${product.salesStatus}]]" === 'sale_completed') {
+          clearInterval(intervalId);
+          display.textContent = "판매가 완료되었습니다.";
+          return;
+        }
         days = parseInt(timer / (3600 * 24), 10);
         hours = parseInt((timer % (3600 * 24)) / 3600, 10);
         minutes = parseInt((timer % 3600) / 60, 10);

@@ -1,7 +1,8 @@
 package com.ssg.bidssgket.user.domain.member.domain;
 
 import jakarta.persistence.Embeddable;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 

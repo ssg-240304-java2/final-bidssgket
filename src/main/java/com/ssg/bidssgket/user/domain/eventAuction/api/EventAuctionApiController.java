@@ -1,6 +1,5 @@
 package com.ssg.bidssgket.user.domain.eventAuction.api;
 
-import com.ssg.bidssgket.global.util.ncps3.FileService;
 import com.ssg.bidssgket.user.domain.eventAuction.application.EventAuctionService;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
@@ -8,7 +7,6 @@ import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto;
 import com.ssg.bidssgket.user.domain.product.api.dto.response.ProductApiResDto;
 import com.ssg.bidssgket.user.domain.product.application.ProductReportService;
-import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import jakarta.servlet.http.HttpSession;
@@ -33,6 +31,14 @@ public class EventAuctionApiController {
     private final ProductRepository productRepository;
     private final ProductReportService productReportService;
 
+    /***
+     * 번개 경매 상품 등록
+     * @param registProductReqDto
+     * @param productImages
+     * @param auctionDuration
+     * @param httpSession
+     * @return
+     */
     @PostMapping("/regist")
     public ResponseEntity<ProductApiResDto> registProduct(@ModelAttribute RegistProductReqDto registProductReqDto,
                                                           @RequestParam("productImages") List<MultipartFile> productImages,

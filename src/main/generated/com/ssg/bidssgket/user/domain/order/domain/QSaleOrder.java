@@ -36,6 +36,8 @@ public class QSaleOrder extends EntityPathBase<SaleOrder> {
 
     public final EnumPath<com.ssg.bidssgket.user.domain.order.domain.enums.OrderStatus> orderStatus = createEnum("orderStatus", com.ssg.bidssgket.user.domain.order.domain.enums.OrderStatus.class);
 
+    public final EnumPath<com.ssg.bidssgket.user.domain.order.domain.enums.OrderTransactionType> orderTransactionType = createEnum("orderTransactionType", com.ssg.bidssgket.user.domain.order.domain.enums.OrderTransactionType.class);
+
     public final QParcel parcel;
 
     public final com.ssg.bidssgket.user.domain.payment.domain.QPayment payment;
@@ -43,8 +45,6 @@ public class QSaleOrder extends EntityPathBase<SaleOrder> {
     public final com.ssg.bidssgket.user.domain.product.domain.QProduct product;
 
     public final NumberPath<Long> saleOrderNo = createNumber("saleOrderNo", Long.class);
-
-    public final EnumPath<com.ssg.bidssgket.user.domain.order.domain.enums.TransactionType> transactionType = createEnum("transactionType", com.ssg.bidssgket.user.domain.order.domain.enums.TransactionType.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
