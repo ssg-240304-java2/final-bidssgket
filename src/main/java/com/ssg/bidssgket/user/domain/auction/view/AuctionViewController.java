@@ -246,7 +246,7 @@ public class AuctionViewController {
     public String bidSuccess(@PathVariable("productNo") Long productNo, Model model, HttpSession httpSession){
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
         ProductResDto product = productService.findProductByNo(productNo);
-        List<Auction> auction = productService.findAuctionByProductNo(productNo);
+        List<AuctionResponseDto> auction = auctionService.findByProductNo(productNo);
         Optional<Member> memberInfo = memberRepository.findByEmail(email);
         Long memberNo = memberInfo.get().getMemberNo();
 
