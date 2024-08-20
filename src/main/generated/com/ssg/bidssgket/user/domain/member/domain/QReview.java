@@ -30,8 +30,6 @@ public class QReview extends EntityPathBase<Review> {
 
     public final QMember reviewee;
 
-    public final QMember reviewer;
-
     public final NumberPath<Long> reviewNo = createNumber("reviewNo", Long.class);
 
     public QReview(String variable) {
@@ -54,7 +52,6 @@ public class QReview extends EntityPathBase<Review> {
         super(type, metadata, inits);
         this.product = inits.isInitialized("product") ? new com.ssg.bidssgket.user.domain.product.domain.QProduct(forProperty("product"), inits.get("product")) : null;
         this.reviewee = inits.isInitialized("reviewee") ? new QMember(forProperty("reviewee"), inits.get("reviewee")) : null;
-        this.reviewer = inits.isInitialized("reviewer") ? new QMember(forProperty("reviewer"), inits.get("reviewer")) : null;
     }
 
 }
