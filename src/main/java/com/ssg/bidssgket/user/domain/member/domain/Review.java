@@ -16,39 +16,29 @@ public class Review {
     private String comment;
     private Integer biscuitRating;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberNo", insertable = false, updatable = false)
-    private Member reviewer;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberNo", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberNo")
     private Member reviewee;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productNo")
     private Product product;
 
     @Builder
-    private Review(String comment, Integer biscuitRating,Member reviewer, Member reviewee, Product product) {
+    private Review(String comment, Integer biscuitRating,Member reviewee, Product product) {
         this.comment = comment;
         this.biscuitRating = biscuitRating;
-        this.reviewer = reviewer;
         this.reviewee = reviewee;
         this.product = product;
     }
 
-    public static Review createReview(ReviewDto reviewDto,Member member, Product product) {
+    public static Review createReview(String comment, int finalRating, Member reviewee, Product product) {
         return Review.builder()
-                .comment(reviewDto.getComment())
-                .biscuitRating(reviewDto.getBiscuitRating())
-                .reviewer(member)
-                .reviewee(member)
+                .comment(comment)
+                .biscuitRating(finalRating)
+                .reviewee(reviewee)
                 .product(product)
                 .build();
-    }
-
-    public void setReviewer(Member reviewer) {
-        this.reviewer = reviewer;
     }
 
     public void setReviewee(Member reviewee) {

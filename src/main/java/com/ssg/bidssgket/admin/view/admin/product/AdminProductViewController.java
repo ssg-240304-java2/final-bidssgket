@@ -1,6 +1,5 @@
 package com.ssg.bidssgket.admin.view.admin.product;
 
-import com.ssg.bidssgket.admin.api.member.application.AdminMemberApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

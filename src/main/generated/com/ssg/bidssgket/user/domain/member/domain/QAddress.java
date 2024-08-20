@@ -17,15 +17,15 @@ public class QAddress extends BeanPath<Address> {
 
     private static final long serialVersionUID = 1235477509L;
 
-    public static final QAddress address = new QAddress("address");
+    public static final QAddress address1 = new QAddress("address1");
+
+    public final StringPath address = createString("address");
 
     public final StringPath addrUUID = createString("addrUUID");
 
-    public final StringPath city = createString("city");
+    public final StringPath detailAddress = createString("detailAddress");
 
-    public final StringPath street = createString("street");
-
-    public final StringPath zipcode = createString("zipcode");
+    public final StringPath postcode = createString("postcode");
 
     public QAddress(String variable) {
         super(Address.class, forVariable(variable));
