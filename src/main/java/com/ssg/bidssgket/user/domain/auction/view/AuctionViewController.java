@@ -55,22 +55,17 @@ public class AuctionViewController {
      */
     @GetMapping("/auctionregistform/{productNo}")
     public String showAuctionRegistForm(Model model,  @PathVariable Long productNo, HttpSession httpSession) {
-//        log.info("productNo >>>>> {}", productNo);
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-//        System.out.println(email);
         Member member = auctionService.getMemberByEmail(email);
-//        log.info("member >>>>>>>>>>. {}", member);
         ProductResDto product = auctionService.getProductById(productNo);
-//        log.info("product >>>>>>>>>>. {}", product);
         int minBidValue = auctionService.getMinBid(productNo);
-//        log.info("minBidValue >>>>>> {}", minBidValue);
 
-//        Auction auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
+        AuctionResponseDto auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
 
         model.addAttribute("member", member);
         model.addAttribute("product", product);
         model.addAttribute("minBid", minBidValue);
-//        model.addAttribute("auction", auction);
+        model.addAttribute("auction", auction);
         return "user/auction/auctionregist";
     }
 
