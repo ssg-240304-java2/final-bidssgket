@@ -174,6 +174,16 @@ public class AuctionService {
         return !auctions.isEmpty();
     }
 
+    public int getMinPrice(Long productNo) {
+        List<Auction> auctions = auctionRepository.findByProductNoOrderByMaxTenderPriceDesc(productNo);
+        if (auctions.isEmpty()) {
+            Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productNo));
+            return (int) (product.getAuctionStartPrice() * 1.01);
+        } else {
+            return (int) (auctions.get(0).getMaxTenderPrice() * 1.01);
+        }
+    }
+
     public List<AuctionResponseDto> findByProductNo(Long productNo) {
         List<Auction> auctions = auctionRepository.findAuctionByProductNo(productNo);
         return auctions.stream().map(auction -> new AuctionResponseDto(

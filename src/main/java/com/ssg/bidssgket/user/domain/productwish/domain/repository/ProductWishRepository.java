@@ -23,7 +23,7 @@ public interface ProductWishRepository extends JpaRepository<Wish, Long> {
 /*
     @Query(value="SELECT count(*) FROM wish w WHERE w.member_no = :memberNo AND w.product_no = :productNo", nativeQuery = true)
     int findByMemberNoAndProductNo(Long memberNo, Long productNo);*/
-    
+
     Optional<Wish> findByMemberAndProduct(Member member, Product product);
 
     @Query(value="SELECT w.* FROM wish w WHERE w.member_no = :memberNo AND w.product_no = :productNo", nativeQuery = true)
