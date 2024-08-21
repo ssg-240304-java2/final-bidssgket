@@ -22,6 +22,11 @@ public class LiveAuctionController {
         this.eventAuctionService = eventAuctionService;
     }
 
+    /***
+     * 실시간 경매 입찰 등록
+     * @param bidMessage
+     * @return
+     */
     @MessageMapping("auction")
     @SendTo("/pro/auction")
     public BidMessage handleBidMessage(@RequestBody BidMessage bidMessage){
