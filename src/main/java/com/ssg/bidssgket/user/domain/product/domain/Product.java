@@ -2,6 +2,7 @@ package com.ssg.bidssgket.user.domain.product.domain;
 
 import com.ssg.bidssgket.common.domain.BaseTimeEntity;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
+import com.ssg.bidssgket.user.domain.order.domain.DeliveryAddress;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
 import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
 import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto;
@@ -50,6 +51,9 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Auction> auctions = new ArrayList<>();
 
+    @OneToOne(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, orphanRemoval = true)
+    private DeliveryAddress deliveryAddress; // 배송지 정보 [FK]
+
     @OneToOne(cascade = {CascadeType.REMOVE},orphanRemoval = true)
     @JoinColumn(name = "productNo", insertable = false, updatable = false)
     private SaleOrder saleOrder;
@@ -57,7 +61,6 @@ public class Product extends BaseTimeEntity {
     @OneToOne(cascade = {CascadeType.REMOVE},orphanRemoval = true)
     @JoinColumn(name = "productNo", insertable = false, updatable = false)
     private PurchaseOrder purchaseOrder;
-
 
     @Builder
     private Product(String productName, Category category, String productDesc, SalesStatus salesStatus, Boolean imdPurchase, Boolean auctionSelected, Boolean eventAuction, Integer buyNowPrice, Integer bidSuccessPrice , Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
@@ -125,6 +128,11 @@ public class Product extends BaseTimeEntity {
 
         productReport.setProduct(this);
         this.productReports.add(productReport);
+    }
+
+    public void addDeliveryAddress(DeliveryAddress deliveryAddress) {
+        deliveryAddress.setProduct(this);
+        this.deliveryAddress = deliveryAddress;
     }
 
     public void setProductNo(Long productNo) {
@@ -199,7 +207,9 @@ public class Product extends BaseTimeEntity {
         this.purchaseOrder = purchaseOrder;
     }
 
-
+    public void setDeliveryAddress(DeliveryAddress deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
+    }
 
 
 }
