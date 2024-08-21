@@ -29,7 +29,7 @@ import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("chat")
+@RequestMapping("/chat")
 public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -125,7 +125,7 @@ public class ChatController {
     @SendTo("/topic/{chatRoomNo}")
     public ChatMessage handleMessage(@Payload ChatMessageDto chatMessageDto) {  // 메세지 전송
         ChatMessage chatMessage = chatMessageService.createAndSaveChatMessage(chatMessageDto);
-        messagingTemplate.convertAndSend("/topic/" + chatMessage.getChatRoom().getChatRoomNo(), chatMessage);
+        messagingTemplate.convertAndSend("/pro/" + chatMessage.getChatRoom().getChatRoomNo(), chatMessage);
         return chatMessage;
     }
 
@@ -133,7 +133,7 @@ public class ChatController {
     public void addUser(ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
         // WebSocket 세션에 사용자 이름 저장
         headerAccessor.getSessionAttributes().put("member", chatMessage.getSender());
-        messagingTemplate.convertAndSend("/topic/" + chatMessage.getChatRoom().getChatRoomNo(), chatMessage);
+        messagingTemplate.convertAndSend("/pro/" + chatMessage.getChatRoom().getChatRoomNo(), chatMessage);
     }
 
 }
