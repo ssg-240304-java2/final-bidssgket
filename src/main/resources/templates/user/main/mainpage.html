@@ -133,9 +133,6 @@
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a th:href="@{/detail/{productNo}(productNo=${product.productNo})}" th:text="${product.productName}" style="text-decoration-line: none; color: black;"></a>
-                                <!--<button class="wishheartbtn" th:onclick="toggleHeart(this, [[${product.productNo}]])">
-                                    <img src="/user/main/images/empty_heart2.png" alt="관심 없음" class="wishheart">
-                                </button>-->
                                 <button class="wishheartbtn" th:onclick="toggleHeart(this, [[${product.productNo}]])">
                                     <img th:src="@{/user/main/images/heart.png}" th:if="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 있음" class="wishheart">
                                     <img th:src="@{/user/main/images/empty_heart2.png}" th:unless="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 없음" class="wishheart">
