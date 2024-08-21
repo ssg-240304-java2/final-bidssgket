@@ -78,7 +78,7 @@
             const sendButton = document.getElementById('send-button');
             const messageInput = document.getElementById('message-input');
             let currentChatRoomNo = null;
-            let socket = new SockJS('/ws'); // WebSocket 연결
+            let socket = new SockJS('/ws-stomp'); // WebSocket 연결
             let stompClient = Stomp.over(socket);
             let subscription = null; // 현재 채팅방의 구독을 저장
 
@@ -91,7 +91,7 @@
                     console.log('Connected: ' + frame);
 
                     // WebSocket 메시지 수신 처리
-                    subscription = stompClient.subscribe('/topic/' + chatRoomNo, function (messageOutput) {
+                    subscription = stompClient.subscribe('/pro/' + chatRoomNo, function (messageOutput) {
                         const message = JSON.parse(messageOutput.body);
                         if (message.chatRoomNo == chatRoomNo) {
                             const messageClass = message.sender === '나' ? 'my-message' : 'other-message';
@@ -132,27 +132,19 @@
             // 메시지 전송 처리
             function sendMessage() {
                 const message = messageInput.value;
-                const currentChatRoomNo = [[${chatRoomNo}]];
                 const memberNo = [[${memberNo}]];
                 if (message && currentChatRoomNo) {
-                    // 서버에 메시지 전송
-                    fetch(`/chat/send?chatRoomNo=${currentChatRoomNo}&memberNo=${memberNo}&message=${encodeURIComponent(message)}`, {
-                        method: 'POST'
-                    }).then(response => {
-                        if (response.ok) {
-                            // WebSocket을 통해 서버에 메시지 전송
-                            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({
-                                chatRoomNo: currentChatRoomNo,
-                                sender: '나',
-                                content: message
-                            }));
+                    // WebSocket을 통해 서버에 메시지 전송
+                    stompClient.send("/send/chat.sendMessage", {}, JSON.stringify({
+                        chatRoomNo: currentChatRoomNo,
+                        sender: '나',
+                        content: message
+                    }));
 
-                            // 메시지 추가 및 입력 필드 초기화
-                            chatMessages.innerHTML += `<div class="message my-message"><span class="sender">나:</span> ${message}</div>`;
-                            messageInput.value = '';
-                            chatMessages.scrollTop = chatMessages.scrollHeight; // 스크롤을 메시지 아래로 자동으로 이동
-                        }
-                    });
+                    // 메시지 추가 및 입력 필드 초기화
+                    chatMessages.innerHTML += `<div class="message my-message"><span class="sender">나:</span> ${message}</div>`;
+                    messageInput.value = '';
+                    chatMessages.scrollTop = chatMessages.scrollHeight; // 스크롤을 메시지 아래로 자동으로 이동
                 }
             }
 
