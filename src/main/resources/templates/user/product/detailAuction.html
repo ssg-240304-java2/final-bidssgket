@@ -123,10 +123,6 @@
     </div>
 
     <div class="row mt-5">
-      <div class="col-md-6"> <!-- 차트를 위한 넓은 열 -->
-        <h4>시세 조회</h4>
-        <canvas id="priceChart" class="chart-table"></canvas>
-      </div>
       <div class="col-md-6"> <!-- 표를 위한 넓은 열 -->
           <h4>입찰 현황</h4>
           <div class="table-responsive chart-table"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
@@ -204,21 +200,6 @@
       }
     };
 
-    var ctx = document.getElementById('priceChart').getContext('2d');
-    var chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['2024.08.01', '2024.08.02', '2024.08.03', '2024.08.04', '2024.08.05', '2024.08.06', '2024.08.07'],
-        datasets: [{
-          label: '가격',
-          backgroundColor: 'rgba(0, 119, 204, 0.3)',
-          borderColor: 'rgb(0, 119, 204)',
-          data: [3000, 4000, 3200, 4800, 5300, 4500, 5000]
-        }]
-      },
-      options: {}
-    });
-
     document.getElementById("submitReport").addEventListener('click', function() {
       // FormData 객체를 생성합니다.
       const formData = new FormData();
@@ -245,6 +226,34 @@
           alert("신고 접수에 실패했습니다.");
         }
       });
+    });
+
+    document.getElementById("createChatRoomButton").addEventListener("click", function() {
+      // 현재 로그인된 사용자와 대화할 상대방의 ID를 가져옵니다.
+      const memberId1 = [[${loggedInMemberId}]]; // 현재 로그인한 사용자
+      const memberId2 = [[${otherMemberId}]]; // 대화할 상대방의 ID
+
+      // 채팅 방 생성 요청을 보냅니다.
+      fetch('/chat/createRoom', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          memberId1: memberId1,
+          memberId2: memberId2
+        })
+      })
+              .then(response => response.json())
+              .then(data => {
+                // 방이 생성되면 해당 채팅 방으로 리다이렉트합니다.
+                const chatRoomId = data;
+                window.location.href = `/chat/${chatRoomId}`;
+              })
+              .catch(error => {
+                console.error('Error creating chat room:', error);
+                alert('채팅 방 생성에 실패했습니다.');
+              });
     });
 
   </script>

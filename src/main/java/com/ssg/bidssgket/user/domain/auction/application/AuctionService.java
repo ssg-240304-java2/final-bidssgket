@@ -197,4 +197,36 @@ public class AuctionService {
                 auction.getProduct()
         )).collect(Collectors.toList());
     }
+
+    public boolean isWinningEventBidder(Long memberNo, Long productNo) {
+        List<Auction> auction = auctionRepository.findByProductNoOrderByMaxTenderPriceDesc(productNo);
+        if (!auction.isEmpty()) {
+            Auction topAuction = auction.get(0);
+            return topAuction.getMember().getMemberNo().equals(memberNo) && !topAuction.getTenderDeleted();
+        }
+        return false;
+    }
+
+    @Transactional
+    public void endEventAuction(Long productNo) {
+        System.out.println("productNo = " + productNo);
+        Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+        product.setSalesStatus(SalesStatus.trading);
+
+        List<Auction> auction = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
+        if (!auction.isEmpty()) {
+            Auction firstBid = auction.get(0);
+            Auction secondBid = auction.size() > 1 ? auction.get(1) : firstBid;
+
+            firstBid.updateBidSuccess(true);
+            product.setBidSuccessPrice(firstBid.getMaxTenderPrice());
+        } else {
+            product.setSalesStatus(SalesStatus.sale_pause);
+            auctionRepository.deleteAll(auction);
+        }
+
+        productRepository.save(product);
+        auctionRepository.saveAll(auction);
+    }
+
 }

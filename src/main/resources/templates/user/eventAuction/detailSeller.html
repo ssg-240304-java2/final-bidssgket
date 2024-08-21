@@ -112,11 +112,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
   <script>
 
-    var duration = /*[[${durationMillis}]]*/ 0;
-
     function startTimer(duration, display) {
       var timer = duration, days, hours, minutes, seconds;
-      setInterval(function () {
+      var intervalId = setInterval(function () {
+        if ("[[${product.salesStatus}]]" === 'sale_completed') {
+          clearInterval(intervalId);
+          display.textContent = "판매가 완료되었습니다.";
+          return;
+        }
         days = parseInt(timer / (3600 * 24), 10);
         hours = parseInt((timer % (3600 * 24)) / 3600, 10);
         minutes = parseInt((timer % 3600) / 60, 10);
@@ -130,14 +133,31 @@
         display.textContent = days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
 
         if (--timer < 0) {
-          timer = duration;
+          clearInterval(intervalId);
+          display.textContent = "경매가 종료되었습니다.";
+          location.href = '/eventAuction/endAuction/'+ [[${product.productNo}]];
         }
       }, 1000);
     }
 
     window.onload = function () {
+      var auctionendtime = "[[${product.auctionEndTime}]]";
+      var auctionstarttime = new Date().getTime();
+      console.log(auctionstarttime);
+      var endTimeMs = new Date(auctionendtime).getTime();
+      console.log(auctionendtime);
+      console.log(auctionstarttime);
+      console.log(endTimeMs);
+      var duration = (endTimeMs - auctionstarttime) / 1000;
+      if (duration < 0) {
+        duration = 0;
+      }
       var display = document.querySelector('#timer');
       startTimer(duration, display);
+      if (duration === 0 || "[[${product.salesStatus}]]" !== 'selling') {
+        document.getElementById('deleteAuction').disabled = true;
+        document.getElementById('modifyAuction').disabled = true;
+      }
     };
 
 
