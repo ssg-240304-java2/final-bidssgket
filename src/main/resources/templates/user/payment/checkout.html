@@ -75,41 +75,44 @@
                 </div>
                 <div class="border-b pb-4">
                     <h1 class="text-2xl font-semibold mb-4">배송 정보</h1>
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <div class="text-gray-900 mb-2">
-                                <span class="text-gray-400 mr-10">받는 분</span>
-                                <input id="receiverName" type="text" class="border rounded p-2" placeholder="이름을 입력하세요."/>
-                            </div>
-                            <div class="text-gray-900 mb-2">
-                                <span class="text-gray-400 mr-11">연락처</span>
-                                <input id="contactNumber" type="text" class="border rounded p-2" placeholder="전화번호를 입력하세요."/>
-                            </div>
-                            <div class="text-gray-900 mb-2">
-                                <span class="text-gray-400 mr-6">배송 주소</span>
-                                <span id="shippingAddress">
-<!--                                    <span th:text=""></span>-->
-                                </span>
-                            </div>
+                    <div class="flex flex-col space-y-4">
+                        <!-- 받는 분 -->
+                        <div class="flex items-center">
+                            <span class="text-gray-400 w-1/6">받는 분</span>
+                            <input type="text" id="receiverName" class="border rounded p-2 w-2/6" placeholder="이름을 입력하세요" />
                         </div>
-                        <div class="flex flex-col items-end">
-                            <div class="text-right text-gray-400">
-                                <a href="#">새 주소 추가</a>
-                            </div>
-                            <br>
-<!--                            <div class="text-gray-400">-->
-<!--                                <button class="border border-gray-400 rounded px-2 py-1 text-gray-600">변경</button>-->
-<!--                            </div>-->
+                        <!-- 연락처 -->
+                        <div class="flex items-center">
+                            <span class="text-gray-400 w-1/6">연락처</span>
+                            <input type="text" id="contactNumber" class="border rounded p-2 w-2/6" placeholder="전화번호를 입력하세요" />
+                            <span id="contactError" class="w-2/6 text-red-500 text-sm ml-3" style="display:none;">"-" 제외한 숫자만 입력해 주세요.</span>
                         </div>
-                    </div>
-                    <div class="mt-4" id="requestListContainer">
-                        <label for="deliveryRequest" class="text-gray-400">배송 요청 사항</label>
-                        <select id="deliveryRequest" name="deliveryRequest" class="border w-full p-3 rounded">
-                            <option value="문 앞에 놔주세요.">문 앞에 놔주세요.</option>
-                            <option value="경비실에 맡겨주세요.">경비실에 맡겨주세요.</option>
-                            <option value="배송 전에 전화주세요.">배송 전에 전화주세요.</option>
-                            <option value="직접 입력">판매자에게 직접 채팅으로 요청</option>
-                        </select>
+                        <!-- 우편번호 및 주소 -->
+                        <div class="flex items-center">
+                            <span class="text-gray-400 w-1/6">우편번호</span>
+                            <input type="text" id="sample6_postcode" placeholder="우편번호" class="border rounded p-2 w-2/6" readonly />
+                            <button type="button" onclick="sample6_execDaumPostcode()" class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded ml-3">주소 검색</button>
+                        </div>
+                        <!-- 기본 주소 + 참고 항목 -->
+                        <div class="flex items-center">
+                            <span class="text-gray-400 w-1/6">주소</span>
+                            <input type="text" id="sample6_address" placeholder="기본 주소" class="border rounded p-2 w-4/6" readonly />
+                        </div>
+                        <!-- 상세 주소 -->
+                        <div class="flex items-center">
+                            <span class="text-gray-400 w-1/6">상세 주소</span>
+                            <input type="text" id="sample6_detailAddress" placeholder="상세 주소를 입력하세요" class="border rounded p-2 w-4/6" />
+                        </div>
+                        <!-- 배송 요청 사항 -->
+                        <div class="flex items-center">
+                            <span class="text-gray-400 w-1/6">배송 요청 사항</span>
+                            <select id="deliveryRequest" name="deliveryRequest" class="border rounded p-2 w-4/6">
+                                <option value="문 앞에 놔주세요.">문 앞에 놔주세요.</option>
+                                <option value="경비실에 맡겨주세요.">경비실에 맡겨주세요.</option>
+                                <option value="배송 전에 전화주세요.">배송 전에 전화주세요.</option>
+                                <option value="직접 입력">판매자에게 직접 채팅으로 요청</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="border-b pt-4 pb-4 mb-4">
@@ -125,6 +128,94 @@
                     <button id="btn-payment" class="bg-green-500 text-white text-lg px-8 py-4 rounded hover:bg-green-600">결제하기</button>
                 </div>
             </div>
+
+            <!-- 카카오 우편번호 API -->
+            <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+            <script>
+                function sample6_execDaumPostcode() {
+                    new daum.Postcode({
+                        oncomplete: function(data) {
+                            var addr = '';
+                            var extraAddr = '';
+
+                            // 사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져옴
+                            if (data.userSelectedType === 'R') {
+                                addr = data.roadAddress;
+                            } else {
+                                addr = data.jibunAddress;
+                            }
+
+                            // 참고 항목 조합
+                            if(data.userSelectedType === 'R'){
+                                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                                    extraAddr += data.bname;
+                                }
+                                if(data.buildingName !== '' && data.apartment === 'Y'){
+                                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                                }
+                                if(extraAddr !== ''){
+                                    extraAddr = ' (' + extraAddr + ')';
+                                }
+                            }
+
+                            // 우편번호와 기본 주소와 참고 항목을 합쳐서 한 필드에 표시
+                            document.getElementById('sample6_postcode').value = data.zonecode; // 우편번호 필드
+                            document.getElementById('sample6_address').value = addr + extraAddr; // 기본 주소 필드
+
+                            // 커서를 상세 주소 필드로 이동
+                            document.getElementById('sample6_detailAddress').focus();
+                        }
+                    }).open();
+                }
+            </script>
+
+            <!-- 연락처 포맷팅 -->
+            <script>
+                function handleContactNumberInput(event) {
+                    const contactNumberInput = event.target;
+                    const contactError = document.getElementById('contactError');
+
+                    let contactNumber = contactNumberInput.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자는 제거
+
+                    // 11자리까지만 허용
+                    if (contactNumber.length > 11) {
+                        contactNumber = contactNumber.slice(0, 11);
+                    }
+
+                    contactNumberInput.value = contactNumber;
+
+                    // 입력 필드가 비어 있을 경우 오류 메시지를 표시하지 않음
+                    if (contactNumber.length === 0) {
+                        contactError.style.display = 'none';
+                    } else if (contactNumber.length < 10) {
+                        contactError.textContent = '전화번호를 다시 확인해 주세요.';
+                        contactError.style.display = 'inline';
+                    } else {
+                        contactError.style.display = 'none';
+                    }
+
+                    // 포맷팅 처리: blur 이벤트에서만 적용
+                    if (event.type === 'blur') {
+                        if (contactNumber.length === 11) {
+                            contactNumberInput.value = contactNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                        } else if (contactNumber.length === 10) {
+                            contactNumberInput.value = contactNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                        }
+                    }
+
+                    // 포맷팅 해제: focus 이벤트에서만 적용
+                    if (event.type === 'focus') {
+                        contactNumberInput.value = contactNumber.replace(/-/g, '');
+                    }
+                }
+
+                // 이벤트 리스너 등록
+                const contactNumberField = document.getElementById('contactNumber');
+                contactNumberField.addEventListener('input', handleContactNumberInput);
+                contactNumberField.addEventListener('blur', handleContactNumberInput);
+                contactNumberField.addEventListener('focus', handleContactNumberInput);
+            </script>
 
             <!-- 결제하기 -->
             <script>
@@ -144,6 +235,14 @@
                     // 보유 잔액
                     const payBalance = parseInt(payBalanceElement.textContent.replace(/[^0-9]/g, ''), 10);
 
+                    // 배송 정보 가져오기
+                    const receiverName = document.getElementById('receiverName').value;
+                    const contactNumber = document.getElementById('contactNumber').value;
+                    const postcode = document.getElementById('sample6_postcode').value;
+                    const deliveryAddress = document.getElementById('sample6_address').value;
+                    const detailAddress = document.getElementById('sample6_detailAddress').value;
+                    const deliveryRequest = document.getElementById('deliveryRequest').value;
+
                     // 버튼에 결제 금액 표시
                     paymentButton.textContent = `${new Intl.NumberFormat('ko-KR').format(paymentAmount)}원 결제하기`;
 
@@ -154,7 +253,8 @@
                         paymentButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
 
                         paymentButton.addEventListener('click', function () {
-                            window.location.href = '/user/payment/deposit'; // 페이 충전 페이지로 이동
+                            const insufficientAmount = paymentAmount - payBalance;
+                            window.location.href = `/user/payment/deposit?`; // 페이 충전 페이지로 이동
                         });
                     } else {
                         // 결제 처리 이벤트 추가
@@ -167,7 +267,13 @@
                                 paymentType: 'BISCUIT_PAY',
                                 paymentTransactionType: 'WITHDRAWAL',
                                 deliveryType: deliveryType,
-                                orderTransactionType: orderTransactionType
+                                orderTransactionType: orderTransactionType,
+                                receiverName: receiverName,
+                                contactNumber: contactNumber,
+                                postcode: postcode,
+                                deliveryAddress: deliveryAddress,
+                                detailAddress: detailAddress,
+                                deliveryRequest: deliveryRequest
                             };
                             console.log('---->', JSON.stringify(paymentData));
                             // 서버에 결제 요청을 보냅니다.
