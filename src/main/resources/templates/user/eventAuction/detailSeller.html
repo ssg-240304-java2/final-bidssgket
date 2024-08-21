@@ -186,24 +186,8 @@
     var stompClient = null;
     var productNo = [[${product.productNo}]];
     var memberNo = [[${memberNo}]];
-    var member = [[${member}]];
     var minTenderPrice = [[${lastPrice}]];
-
-    // 이메일을 '@' 기준으로 나누기
-    var emailParts = member.split('@');
-    var emailLocalPart = emailParts[0];
-    var emailDomainPart = emailParts[1];
-
-    // 이메일의 첫 번째 부분을 마스킹 처리 (4자리를 *로 변경)
-    if (emailLocalPart.length > 4) {
-      emailLocalPart = emailLocalPart.substring(0, emailLocalPart.length - 4) + '****';
-    } else {
-      emailLocalPart = '****';
-    }
-
-    // 마스킹된 이메일 주소를 재구성
-    var maskedMember = emailLocalPart + '@' + emailDomainPart;
-
+    var email = [[${member.email}]]
 
     function connectAndSubscribe() {
       var socket = new SockJS('/ws-stomp');
@@ -219,15 +203,53 @@
       });
     }
 
+    function sendBid(bidAmount) {
+      const message = {
+        memberNo: memberNo,
+        productNo: productNo,
+        maxTenderPrice: bidAmount,
+        minTenderPrice: minTenderPrice
+      };
+      stompClient.send(`/send/auction`, {}, JSON.stringify(message));
+      console.log('Bid sent: ' + bidAmount);
+    }
+
     function showBid(bidMessage) {
       $("#bidding").prepend(
               "<tr>" +
-              "<td>" + maskedMember + "</td>" +
+              "<td>" + "실시간 입찰자" + "</td>" +
               "<td>" + bidMessage.maxTenderPrice + " 원" + "</td>" +
               "<td>" + new Date().toLocaleString() + "</td>" +
               "</tr>"
       );
     }
+
+    function maskEmail(email) {
+      var emailParts = email.split('@');
+      var emailLocalPart = emailParts[0];
+      var emailDomainPart = emailParts[1];
+
+      if (emailLocalPart.length > 4) {
+        emailLocalPart = emailLocalPart.substring(0, emailLocalPart.length - 4) + '****';
+      } else {
+        emailLocalPart = '****';
+      }
+
+      return emailLocalPart + '@' + emailDomainPart;
+    }
+
+    document.getElementById("onAuctionBtn").addEventListener('click', function () {
+      var bidAmount = prompt("입찰 금액을 입력하세요:"); // 입찰 금액 입력창
+      if (bidAmount) {
+        if (parseInt(bidAmount) < minTenderPrice) {
+          alert("최소 " + minTenderPrice + "원 이상을 입력해주세요.");
+        } else {
+          sendBid(bidAmount); // 최소 입찰가 이상일 경우 입찰 메시지 전송
+        }
+      } else {
+        alert("입찰 금액을 입력하세요.");
+      }
+    });
 
     $(document).ready(function () {
       connectAndSubscribe();  // 페이지가 로드될 때 WebSocket 연결 및 구독

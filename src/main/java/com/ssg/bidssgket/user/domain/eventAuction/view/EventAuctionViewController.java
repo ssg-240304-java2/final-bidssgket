@@ -3,7 +3,6 @@ package com.ssg.bidssgket.user.domain.eventAuction.view;
 import com.ssg.bidssgket.user.domain.auction.application.AuctionService;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.eventAuction.application.EventAuctionService;
-import com.ssg.bidssgket.user.domain.eventAuction.view.dto.BidMessage;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
@@ -11,12 +10,11 @@ import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
+import com.ssg.bidssgket.user.domain.productwish.application.ProductWishService;
+import com.ssg.bidssgket.user.domain.productwish.domain.dto.MemberDTO;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +38,7 @@ public class EventAuctionViewController {
     private final ProductService productService;
     private final SimpMessagingTemplate messagingTemplate;
     private final AuctionService auctionService;
+    private final ProductWishService productWishService;
 
     /***
      * 번개 경매 상품 등록 화면
@@ -84,9 +84,18 @@ public class EventAuctionViewController {
      * @return
      */
     @GetMapping("/lists")
-    public String eventAuctionList(Model model) {
+    public String eventAuctionList(Model model,HttpSession httpSession) {
         List<Product> eventProducts = eventAuctionService.getEventProducts();
         model.addAttribute("eventProducts", eventProducts);
+        SessionMember sessionMember = (SessionMember) httpSession.getAttribute("member");
+        List<Long> wishedProductIds = new ArrayList<>();
+
+        if (sessionMember != null) {
+            MemberDTO member = auctionService.getMemberByEmail(sessionMember.getEmail());
+            wishedProductIds = productWishService.findProductNoByMemberNo(member.getMemberNo());
+            System.out.println("wishedProductIds = " + wishedProductIds);
+        }
+        model.addAttribute("wishedProductIds", wishedProductIds);
         return "user/eventAuction/lists";
     }
 

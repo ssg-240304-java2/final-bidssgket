@@ -50,7 +50,7 @@
                                     <img th:src="@{/user/main/images/empty_heart2.png}" th:unless="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 없음" class="wishheart">
                                 </button>
                             </h5>
-                            <p class="card-text">경매 종료 일자: <span th:text="${product.auctionEndTime}" id="auction-end-1"></span></p>
+                            <p class="card-text">경매 종료 일자: <span th:text="${#temporals.format(product.auctionEndTime, 'yyyy-MM-dd HH:mm')}" id="auction-end-1"></span></p>
                             <p class="card-text" th:if="${product.buyNowPrice != null}">즉시 구매 가격: <span th:text="|${product.buyNowPrice}원|" id="current-price-1"></span></p>
                             <p class="card-text" th:if="${product.auctionStartPrice != null}">경매 시작가: <span th:text="|${product.auctionStartPrice}원|" id="starting-price-1"></span></p>
                         </div>
