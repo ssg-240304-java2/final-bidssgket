@@ -81,7 +81,9 @@ public class AuctionViewController {
     public String registerAuction(@PathVariable("productNo") Long productNo, @RequestParam(required = false) int minTenderPrice, @RequestParam(required = false) int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
+            log.info("회원 정보 >>> {}", email);
             int auctionCount = auctionService.countAuctionsByMemberAndProduct(email, productNo);
+            log.info("입찰횟수>>>> {}",auctionCount);
             if (auctionCount >= 2) {
                 redirectAttributes.addFlashAttribute("message", "입찰은 최대 2번까지 가능합니다.");
                 return "redirect:/detailBuyer/" + productNo;
@@ -191,6 +193,7 @@ public class AuctionViewController {
             if (isAuctionEnded) {
                 if (!hasBidders) {
                     redirectAttributes.addFlashAttribute("message", "경매가 종료되었으나 입찰자가 없어 판매 중지 상태로 변경되었습니다.");
+                    auctionService.deleteIfAuctionExists(productNo);
                     return "redirect:/auction/bidFailed/" + productNo;
                 } else {
                     auctionService.endAuction(productNo);

@@ -229,4 +229,15 @@ public class AuctionService {
         auctionRepository.saveAll(auction);
     }
 
+    public boolean findAuctionMember(Long productNo, Long memberNo) {
+        return auctionRepository.findAuctionMember(productNo, memberNo)> 0? true: false;
+    }
+
+    @Transactional
+    public void deleteIfAuctionExists(Long productNo) {
+        List<Auction> auctions = auctionRepository.findAuctionByProductNo(productNo);
+        if(!auctions.isEmpty()){
+            auctionRepository.deleteAll(auctions);
+        }
+    }
 }
