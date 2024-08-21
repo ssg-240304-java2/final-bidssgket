@@ -1,10 +1,12 @@
 package com.ssg.bidssgket.user.domain.member.api.chat.controller;
 
+import com.ssg.bidssgket.user.domain.member.api.chat.exception.ChatRoomNotFoundException;
 import com.ssg.bidssgket.user.domain.member.api.chat.exception.MemberNotFoundException;
 import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatMessage;
 import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoom;
 import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember;
 import com.ssg.bidssgket.user.domain.member.api.chat.repository.ChatRoomMemberRepository;
+import com.ssg.bidssgket.user.domain.member.api.chat.repository.ChatRoomRepository;
 import com.ssg.bidssgket.user.domain.member.api.chat.service.ChatMessageService;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
@@ -36,6 +38,7 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
     private final MemberRepository memberRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     @GetMapping
     public String getChatPage(Model model, HttpSession session) {
@@ -103,23 +106,40 @@ public class ChatController {
     }
 
     @MessageMapping("/chat.sendMessage")
-    @SendTo("/pro/{chatRoomNo}")
-    public ChatMessageResDto handleMessage(@Payload ChatMessageDto chatMessageDto, SimpMessageHeaderAccessor headerAccessor) {
-        HttpSession session = (HttpSession) headerAccessor.getSessionAttributes().get("HTTP_SESSION");
-        SessionMember sessionMember = (SessionMember) session.getAttribute("member");
+    public ChatMessageResDto handleMessage(@Payload ChatMessageDto chatMessageDto) {
+        // 클라이언트로부터 받은 memberNo를 사용하여 Member 조회
+        Long memberNo = chatMessageDto.getMemberNo();
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(() -> new MemberNotFoundException("Member not found with ID: " + memberNo));
 
-        Member member = memberRepository.findByEmail(sessionMember.getEmail())
-                .orElseThrow(() -> new MemberNotFoundException("Member not found for email: " + sessionMember.getEmail()));
-
+        // 메시지 생성 및 저장
         ChatMessage chatMessage = chatMessageService.createAndSaveChatMessage(chatMessageDto, member);
         ChatMessageResDto responseDto = ChatMessageResDto.fromEntity(chatMessage);
-        messagingTemplate.convertAndSend("/pro/" + chatMessage.getChatRoom().getChatRoomNo(), responseDto);
+
+        // 동적으로 채팅방 경로를 생성하여 메시지 전송
+        messagingTemplate.convertAndSend("/pro/chatRoom/" + chatMessage.getChatRoom().getChatRoomNo(), responseDto);
         return responseDto;
     }
 
     @MessageMapping("/chat.addUser")
-    public void addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-        headerAccessor.getSessionAttributes().put("member", chatMessage.getMember().getEmail());
-        messagingTemplate.convertAndSend("/pro/" + chatMessage.getChatRoom().getChatRoomNo(), ChatMessageResDto.fromEntity(chatMessage));
+    public void addUser(@Payload ChatMessageDto chatMessageDto) {
+        // 클라이언트에서 보낸 memberNo를 기반으로 Member 조회
+        Long memberNo = chatMessageDto.getMemberNo();
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(() -> new MemberNotFoundException("Member not found with ID: " + memberNo));
+
+        // 채팅방 조회
+        ChatRoom chatRoom = chatRoomRepository.findById(chatMessageDto.getChatRoomNo())
+                .orElseThrow(() -> new ChatRoomNotFoundException("ChatRoom not found"));
+
+        // 사용자 추가 알림 메시지 생성
+        ChatMessage chatMessage = ChatMessage.builder()
+                .member(member)
+                .chatRoom(chatRoom)
+                .message("User " + member.getEmail() + " has joined the chat")
+                .build();
+
+        // 동적으로 채팅방 경로를 생성하여 메시지 전송
+        messagingTemplate.convertAndSend("/pro/chatRoom/" + chatRoom.getChatRoomNo(), ChatMessageResDto.fromEntity(chatMessage));
     }
 }

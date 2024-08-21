@@ -12,6 +12,44 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
     <link rel="stylesheet" href="/user/css/chat.css">
+    <style>
+        .my-message {
+            background-color: #8D999E; /* 보낸 사람 말풍선 색상 */
+            text-align: right;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px 0;
+            display: inline-block;
+            max-width: 80%;
+            align-self: flex-end;
+        }
+
+        .your-message {
+            background-color: #FFFFFF; /* 받은 사람 말풍선 색상 */
+            text-align: left;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px 0;
+            display: inline-block;
+            max-width: 80%;
+            align-self: flex-start;
+        }
+
+        .message-container {
+            display: flex;
+            justify-content: flex-end; /* 보낸 사람 메시지를 오른쪽에 정렬 */
+        }
+
+        .your-message-container {
+            justify-content: flex-start; /* 받은 사람 메시지를 왼쪽에 정렬 */
+        }
+
+        .chat-messages {
+            padding: 10px;
+            height: 400px;
+            overflow-y: scroll;
+        }
+    </style>
 </head>
 <body>
 <main class="contents" layout:fragment="content">
@@ -60,8 +98,10 @@
                 </div>
                 <div id="chat-messages" class="chat-messages">
                     <div th:each="message : ${messages}">
+                        <div class="message-container" th:classappend="${message.member.memberNo == memberNo} ? '' : 'your-message-container'">
                         <div class="message" th:classappend="${message.member.memberNo == memberNo} ? 'my-message' : 'your-message'">
                             <div class="message-content" th:text="${message.message}"></div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -90,14 +130,11 @@
                     return;
                 }
 
-                // 기존 구독을 취소하여 중복 구독을 방지
-                if (stompClient && stompClient.connected) {
-                    stompClient.unsubscribe(); // 기존 구독을 해제합니다.
-                }
-
+                // 특정 채팅방에 대한 구독 설정
                 stompClient.subscribe(`/pro/chatRoom/${chatRoomNo}`, function (messageOutput) {
                     const data = JSON.parse(messageOutput.body);
-                    showChatMessage(data);
+                    console.log("Received message: ", data); // 수신된 메시지를 콘솔에 출력
+                    showChatMessage(data);  // 새로운 메시지를 화면에 추가
                 });
             });
         }
@@ -111,17 +148,19 @@
             };
             // 메시지를 지정된 경로로 전송
             stompClient.send("/send/chat.sendMessage", {}, JSON.stringify(message));
+            // showChatMessage(message);
             console.log('Chat message sent: ' + chatMessage);
         }
 
         function showChatMessage(chatMessage) {
             // 메시지를 보낸 사용자가 자신인지 확인하여 메시지의 스타일을 다르게 설정
             var messageClass = chatMessage.memberNo == memberNo ? 'my-message' : 'your-message';
+            var messageContainerClass = chatMessage.memberNo == memberNo ? '' : 'your-message-container';
             // 채팅 메시지를 화면에 추가
             $("#chat-messages").append(
-                "<div class='message " + messageClass + "'>" +
-                "<span class='sender'>" + (chatMessage.email || 'Unknown') + ":</span> " + // email이 없을 경우 'Unknown' 표시
-                chatMessage.message + "</div>"
+                "<div class='message-container " + messageContainerClass + "'>" +
+                "<div class='message " + messageClass + "'>" + chatMessage.message +
+                "</div></div>"
             );
             // 스크롤을 최신 메시지 위치로 자동으로 이동
             $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
@@ -153,9 +192,11 @@
 
                         // 기존 메시지를 화면에 표시
                         $("#chat-messages").html(messages.map(function(message) {
-                            return "<div class='message " + (message.memberNo == memberNo ? 'my-message' : 'your-message') + "'>" +
-                                "<span class='sender'>" + (message.email || 'Unknown') + ":</span> " + message.message +
-                                "</div>";
+                            var messageClass = message.memberNo == memberNo ? 'my-message' : 'your-message';
+                            var messageContainerClass = message.memberNo == memberNo ? '' : 'your-message-container';
+                            return "<div class='message-container " + messageContainerClass + "'>" +
+                                "<div class='message " + messageClass + "'>" + message.message +
+                                "</div></div>";
                         }).join(''));
 
                         // 스크롤을 최신 메시지 위치로 자동으로 이동
