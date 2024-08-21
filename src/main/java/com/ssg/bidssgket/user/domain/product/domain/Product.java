@@ -2,7 +2,6 @@ package com.ssg.bidssgket.user.domain.product.domain;
 
 import com.ssg.bidssgket.common.domain.BaseTimeEntity;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
-import com.ssg.bidssgket.user.domain.member.domain.Review;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
 import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
 import com.ssg.bidssgket.user.domain.product.api.dto.request.RegistProductReqDto;
@@ -59,9 +58,6 @@ public class Product extends BaseTimeEntity {
     @JoinColumn(name = "productNo", insertable = false, updatable = false)
     private PurchaseOrder purchaseOrder;
 
-    @ManyToOne
-    @JoinColumn(name = "productNo", insertable = false, updatable = false)
-    private Review review;
 
     @Builder
     private Product(String productName, Category category, String productDesc, SalesStatus salesStatus, Boolean imdPurchase, Boolean auctionSelected, Boolean eventAuction, Integer buyNowPrice, Integer bidSuccessPrice , Integer auctionStartPrice, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime, Member member) {
@@ -107,11 +103,6 @@ public class Product extends BaseTimeEntity {
 
         auction.setProduct(this);
         this.auctions.add(auction);
-    }
-
-    public void addReview(Review review){
-        review.setProduct(this);
-        this.review = review;
     }
 
     public void setMember(Member member){
@@ -208,9 +199,6 @@ public class Product extends BaseTimeEntity {
         this.purchaseOrder = purchaseOrder;
     }
 
-    public void setReview(Review review) {
-        this.review = review;
-    }
 
 
 

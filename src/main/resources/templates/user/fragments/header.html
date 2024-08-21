@@ -20,12 +20,11 @@
     </div>
     <div class="header-bottom">
         <div class="header-links">
-            <a href="/user/mypage">마이페이지</a>
+            <!-- 로그인 상태에 따라 마이페이지와 링크 표시 -->
+            <a id="mypage-link" href="/user/mypage" style="display: none;">마이페이지</a>
             <a href="#">알림</a>
-            <!-- 로그인 상태에 따라 링크 표시 -->
             <a id="login-link" href="/login">로그인</a>
             <a id="logout-link" href="/logout" style="display: none;">로그아웃</a>
-
         </div>
         <div class="search-container">
             <nav class="nav">
@@ -67,12 +66,15 @@
     <script>
         document.addEventListener('DOMContentLoaded',function (){
             var isAuthenticated = '[[${session.member}]]';
+            var mypageLink = document.getElementById('mypage-link');
             var loginLink = document.getElementById('login-link');
             var logoutLink = document.getElementById('logout-link');
             if (isAuthenticated) {
+                mypageLink.style.display = 'inline';
                 loginLink.style.display = 'none';
                 logoutLink.style.display = 'inline';
             } else {
+                mypageLink.style.display = 'none';
                 loginLink.style.display = 'inline';
                 logoutLink.style.display = 'none';
             }

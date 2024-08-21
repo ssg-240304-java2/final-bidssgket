@@ -14,6 +14,7 @@ import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
+import com.ssg.bidssgket.user.domain.productwish.domain.dto.MemberDTO;
 import com.sun.tools.jconsole.JConsoleContext;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -55,22 +56,17 @@ public class AuctionViewController {
      */
     @GetMapping("/auctionregistform/{productNo}")
     public String showAuctionRegistForm(Model model,  @PathVariable Long productNo, HttpSession httpSession) {
-//        log.info("productNo >>>>> {}", productNo);
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-//        System.out.println(email);
-        Member member = auctionService.getMemberByEmail(email);
-//        log.info("member >>>>>>>>>>. {}", member);
+        MemberDTO member = auctionService.getMemberByEmail(email);
         ProductResDto product = auctionService.getProductById(productNo);
-//        log.info("product >>>>>>>>>>. {}", product);
         int minBidValue = auctionService.getMinBid(productNo);
-//        log.info("minBidValue >>>>>> {}", minBidValue);
 
-//        Auction auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
+        AuctionResponseDto auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
 
         model.addAttribute("member", member);
         model.addAttribute("product", product);
         model.addAttribute("minBid", minBidValue);
-//        model.addAttribute("auction", auction);
+        model.addAttribute("auction", auction);
         return "user/auction/auctionregist";
     }
 
@@ -109,7 +105,7 @@ public class AuctionViewController {
     public String showAuctionRegistModifyForm(Model model, @PathVariable("productNo") Long productNo, HttpSession httpSession) {
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
 
-        Member member = auctionService.getMemberByEmail(email);
+        MemberDTO member = auctionService.getMemberByEmail(email);
         ProductResDto product = auctionService.getProductById(productNo);
         AuctionResponseDto auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
 
@@ -246,7 +242,7 @@ public class AuctionViewController {
     public String bidSuccess(@PathVariable("productNo") Long productNo, Model model, HttpSession httpSession){
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
         ProductResDto product = productService.findProductByNo(productNo);
-        List<Auction> auction = productService.findAuctionByProductNo(productNo);
+        List<AuctionResponseDto> auction = auctionService.findByProductNo(productNo);
         Optional<Member> memberInfo = memberRepository.findByEmail(email);
         Long memberNo = memberInfo.get().getMemberNo();
 
@@ -291,9 +287,11 @@ public class AuctionViewController {
         System.out.println("유찰된 상품");
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
         ProductResDto product = productService.findProductByNo(productNo);
-        List<Auction> auction = productService.findAuctionByProductNo(productNo);
-        Optional<Member> memberInfo = memberRepository.findByEmail(email);
-        Long memberNo = memberInfo.get().getMemberNo();
+        List<AuctionResponseDto> auction = auctionService.findByProductNo(productNo);
+//        List<Auction> auction = productService.findAuctionByProductNo(productNo);
+//        Optional<Member> memberInfo = memberRepository.findByEmail(email);
+        MemberDTO memberInfo = auctionService.getMemberByEmail(email);
+        Long memberNo = memberInfo.getMemberNo();
 
         model.addAttribute("memberNo", memberNo);
         model.addAttribute("product", product);

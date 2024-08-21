@@ -89,10 +89,6 @@
       </div>
     </div>
     <div class="row mt-5">
-      <div class="col-md-6"> <!-- 차트를 위한 넓은 열 -->
-        <h4>시세 조회</h4>
-        <canvas id="priceChart" class="chart-table"></canvas>
-      </div>
       <div class="col-md-6"> <!-- 표를 위한 넓은 열 -->
         <h4>입찰 현황</h4>
         <div class="table-responsive chart-table"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
@@ -172,21 +168,6 @@
         document.getElementById('deleteBtn').disabled = true;
       }
     };
-
-    var ctx = document.getElementById('priceChart').getContext('2d');
-    var chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['2024.08.01', '2024.08.02', '2024.08.03', '2024.08.04', '2024.08.05', '2024.08.06', '2024.08.07'],
-        datasets: [{
-          label: '가격',
-          backgroundColor: 'rgba(0, 119, 204, 0.3)',
-          borderColor: 'rgb(0, 119, 204)',
-          data: [3000, 4000, 3200, 4800, 5300, 4500, 5000]
-        }]
-      },
-      options: {}
-    });
 
     document.getElementById('updateBtn').addEventListener('click',function (){
       let productNo = [[${product.productNo}]];
