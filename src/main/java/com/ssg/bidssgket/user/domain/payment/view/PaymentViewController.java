@@ -115,7 +115,14 @@ public class PaymentViewController {
                     paymentReq.getPaymentType(),
                     paymentReq.getPaymentTransactionType(),
                     paymentReq.getDeliveryType(),
-                    paymentReq.getOrderTransactionType()
+                    paymentReq.getOrderTransactionType(),
+
+                    paymentReq.getReceiverName(),
+                    paymentReq.getContactNumber(),
+                    paymentReq.getPostcode(),
+                    paymentReq.getDeliveryAddress(),
+                    paymentReq.getDetailAddress(),
+                    paymentReq.getDeliveryRequest()
             );
 
             log.info("[processPayment] (Completed) memberNo: {}, productNo: {}",

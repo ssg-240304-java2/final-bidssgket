@@ -2,8 +2,10 @@ package com.ssg.bidssgket.user.domain.payment.application.service;
 
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.order.application.OrderService;
+import com.ssg.bidssgket.user.domain.order.domain.DeliveryAddress;
 import com.ssg.bidssgket.user.domain.order.domain.enums.DeliveryType;
 import com.ssg.bidssgket.user.domain.order.domain.enums.OrderTransactionType;
+import com.ssg.bidssgket.user.domain.order.domain.repository.DeliveryAddressRepository;
 import com.ssg.bidssgket.user.domain.payment.api.service.MemberTestService;
 import com.ssg.bidssgket.user.domain.payment.domain.Pay;
 import com.ssg.bidssgket.user.domain.payment.domain.PayChange;
@@ -31,18 +33,21 @@ public class PaymentService {
     private final OrderService orderService;
     private final MemberTestService memberTestService;
     private final ProductRepository productRepository;
+    private final DeliveryAddressRepository deliveryAddressRepository;
 
-    public PaymentService(PayChangeRepository payChangeRepository, PayRepository payRepository, PaymentRepository paymentRepository, OrderService orderService, MemberTestService memberTestService, ProductRepository productRepository) {
+    public PaymentService(PayChangeRepository payChangeRepository, PayRepository payRepository, PaymentRepository paymentRepository, OrderService orderService, MemberTestService memberTestService, ProductRepository productRepository, DeliveryAddressRepository deliveryAddressRepository) {
         this.payChangeRepository = payChangeRepository;
         this.payRepository = payRepository;
         this.paymentRepository = paymentRepository;
         this.orderService = orderService;
         this.memberTestService = memberTestService;
         this.productRepository = productRepository;
+        this.deliveryAddressRepository = deliveryAddressRepository;
     }
 
     @Transactional
-    public void processPayment(Long memberNo, Long productNo, int paymentAmount, PaymentType paymentType, PaymentTransactionType paymentTransactionType, DeliveryType deliveryType, OrderTransactionType orderTransactionType) {
+    public void processPayment(Long memberNo, Long productNo, int paymentAmount, PaymentType paymentType, PaymentTransactionType paymentTransactionType, DeliveryType deliveryType, OrderTransactionType orderTransactionType,
+                               String receiverName, String contactNumber, String postcode, String deliveryAddress, String detailAddress, String deliveryRequest) {
 
         // 1. 회원 정보 조회
         Member member = memberTestService.getMember(memberNo);
@@ -51,12 +56,18 @@ public class PaymentService {
         Product product = productRepository.findById(productNo)
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품의 정보가 존재하지 않습니다."));
 
-        // 안전거래(ESCROW)일 경우에만 결제 처리
+        // 3. 안전거래(ESCROW)일 경우에만 결제 및 배송 정보 처리
         Payment payment = null;
 
         if (deliveryType == DeliveryType.ESCROW) {
 
+            // 4. 결제 처리
             payment = handleEscrowPayment(memberNo, paymentAmount, paymentType, paymentTransactionType);
+
+            // 5. 배송 정보 저장
+            DeliveryAddress deliveryAddressEntity = DeliveryAddress.addDeliveryAddress(member, product, receiverName, contactNumber, postcode, deliveryAddress, detailAddress, deliveryRequest);
+            deliveryAddressRepository.save(deliveryAddressEntity);
+
         }
 
         // 주문서 생성
