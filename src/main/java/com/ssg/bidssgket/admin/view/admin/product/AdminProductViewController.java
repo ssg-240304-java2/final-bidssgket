@@ -27,7 +27,7 @@ public class AdminProductViewController {
 
 
     /**
-     * 상품 목록 조회 페이지
+     * 상품 상세 조회 페이지
      */
     @GetMapping("/info/{productNo}")
     public String productInfoPage() {
