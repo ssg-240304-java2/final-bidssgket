@@ -135,7 +135,7 @@
                             <h5 class="card-title">
                                 <a th:href="@{/detail/{productNo}(productNo=${product.productNo})}" th:text="${product.productName}" style="text-decoration-line: none; color: black;"></a>
                                 <button class="wishheartbtn" th:onclick="toggleHeart(this, [[${product.productNo}]])">
-                                    <img th:src="@{/user/main/images/heart.png}" th:if="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 있음" class="wishheart">
+                                    <img th:src="@{/user/main/images/redh.png}" th:if="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 있음" class="wishheart">
                                     <img th:src="@{/user/main/images/empty_heart2.png}" th:unless="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 없음" class="wishheart">
                                 </button>
 
@@ -210,8 +210,8 @@
                 if (result === "fail") {
                     window.location.href = "/login";
                 } else {
-                    const isWished = imgElement.src.includes('heart.png');
-                    imgElement.src = isWished ? '/user/main/images/empty_heart2.png' : '/user/main/images/heart.png';
+                    const isWished = imgElement.src.includes('redh.png');
+                    imgElement.src = isWished ? '/user/main/images/empty_heart2.png' : '/user/main/images/redh.png';
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -249,7 +249,7 @@
             })
             .then(isWished => {
                 const imgElement = button.querySelector('.wishheart');
-                imgElement.src = isWished ? '/user/main/images/heart.png' : '/user/main/images/empty_heart2.png';
+                imgElement.src = isWished ? '/user/main/images/redh.png' : '/user/main/images/empty_heart2.png';
             })
             .catch(error => console.error('Error:', error));
     }
