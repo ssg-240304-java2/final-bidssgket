@@ -119,7 +119,7 @@
     }
     h1 {
       font-weight: bold;
-      margin: 0;
+      margin-bottom: 2rem;
     }
     h2 {
       text-align: center;
@@ -323,7 +323,6 @@
   </style>
 </head>
 
-
 <body layout:fragment="content">
 
 <div class="container" id="container">
@@ -353,10 +352,11 @@
   <div class="form-container sign-in-container">
     <form action="#">
       <h1>Sign In</h1>
-      <div class="social-container">
-        <a href="/oauth2/authorization/google">google</a>
-        <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-      </div>
+
+        <a href="/oauth2/authorization/google">
+          <img src="https://kr.object.ncloudstorage.com/bidssgket-file/google.png" alt="Google Login" style="width: 200px; height: 40px;">
+        </a>
+
       <input type="text" placeholder="아이디" />
       <div class="form-check-container">
         <input class="form-check-input" type="checkbox" id="rememberMe" />
@@ -385,7 +385,7 @@
       </div>
       <button id="tbt">sign in</button>
       <div class="cookie-container">
-      <img src="/css/cookie.png" id="cookieImage" class="cookie-image" alt="Cookie Image">
+      <img src="https://kr.object.ncloudstorage.com/bidssgket-file/cookie.png" id="cookieImage" class="cookie-image" alt="Cookie Image">
       </div>
 
       <script>
