@@ -72,7 +72,7 @@ public class NotificationService {
     /**
      * 경매 참가 구독 -> 구매자들 구독
      */
-    public SseEmitter subscribeAuction(Long productNo, Long memberNo, String eventName, String lastEventId) {
+    public SseEmitter subscribeAuction(Long productNo, Long memberNo, String eventName) {
         String emitterId = makeTimeIncludeId(memberNo, productNo);
         SseEmitter emitter = emitterLocalRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
 
