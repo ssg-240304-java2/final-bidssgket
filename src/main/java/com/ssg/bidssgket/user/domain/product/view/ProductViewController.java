@@ -1,5 +1,6 @@
 package com.ssg.bidssgket.user.domain.product.view;
 
+import com.ssg.bidssgket.user.domain.auction.application.AuctionService;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
 import com.ssg.bidssgket.user.domain.eventAuction.application.EventAuctionService;
@@ -13,9 +14,12 @@ import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
+import com.ssg.bidssgket.user.domain.productwish.application.ProductWishService;
+import com.ssg.bidssgket.user.domain.productwish.domain.dto.MemberDTO;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +43,10 @@ public class ProductViewController {
     private final ProductService productService;
     private final MemberRepository memberRepository;
     private final EventAuctionService eventAuctionService;
+    @Autowired
+    private AuctionService auctionService;
+    @Autowired
+    private ProductWishService productWishService;
 
 
     @GetMapping("/register")
@@ -137,17 +146,35 @@ public class ProductViewController {
     }
 
     @GetMapping("/category/{category}")
-    public String categoryController(Model model, @PathVariable("category") Category category) {
+    public String categoryController(Model model, @PathVariable("category") Category category, HttpSession httpSession) {
         log.info("category: {}", category);
         List<Product> products = productService.getProductsByCategory(category);
         model.addAttribute("products", products);
+        SessionMember sessionMember = (SessionMember) httpSession.getAttribute("member");
+        List<Long> wishedProductIds = new ArrayList<>();
+
+        if (sessionMember != null) {
+            MemberDTO member = auctionService.getMemberByEmail(sessionMember.getEmail());
+            wishedProductIds = productWishService.findProductNoByMemberNo(member.getMemberNo());
+            System.out.println("wishedProductIds = " + wishedProductIds);
+        }
+        model.addAttribute("wishedProductIds", wishedProductIds);
         return "user/product/category";
     }
 
     @GetMapping("/list")
-    public String listController(Model model) {
+    public String listController(Model model, HttpSession httpSession) {
         List<Product> products = productService.getAllProducts();
         model.addAttribute("products", products);
+        SessionMember sessionMember = (SessionMember) httpSession.getAttribute("member");
+        List<Long> wishedProductIds = new ArrayList<>();
+
+        if (sessionMember != null) {
+            MemberDTO member = auctionService.getMemberByEmail(sessionMember.getEmail());
+            wishedProductIds = productWishService.findProductNoByMemberNo(member.getMemberNo());
+            System.out.println("wishedProductIds = " + wishedProductIds);
+        }
+        model.addAttribute("wishedProductIds", wishedProductIds);
         return "user/product/list";
     }
 
@@ -166,22 +193,27 @@ public class ProductViewController {
         model.addAttribute("member", member);
         boolean isSeller = products.stream()
                 .anyMatch(product -> product.getProductNo().equals(productNo));
-        boolean isAuction = auctions.stream()
-                .anyMatch(auction -> auction.getMember().getMemberNo().equals(memberNo));
-        boolean onAuction = onAuctions.stream()
-                .anyMatch(auction -> auction.getTenderDeleted().equals(false));
+        /*boolean isAuction = auctions.stream()
+                .anyMatch(auction -> auction.getMember().getMemberNo().equals(memberNo));*/
+        boolean isAuction = auctionService.findAuctionMember(productNo, memberInfo.get().getMemberNo());
+        /*boolean onAuction = onAuctions.stream()
+                .anyMatch(auction -> auction.getTenderDeleted().equals(false));*/
         boolean eventAuction = eventProducts.stream()
                 .anyMatch(product -> product.getProductNo().equals(productNo));
 
+        System.out.println("isAuction = " + isAuction);
         if (eventAuction) {
                 return "redirect:/eventAuction/detail/" + productNo;
         } else {
             if (isSeller) {
+                log.info("판매자");
                 return "redirect:/detailSeller/" + productNo;
             } else {
-                if (isAuction && onAuction) {
+                if (isAuction) {
+                    log.info("입찰 등록 및 회원");
                     return "redirect:/detailAuction/" + productNo;
                 } else {
+                    log.info("삭제된 경우 혹은 입찰자 아닌 사람");
                     return "redirect:/detailBuyer/" + productNo;
                 }
             }

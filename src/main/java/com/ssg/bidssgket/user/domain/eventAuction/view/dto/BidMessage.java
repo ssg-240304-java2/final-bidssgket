@@ -10,5 +10,6 @@ public class BidMessage {
     private Long memberNo;
     private int maxTenderPrice;
     private int minTenderPrice;
-    private Long ProductNo;
+    private Long productNo;
+    private String email;
 }
