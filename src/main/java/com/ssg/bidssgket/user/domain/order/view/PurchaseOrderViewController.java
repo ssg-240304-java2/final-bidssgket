@@ -68,12 +68,13 @@ public class PurchaseOrderViewController {
 
         // 3. 회원 번호를 통해 경매중인 상품 목록 조회
         List<Auction> auctionItems = purchaseOrderService.getPurchaseAuctionProducts(member.getMemberNo());
+        log.info("[PurchaseOrderView] auctionItems: {}", auctionItems);
 
         // 4. 회원 번호를 통해 구매중인 상품 목록 조회
-        List<Product> tradingItems = purchaseOrderService.getPurchaseTradingProducts(member.getMemberNo());
+//        List<Product> tradingItems = purchaseOrderService.getPurchaseTradingProducts(member.getMemberNo());
 
         // 5. 회원 번호를 통해 구매완료된 상품 목록 조회
-        List<Product>
+//        List<Product>
 
         // 4. 모델에 데이터 추가
         model.addAttribute("auctionItems", auctionItems);
