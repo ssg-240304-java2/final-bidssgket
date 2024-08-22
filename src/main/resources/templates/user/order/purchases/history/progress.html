@@ -42,19 +42,19 @@
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/auction" class="block">
                                 <div>경매중</div>
-                                <div class="text-black-500">0</div>
+                                <div th:text="${purchaseAuctionItems.size()}" class="text-red-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/progress" class="block">
                                 <div>구매중</div>
-                                <div class="text-red-500">0</div>
+                                <div th:text="${purchaseTradingItems.size()}" class="text-black-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/completed" class="block">
                                 <div>구매 완료</div>
-                                <div class="text-black-500">0</div>
+                                <div th:text="${purchaseCompletedItems.size()}" class="text-black-500">0</div>
                             </a>
                         </div>
                     </div>
@@ -74,17 +74,36 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr class="border-b">
+                            <tr th:each="item : ${purchaseTradingItems}" class="border-b">
+                                <!-- 상품 이미지 및 상품명 -->
                                 <td class="flex items-center space-x-2 px-4 py-2">
-                                    <img src="https://placehold.co/100x100" alt="나이키 에어 줌 알파플라이 넥스트% 3 블루프린트 운동화" class="w-24 h-24 mr-4">
+                                    <div th:each="productImage : ${item.product.productImages}">
+                                        <img th:src="${productImage.productImg}"
+                                             th:alt="'Product image of ' + ${item.product.productName}"
+                                             style="width: 100px; height: 100px"
+                                             data-product-image="${productImage.productImg}">
+                                    </div>
                                     <div class="bg-white p-6 mb-8">
-                                        <a href="#" class="block text-lg font-medium">나이키 에어 줌 알파플라이 넥스트% 3 블루프린트</a>
-                                        <div class="text-gray-600">260</div>
+                                        <a th:href="@{/user/order/purchases/shipping/{no}(no=${item.product.productNo})}"
+                                           th:text="${item.product.productName}"
+                                           class="block text-lg font-medium"
+                                           data-product-name="${purchaseTradingItems.product.productName}">
+                                            상품명
+                                        </a>
                                     </div>
                                 </td>
-                                <td class="px-4 py-2">300,000원</td>
-                                <td class="px-4 py-2">24/07/31</td>
-                                <td class="px-4 py-2">배송중</td>
+                                <!-- 결제 금액 -->
+                                <td th:text="${item.product.buyNowPrice}" class="minTenderPrice px-4 py-2">
+                                    결제 금액
+                                </td>
+                                <!-- 경매 참가일 -->
+                                <td th:text="${item.purchaseOrder.createdAt}" class="tenderDate px-4 py-2">
+                                    경매 참가일
+                                </td>
+                                <!-- 상태 -->
+                                <td th:text="${item.purchaseOrder.orderStatus}" class="salesStatus px-4 py-2">
+                                    상태
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -126,6 +145,73 @@
             </div>
         </section>
     </div>
+
+    <!-- 날짜 포맷팅 -->
+    <script>
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) { // 유효한 날짜인지 확인
+                console.error('Invalid date string:', dateString);
+                return 'Invalid Date';
+            }
+            return date.toISOString().split('T')[0]; // YYYY-MM-DD
+        }
+    </script>
+
+    <!-- 상태 포맷팅 -->
+    <script>
+        function formatStatus(status) {
+            const statuses = {
+                // 판매 상태 매핑
+                'selling': '판매중',
+                'trading': '경매중',
+                'sale_completed': '판매완료',
+                'sale_pause': '판매정지',
+
+                // 결제 상태 매핑
+                'PENDING_PAYMENT': '결제대기',
+                'PAID': '결제완료',
+
+                // 배송 상태 매핑
+                'PENDING_SHIPMENT': '배송대기',
+                'IN_TRANSIT': '배송중',
+                'DELIVERED': '배송완료',
+
+                // 주문 상태 매핑
+                'COMPLETED': '주문완료',
+                'PAYMENT_CANCELLED': '결제취소',
+                'ORDER_CANCELLED': '주문취소'
+            };
+            return statuses[status] || '상태 불명';
+        }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 날짜 포맷팅
+            document.querySelectorAll('.tenderDate').forEach(function(elem) {
+                const tenderDateValue = elem.textContent.trim();
+                elem.textContent = formatDate(tenderDateValue);
+            });
+
+            // 상태 포맷팅
+            document.querySelectorAll('.salesStatus').forEach(function(elem) {
+                const salesStatusValue = elem.textContent.trim();
+                elem.textContent = formatStatus(salesStatusValue);
+            });
+
+            // 가격 포맷팅
+            document.querySelectorAll('.minTenderPrice').forEach(function(elem) {
+                const minTenderPriceValue = parseInt(elem.textContent.replace(/,/g, ''), 10);
+                elem.textContent = new Intl.NumberFormat('ko-KR').format(minTenderPriceValue) + '원';
+            });
+
+            document.querySelectorAll('.maxTenderPrice').forEach(function(elem) {
+                const maxTenderPriceValue = parseInt(elem.textContent.replace(/,/g, ''), 10);
+                elem.textContent = new Intl.NumberFormat('ko-KR').format(maxTenderPriceValue) + '원';
+            });
+        });
+    </script>
 </main>
 </body>
 </html>

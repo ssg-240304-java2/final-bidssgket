@@ -45,6 +45,12 @@ public class DeliveryAddress extends BaseTimeAndDeleteEntity {
     @JoinColumn(name = "productNo", nullable = false)
     private Product product; // 상품 [FK]
 
+    @OneToOne(mappedBy = "deliveryAddress", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, orphanRemoval = true)
+    private PurchaseOrder purchaseOrder; // 구매 주문서
+
+    @OneToOne(mappedBy = "deliveryAddress", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, orphanRemoval = true)
+    private SaleOrder saleOrder; // 판매 주문서
+
     @Builder
     public DeliveryAddress(String receiverName, String contactNumber, String postcode, String deliveryAddress, String detailAddress, String deliveryRequest, Member member, Product product) {
         this.receiverName = receiverName;
@@ -71,6 +77,16 @@ public class DeliveryAddress extends BaseTimeAndDeleteEntity {
                 .build();
     }
 
+    public void addPurchaseOrder(PurchaseOrder purchaseOrder) {
+        purchaseOrder.setDeliveryAddress(this);
+        this.purchaseOrder = purchaseOrder;
+    }
+
+    public void addSaleOrder(SaleOrder saleOrder) {
+        saleOrder.setDeliveryAddress(this);
+        this.saleOrder = saleOrder;
+    }
+
     /***
      * 구매자 회원 정보 설정 메서드
      * @param member 구매자 회원 정보
@@ -85,5 +101,21 @@ public class DeliveryAddress extends BaseTimeAndDeleteEntity {
      */
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    /***
+     * 구매 주문서 설정 메서드
+     * @param purchaseOrder
+     */
+    public void setPurchaseOrder(PurchaseOrder purchaseOrder) {
+        this.purchaseOrder = purchaseOrder;
+    }
+
+    /***
+     * 판매 주문서 설정 메서드
+     * @param saleOrder
+     */
+    public void setSaleOrder(SaleOrder saleOrder) {
+        this.saleOrder = saleOrder;
     }
 }

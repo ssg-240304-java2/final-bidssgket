@@ -39,7 +39,7 @@
                 <div class="flex items-center justify-between p-6 bg-blue-50 shadow-lg rounded-md">
                     <div class="flex flex-col items-center w-48">
                         <h1 class="text-2xl font-semibold text-blue-700 w-full text-left">Biscuit Pay</h1>
-                        <span class="mt-2 text-xl font-medium text-gray-700 w-full text-right">0원</span>
+                        <span th:text="${pay.getPayBalance()}" id="pay-balance" class="mt-2 text-xl font-medium text-gray-700 w-full text-right">0원</span>
                     </div>
                     <div class="flex space-x-4">
                         <button class="px-5 py-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition duration-300" onclick="window.location.href='/user/payment/deposit'">페이 충전</button>
@@ -78,6 +78,15 @@
             </div>
         </section>
     </div>
+
+    <!-- 가격 포맷팅 -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const payBalanceElement = document.getElementById('pay-balance');
+            const payBalanceValue = parseInt(payBalanceElement.textContent.replace(/[^0-9]/g, ''), 10);
+            payBalanceElement.textContent = new Intl.NumberFormat('ko-KR').format(payBalanceValue) + '원';
+        });
+    </script>
 </main>
 </body>
 </html>
