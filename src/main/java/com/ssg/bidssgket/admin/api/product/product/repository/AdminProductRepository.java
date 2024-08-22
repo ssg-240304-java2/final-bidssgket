@@ -10,5 +10,4 @@ import java.util.List;
 @Repository
 public interface AdminProductRepository extends JpaRepository<Product, Long> {
 
-    List<Auction> findAllByProduct(Product product);
 }

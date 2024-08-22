@@ -55,7 +55,8 @@ public class AdminAuctionService {
     public List<AuctionMemberNoResDto> getAllParticipants(Long productNo) {
         Product product = adminProductRepository.findById(productNo).orElseThrow(() -> new RuntimeException("Product가 존재하지 않습니다."));
 
-        return adminProductRepository.findAllByProduct(product).stream()
+        return adminAuctionRepository.findAllByProduct(product).stream()
+//        return adminAuctionRepository.findAllByProduct_ProductNo(productNo).stream()
                 .map(AuctionMemberNoResDto::new)
                 .collect(Collectors.toList());
 

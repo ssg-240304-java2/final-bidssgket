@@ -11,7 +11,7 @@ import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import com.ssg.bidssgket.user.domain.productwish.domain.dto.MemberDTO;
-import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,16 +21,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class AuctionService {
 
-    @Autowired
-    private AuctionRepository auctionRepository;
-
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
+    private final AuctionRepository auctionRepository;
+    private final MemberRepository memberRepository;
+    private final ProductRepository productRepository;
 
     public ProductResDto getProductById(Long productNo) {
         Product product = productRepository.findById(productNo)

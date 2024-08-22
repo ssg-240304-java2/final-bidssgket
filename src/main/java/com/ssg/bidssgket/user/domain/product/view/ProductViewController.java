@@ -1,12 +1,8 @@
 package com.ssg.bidssgket.user.domain.product.view;
 
-<<<<<<< HEAD
 import com.ssg.bidssgket.user.domain.auction.application.AuctionService;
-=======
 import com.ssg.bidssgket.admin.notification.NotificationService;
->>>>>>> feature/noti
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
-import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
 import com.ssg.bidssgket.user.domain.eventAuction.application.EventAuctionService;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
@@ -23,14 +19,10 @@ import com.ssg.bidssgket.user.domain.productwish.domain.dto.MemberDTO;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,14 +39,9 @@ public class ProductViewController {
     private final ProductService productService;
     private final MemberRepository memberRepository;
     private final EventAuctionService eventAuctionService;
-<<<<<<< HEAD
-    @Autowired
-    private AuctionService auctionService;
-    @Autowired
-    private ProductWishService productWishService;
-=======
+    private final AuctionService auctionService;
+    private final ProductWishService productWishService;
     private final NotificationService notificationService;
->>>>>>> feature/noti
 
 
     @GetMapping(value = "/register", produces = "text/event-stream")

@@ -35,6 +35,8 @@ public class NotificationService {
         emitter.onCompletion(() -> emitterLocalRepository.deleteById(emitterId));
         emitter.onTimeout(() -> emitterLocalRepository.deleteById(emitterId));
 
+        log.info("===== 상품 등록 구독 -> 판매자 구독 =====");
+
         // 503 에러를 방지하기 위한 더미 이벤트 전송
         String eventId = makeTimeIncludeId(memberNo, productNo);
         sendNotification(emitter, eventId, emitterId, eventName,"Product EventStream Created. [memberNo=" + memberNo + "]");
@@ -77,17 +79,41 @@ public class NotificationService {
         emitter.onCompletion(() -> emitterLocalRepository.deleteById(emitterId));
         emitter.onTimeout(() -> emitterLocalRepository.deleteById(emitterId));
 
+        log.info("===== 경매 참가 구독 -> 구매자들 구독 =====");
+
         // 503 에러를 방지하기 위한 더미 이벤트 전송
         String eventId = makeTimeIncludeId(memberNo, productNo);
         sendNotification(emitter, eventId, emitterId, eventName, "Auction EventStream Created. [userEmail=" + memberNo + "]");
 
-        // 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
-        if (hasLostData(lastEventId)) {
-            sendLostData(lastEventId, memberNo, emitterId, eventName, emitter);
-        }
 
         return emitter;
     }
+
+    /**
+     * 경매 참가 구독 -> 구매자들 구독
+     */
+//    public SseEmitter subscribeAuction(Long productNo, Long memberNo, String eventName, String lastEventId) {
+//        String emitterId = makeTimeIncludeId(memberNo, productNo);
+//        SseEmitter emitter = emitterLocalRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
+//
+//        emitter.onCompletion(() -> emitterLocalRepository.deleteById(emitterId));
+//        emitter.onTimeout(() -> emitterLocalRepository.deleteById(emitterId));
+//
+//        log.info("===== 경매 참가 구독 -> 구매자들 구독 =====");
+//
+//        // 503 에러를 방지하기 위한 더미 이벤트 전송
+//        String eventId = makeTimeIncludeId(memberNo, productNo);
+//        sendNotification(emitter, eventId, emitterId, eventName, "Auction EventStream Created. [userEmail=" + memberNo + "]");
+//
+//
+//        // 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
+//        if (hasLostData(lastEventId)) {
+//            sendLostData(lastEventId, memberNo, emitterId, eventName, emitter);
+//        }
+//
+//        return emitter;
+//    }
+
 
 
     /**
@@ -108,7 +134,7 @@ public class NotificationService {
 
         Map<String, SseEmitter> emitters = emitterLocalRepository.findAllEmitterStartWithByMemberId( productSellerMemberNo + "_" + productNo);
 
-        log.info("===== sendProductStatusChanged service =====");
+        log.info("=====" + productSellerMemberNo + "sendProductStatusChanged service =====");
 
         emitters.forEach(
                 (key, emitter) -> {
@@ -162,7 +188,7 @@ public class NotificationService {
 
         Map<String, SseEmitter> emitters = emitterLocalRepository.findAllEmitterStartWithByMemberId( productSellerMemberNo + "_" + productNo);
 
-        log.info("===== sendProductStatusChanged service =====");
+        log.info("=====" + productSellerMemberNo + "sendProductStatusChanged service =====");
 
         emitters.forEach(
                 (key, emitter) -> {
@@ -193,7 +219,7 @@ public class NotificationService {
 
             emitters.forEach(
                     (key, emitter) -> {
-                        log.info(key + " == : " + emitters.get(key).toString());
+                        log.info(key + " =send = : " + emitters.get(key).toString());
                         emitterLocalRepository.saveEventCache(key, content);
                         sendNotification(emitter, eventId, key, eventName, content);
 
