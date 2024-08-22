@@ -86,8 +86,11 @@
           <div class="buy-now-section text-center"> <!-- 중앙 정렬된 즉시 구매가 섹션 -->
             <h5>즉시 구매가</h5>
             <h3 th:if="${product.buyNowPrice != null}" th:text="|${product.buyNowPrice}원|"></h3>
-            <button class="btn btn-primary mb-3"
-                    th:disabled="${product.imdPurchase == false}">즉시 구매하기</button> <!-- 아래 버튼들과 간격 추가 -->
+            <a th:href="@{/user/payment/checkout/{productNo}(productNo=${product.productNo})}"
+               class="btn btn-primary mb-3"
+               th:disabled="${product.imdPurchase == false}">
+              즉시 구매하기
+            </a> <!-- 아래 버튼들과 간격 추가 -->
           </div>
           <div class="auction-start-section text-center">
             <h5>경매 시작가</h5>

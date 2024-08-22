@@ -1,6 +1,7 @@
 package com.ssg.bidssgket.user.domain.order.application;
 
 import com.ssg.bidssgket.user.domain.member.domain.Member;
+import com.ssg.bidssgket.user.domain.order.domain.DeliveryAddress;
 import com.ssg.bidssgket.user.domain.order.domain.Parcel;
 import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
 import com.ssg.bidssgket.user.domain.order.domain.enums.DeliveryType;
@@ -23,7 +24,7 @@ public class SaleOrderService {
 
     @Transactional
     public SaleOrder createAndSaveSaleOrder(OrderTransactionType orderTransactionType, DeliveryType deliveryType,
-                                            OrderStatus orderStatus, Member member, Product product, Payment payment, Parcel parcel) {
+                                            OrderStatus orderStatus, Member member, Product product, Payment payment, Parcel parcel, DeliveryAddress deliveryAddress) {
 
         // SaleOrder 객체 생성
         SaleOrder saleOrder = SaleOrder.addSaleOrder(
@@ -33,7 +34,8 @@ public class SaleOrderService {
                 member,
                 product,
                 payment,
-                parcel
+                parcel,
+                deliveryAddress
         );
 
         // SaleOrder 객체 저장

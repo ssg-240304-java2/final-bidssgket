@@ -18,6 +18,7 @@ import com.ssg.bidssgket.user.domain.payment.domain.repository.PayChangeReposito
 import com.ssg.bidssgket.user.domain.payment.domain.repository.PayRepository;
 import com.ssg.bidssgket.user.domain.payment.domain.repository.PaymentRepository;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
+import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,7 @@ public class PaymentService {
 
         // 3. 안전거래(ESCROW)일 경우에만 결제 및 배송 정보 처리
         Payment payment = null;
+        DeliveryAddress deliveryAddressEntity = null;
 
         if (deliveryType == DeliveryType.ESCROW) {
 
@@ -65,13 +67,16 @@ public class PaymentService {
             payment = handleEscrowPayment(memberNo, paymentAmount, paymentType, paymentTransactionType);
 
             // 5. 배송 정보 저장
-            DeliveryAddress deliveryAddressEntity = DeliveryAddress.addDeliveryAddress(member, product, receiverName, contactNumber, postcode, deliveryAddress, detailAddress, deliveryRequest);
+            deliveryAddressEntity = DeliveryAddress.addDeliveryAddress(member, product, receiverName, contactNumber, postcode, deliveryAddress, detailAddress, deliveryRequest);
             deliveryAddressRepository.save(deliveryAddressEntity);
+
+            // 6. 상품 상태를 trading으로 변경
+            updateProductStatusToTrading(product);
 
         }
 
-        // 주문서 생성
-        orderService.createOrders(member, product, payment, orderTransactionType, deliveryType);
+        // 7. 주문서 생성
+        orderService.createOrders(member, product, payment, orderTransactionType, deliveryType, deliveryAddressEntity);
     }
 
     private Payment handleEscrowPayment(Long memberNo, int paymentAmount, PaymentType paymentType, PaymentTransactionType paymentTransactionType) {
@@ -93,7 +98,17 @@ public class PaymentService {
         }
 
         // 3. 잔액 변경 내역 기록
-        PayChange payChange = createPayChange(pay, paymentAmount, currentBalance, updatedBalance);
+        PayChangeType payChangeType = null;
+
+        if (paymentTransactionType == PaymentTransactionType.DEPOSIT) {
+            payChangeType = PayChangeType.DEPOSIT;
+        } else if (paymentTransactionType == PaymentTransactionType.WITHDRAWAL) {
+            payChangeType = PayChangeType.WITHDRAWAL;
+        } else {
+            throw new IllegalArgumentException("결제 거래 정보가 없습니다.");
+        }
+
+        PayChange payChange = createPayChange(pay, payChangeType, paymentAmount, currentBalance, updatedBalance);
 
         // 4. Pay Table 업데이트
         pay.setPayBalance(updatedBalance);
@@ -113,10 +128,10 @@ public class PaymentService {
         return payment;
     }
 
-    private PayChange createPayChange(Pay pay, int paymentAmount, int currentBalance, int updatedBalance) {
+    private PayChange createPayChange(Pay pay, PayChangeType payChangeType, int paymentAmount, int currentBalance, int updatedBalance) {
 
         PayChange payChange = PayChange.builder()
-                .payChangeType(PayChangeType.WITHDRAWAL)
+                .payChangeType(payChangeType)
                 .payChangeAmount(paymentAmount)
                 .balance(currentBalance)
                 .updatedBalance(updatedBalance)
@@ -126,5 +141,11 @@ public class PaymentService {
         payChangeRepository.save(payChange);
 
         return payChange;
+    }
+
+    private void updateProductStatusToTrading(Product product) {
+
+        product.setSalesStatus(SalesStatus.trading); // 상품 상태를 trading 으로 변경
+        productRepository.save(product); // 변경된 상태를 DB에 저장
     }
 }

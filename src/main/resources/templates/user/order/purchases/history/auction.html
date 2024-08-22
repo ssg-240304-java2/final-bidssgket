@@ -42,13 +42,13 @@
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/auction" class="block">
                                 <div class="text-black">경매중</div>
-                                <div class="text-red-500">0</div>
+                                <div th:text="${auctionItems.size()}" class="text-red-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/progress" class="block">
                                 <div>구매중</div>
-                                <div class="text-black-500">0</div>
+                                <div th:text="${auctionItems.}" class="text-black-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
@@ -68,25 +68,47 @@
                             <thead>
                             <tr class="text-left border-b text-gray-500 text-sm">
                                 <th class="px-4 py-2">제품명</th>
-                                <th class="px-4 py-2">구매 입찰가</th>
-                                <th class="px-4 py-2">즉시 판매가</th>
-                                <th class="px-4 py-2">경매 마감일</th>
+                                <th class="px-4 py-2">최소 입찰 금액</th>
+                                <th class="px-4 py-2">최대 입찰 금액</th>
+                                <th class="px-4 py-2">경매 참가일</th>
                                 <th class="px-4 py-2">상태</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr class="border-b">
+                            <tbody id="auction-table-body">
+                            <tr th:each="auction : ${auctionItems}" class="border-b">
+                                <!-- 상품 이미지 및 상품명 -->
                                 <td class="flex items-center space-x-2 px-4 py-2">
-                                    <img src="https://placehold.co/100x100" alt="나이키 에어 줌 알파플라이 넥스트% 3 블루프린트 운동화" class="w-24 h-24 mr-4">
+                                    <div th:each="productImage : ${auction.product.productImages}">
+                                        <img th:src="${productImage.productImg}"
+                                             th:alt="'Product image of ' + ${auction.product.productName}"
+                                             style="width: 100px; height: 100px"
+                                             data-product-image="${productImage.productImg}">
+                                    </div>
                                     <div class="bg-white p-6 mb-8">
-                                        <a href="#" class="block text-lg font-medium">나이키 에어 줌 알파플라이 넥스트% 3 블루프린트</a>
-                                        <div class="text-gray-600">260</div>
+                                        <a th:href="@{/detailAuction/{no}(no=${auction.product.productNo})}"
+                                           th:text="${auction.product.productName}"
+                                           class="block text-lg font-medium"
+                                           data-product-name="${auction.product.productName}">
+                                            상품명
+                                        </a>
                                     </div>
                                 </td>
-                                <td class="px-4 py-2">200,000원</td>
-                                <td class="px-4 py-2">300,000원</td>
-                                <td class="px-4 py-2">24/07/31</td>
-                                <td class="px-4 py-2">경매중</td>
+                                <!-- 최소 입찰 금액 -->
+                                <td th:text="${auction.minTenderPrice}" class="minTenderPrice px-4 py-2">
+                                    최소 입찰 금액
+                                </td>
+                                <!-- 최대 입찰 금액 -->
+                                <td th:text="${auction.maxTenderPrice}" class="maxTenderPrice px-4 py-2">
+                                    최대 입찰 금액
+                                </td>
+                                <!-- 경매 참가일 -->
+                                <td th:text="${auction.tenderDate}" class="tenderDate px-4 py-2">
+                                    경매 참가일
+                                </td>
+                                <!-- 상태 -->
+                                <td th:text="${auction.product.salesStatus}" class="salesStatus px-4 py-2">
+                                    상태
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -128,6 +150,58 @@
             </div>
         </section>
     </div>
+
+    <!-- 날짜 포맷팅 -->
+    <script>
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) { // 유효한 날짜인지 확인
+                console.error('Invalid date string:', dateString);
+                return 'Invalid Date';
+            }
+            return date.toISOString().split('T')[0]; // YYYY-MM-DD
+        }
+    </script>
+
+    <!-- 상태 포맷팅 -->
+    <script>
+        function formatStatus(status) {
+            const statuses = {
+                'selling': '판매중',
+                'trading': '경매중',
+                'sale_completed': '판매완료',
+                'sale_pause': '판매정지'
+            };
+            return statuses[status] || '상태 불명';
+        }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 날짜 포맷팅
+            document.querySelectorAll('.tenderDate').forEach(function(elem) {
+                const tenderDateValue = elem.textContent.trim();
+                elem.textContent = formatDate(tenderDateValue);
+            });
+
+            // 상태 포맷팅
+            document.querySelectorAll('.salesStatus').forEach(function(elem) {
+                const salesStatusValue = elem.textContent.trim();
+                elem.textContent = formatStatus(salesStatusValue);
+            });
+
+            // 가격 포맷팅
+            document.querySelectorAll('.minTenderPrice').forEach(function(elem) {
+                const minTenderPriceValue = parseInt(elem.textContent.replace(/,/g, ''), 10);
+                elem.textContent = new Intl.NumberFormat('ko-KR').format(minTenderPriceValue) + '원';
+            });
+
+            document.querySelectorAll('.maxTenderPrice').forEach(function(elem) {
+                const maxTenderPriceValue = parseInt(elem.textContent.replace(/,/g, ''), 10);
+                elem.textContent = new Intl.NumberFormat('ko-KR').format(maxTenderPriceValue) + '원';
+            });
+        });
+    </script>
 </main>
 </body>
 </html>

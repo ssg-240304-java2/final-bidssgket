@@ -1,11 +1,8 @@
 package com.ssg.bidssgket.user.domain.payment.view;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.payment.api.service.MemberTestService;
-import com.ssg.bidssgket.user.domain.payment.application.dto.request.PayReqDto;
 import com.ssg.bidssgket.user.domain.payment.application.dto.request.PaymentReqDto;
 import com.ssg.bidssgket.user.domain.payment.application.dto.response.PayResDto;
 import com.ssg.bidssgket.user.domain.payment.application.service.PayService;
@@ -21,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,16 +31,14 @@ public class PaymentViewController {
     private final MemberTestService memberTestService;
     private final PayService payService;
     private final PaymentService paymentService;
-    private final ObjectMapper objectMapper;
 
     @Autowired
-    public PaymentViewController(ProductService productService, MemberTestService memberTestService, PayService payService, PaymentService paymentService, ObjectMapper objectMapper) {
+    public PaymentViewController(ProductService productService, MemberTestService memberTestService, PayService payService, PaymentService paymentService) {
 
         this.productService = productService;
         this.memberTestService = memberTestService;
         this.payService = payService;
         this.paymentService = paymentService;
-        this.objectMapper = objectMapper;
     }
 
     @GetMapping("/info")
@@ -59,7 +53,7 @@ public class PaymentViewController {
     @GetMapping("/checkout/{productNo}")
     public String showPaymentPage(@PathVariable("productNo") Long productNo,
                                   HttpSession session,
-                                  Model model) throws JsonProcessingException {
+                                  Model model) {
 
         // 1. 세션에서 현재 로그인한 회원 정보 가져오기
         SessionMember sessionMember = (SessionMember) session.getAttribute("member");
@@ -78,6 +72,13 @@ public class PaymentViewController {
         // 3. 상품 정보 가져오기
         ProductResDto product = productService.findProductByNo(productNo);
         log.info("[ProductService] (findProductByNo) product: {}", product);
+
+        // 4. 상품 판매 상태 확인
+        if (!product.getSalesStatus().equals("selling")) {
+            log.warn("상품 상태가 판매중이 아닙니다. (ProductName: {}, Status: {})", product.getProductName(), product.getSalesStatus());
+
+            return "redirect:/"; // 메인 페이지로 리다이렉트
+        }
 
         // 4. 비스킷 페이 정보 가져오기
         Pay pay = payService.getOrCreatePay(member);

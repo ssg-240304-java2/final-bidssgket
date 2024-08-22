@@ -90,23 +90,23 @@
                         <!-- 우편번호 및 주소 -->
                         <div class="flex items-center">
                             <span class="text-gray-400 w-1/6">우편번호</span>
-                            <input type="text" id="sample6_postcode" placeholder="우편번호" class="border rounded p-2 w-2/6" readonly />
+                            <input type="text" id="sample6_postcode" placeholder="우편번호" class="border rounded p-2 w-1/6" readonly />
                             <button type="button" onclick="sample6_execDaumPostcode()" class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded ml-3">주소 검색</button>
                         </div>
                         <!-- 기본 주소 + 참고 항목 -->
                         <div class="flex items-center">
                             <span class="text-gray-400 w-1/6">주소</span>
-                            <input type="text" id="sample6_address" placeholder="기본 주소" class="border rounded p-2 w-4/6" readonly />
+                            <input type="text" id="sample6_address" placeholder="기본 주소" class="border rounded p-2 w-5/6" readonly />
                         </div>
                         <!-- 상세 주소 -->
                         <div class="flex items-center">
                             <span class="text-gray-400 w-1/6">상세 주소</span>
-                            <input type="text" id="sample6_detailAddress" placeholder="상세 주소를 입력하세요" class="border rounded p-2 w-4/6" />
+                            <input type="text" id="sample6_detailAddress" placeholder="상세 주소를 입력하세요" class="border rounded p-2 w-5/6" />
                         </div>
                         <!-- 배송 요청 사항 -->
                         <div class="flex items-center">
                             <span class="text-gray-400 w-1/6">배송 요청 사항</span>
-                            <select id="deliveryRequest" name="deliveryRequest" class="border rounded p-2 w-4/6">
+                            <select id="deliveryRequest" name="deliveryRequest" class="border rounded p-2 w-5/6">
                                 <option value="문 앞에 놔주세요.">문 앞에 놔주세요.</option>
                                 <option value="경비실에 맡겨주세요.">경비실에 맡겨주세요.</option>
                                 <option value="배송 전에 전화주세요.">배송 전에 전화주세요.</option>
@@ -125,7 +125,7 @@
                     </div>
                 </div>
                 <div class="text-center mt-6">
-                    <button id="btn-payment" class="bg-green-500 text-white text-lg px-8 py-4 rounded hover:bg-green-600">결제하기</button>
+                    <button id="btn-payment" class="bg-gray-400 text-white text-lg px-8 py-4 rounded" disabled>결제하기</button>
                 </div>
             </div>
 
@@ -235,22 +235,56 @@
                     // 보유 잔액
                     const payBalance = parseInt(payBalanceElement.textContent.replace(/[^0-9]/g, ''), 10);
 
-                    // 배송 정보 가져오기
-                    const receiverName = document.getElementById('receiverName').value;
-                    const contactNumber = document.getElementById('contactNumber').value;
-                    const postcode = document.getElementById('sample6_postcode').value;
-                    const deliveryAddress = document.getElementById('sample6_address').value;
-                    const detailAddress = document.getElementById('sample6_detailAddress').value;
-                    const deliveryRequest = document.getElementById('deliveryRequest').value;
+                    // 배송 정보 필드
+                    const receiverNameField = document.getElementById('receiverName');
+                    const contactNumberField = document.getElementById('contactNumber');
+                    const postcodeField = document.getElementById('sample6_postcode');
+                    const deliveryAddressField = document.getElementById('sample6_address');
+                    const detailAddressField = document.getElementById('sample6_detailAddress');
+                    const deliveryRequestField = document.getElementById('deliveryRequest');
 
-                    // 버튼에 결제 금액 표시
-                    paymentButton.textContent = `${new Intl.NumberFormat('ko-KR').format(paymentAmount)}원 결제하기`;
+                    // 배송 정보 입력 확인 함수
+                    function checkForm() {
+                        const receiverName = receiverNameField.value.trim();
+                        const contactNumber = contactNumberField.value.trim();
+                        const postcode = postcodeField.value.trim();
+                        const address = deliveryAddressField.value.trim();
+                        const detailAddress = detailAddressField.value.trim();
+                        const deliveryRequest = deliveryRequestField.value;
+
+                        // 모든 필드가 채워져 있는지 확인
+                        if (receiverName && contactNumber && postcode && address && detailAddress && deliveryRequest) {
+                            paymentButton.disabled = false;
+                            paymentButton.classList.remove('bg-gray-400');
+                            paymentButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                            paymentButton.textContent = `${new Intl.NumberFormat('ko-KR').format(paymentAmount)}원 결제하기`;
+                        } else {
+                            paymentButton.disabled = true;
+                            paymentButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                            paymentButton.classList.add('bg-gray-400');
+                            paymentButton.textContent = `결제하기`;
+                        }
+                    }
+
+                    // 이벤트 리스너로 배송 정보 필드에 대한 유효성 검사 연결
+                    receiverNameField.addEventListener('input', checkForm);
+                    contactNumberField.addEventListener('input', checkForm);
+                    detailAddressField.addEventListener('input', checkForm);
+                    deliveryRequestField.addEventListener('change', checkForm);
+
+                    // 주소가 변경될 때마다 폼 검사를 실행
+                    postcodeField.addEventListener('input', checkForm);
+                    detailAddressField.addEventListener('input', checkForm);
+
+                    // 초기 폼 상태 검사
+                    checkForm();
 
                     // 보유 잔액이 결제 금액보다 적을 경우, 충전 페이지로 이동하도록 버튼 변경
                     if (payBalance < paymentAmount) {
                         paymentButton.textContent = '페이 충전하기';
                         paymentButton.classList.remove('bg-green-500', 'hover:bg-green-600');
                         paymentButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                        paymentButton.deisabled = false;
 
                         paymentButton.addEventListener('click', function () {
                             const insufficientAmount = paymentAmount - payBalance;
@@ -259,6 +293,18 @@
                     } else {
                         // 결제 처리 이벤트 추가
                         paymentButton.addEventListener('click', function () {
+                            if (paymentButton.disabled) {
+                                return; // 버튼이 비활성화된 상태에서는 동작하지 않음
+                            }
+
+                            // 배송 정보 가져오기
+                            const receiverName = receiverNameField.value.trim();
+                            const contactNumber = contactNumberField.value.trim();
+                            const postcode = postcodeField.value.trim();
+                            const deliveryAddress = deliveryAddressField.value.trim();
+                            const detailAddress = detailAddressField.value.trim();
+                            const deliveryRequest = deliveryRequestField.value;
+
                             // 결제 처리 로직
                             const paymentData = {
                                 email: memberEmail,
@@ -276,6 +322,7 @@
                                 deliveryRequest: deliveryRequest
                             };
                             console.log('---->', JSON.stringify(paymentData));
+
                             // 서버에 결제 요청을 보냅니다.
                             fetch('/user/payment/process', {
                                 method: 'POST',
@@ -293,7 +340,7 @@
                             .then(data => {
                                 // 결제가 성공적으로 처리된 경우
                                 alert(data.message);
-                                window.location.href = '/user/order/purchase/history/progress'; // 결제 완료 후 리다이렉션할 페이지
+                                window.location.href = '/user/order/purchases/history/progress'; // 결제 완료 후 리다이렉션할 페이지
                             })
                             .catch(error => {
                                 // 결제 처리 중 오류가 발생한 경우
