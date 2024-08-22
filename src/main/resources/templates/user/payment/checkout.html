@@ -227,8 +227,10 @@
                     // 서버에서 전달된 사용자 및 제품 정보
                     const memberEmail = '[[${member.email}]]';
                     const productNo = '[[${product.productNo}]]';
-                    const deliveryType = 'ESCROW';
+                    const deliveryType = '[[${deliveryType}]]';
                     const orderTransactionType = 'AUCTION';
+
+                    console.log(deliveryType);
 
                     // 결제 금액
                     const paymentAmount = parseInt(priceElement.textContent.replace(/[^0-9]/g, ''), 10);

@@ -3,13 +3,13 @@ package com.ssg.bidssgket.user.domain.order.application;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
+import com.ssg.bidssgket.user.domain.order.application.dto.response.ProductWithOrderDto;
 import com.ssg.bidssgket.user.domain.order.domain.DeliveryAddress;
 import com.ssg.bidssgket.user.domain.order.domain.Parcel;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
 import com.ssg.bidssgket.user.domain.order.domain.enums.DeliveryType;
 import com.ssg.bidssgket.user.domain.order.domain.enums.OrderStatus;
 import com.ssg.bidssgket.user.domain.order.domain.enums.OrderTransactionType;
-import com.ssg.bidssgket.user.domain.order.domain.repository.OrderRepository;
 import com.ssg.bidssgket.user.domain.order.domain.repository.PurchaseOrderRepository;
 import com.ssg.bidssgket.user.domain.payment.domain.Payment;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -67,5 +68,28 @@ public class PurchaseOrderService {
         }
 
         return auctionItems;
+    }
+
+    public List<Product> getPurchaseTradingProducts(Long memberNo) {
+
+        return purchaseOrderRepository.getPurchaseTradingProducts(memberNo);
+    }
+
+    public List<Product> getPurchaseCompletedProducts(Long memberNo) {
+
+        return purchaseOrderRepository.getPurchaseCompletedProducts(memberNo);
+    }
+
+    // 멤버의 구매 거래 상품과 그 주문 정보를 조회
+    public List<ProductWithOrderDto> getPurchaseTradingItemsWithOrder(Long memberNo) {
+        List<Product> products = getPurchaseTradingProducts(memberNo); // 제품 조회
+        List<ProductWithOrderDto> productWithOrders = new ArrayList<>();
+
+        for (Product product : products) {
+            PurchaseOrder purchaseOrder = product.getPurchaseOrder(); // 구매 주문 조회
+            productWithOrders.add(new ProductWithOrderDto(product, purchaseOrder));
+        }
+
+        return productWithOrders;
     }
 }

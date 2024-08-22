@@ -30,13 +30,13 @@ public class KakaoPayService {
     /***
      * 카카오페이 결제창 연결
      */
-    public KakaoReadyResDto kakaoPayReady(String name, int totalPrice) {
+    public KakaoReadyResDto kakaoPayReady(String userId, String name, int totalPrice) {
 
         // 카카오페이 요청 양식
         Map<String, String> parameters = new HashMap<>();
         parameters.put("cid", cid);                                                     // 가맹점 코드(테스트용)
         parameters.put("partner_order_id", "1234567890");                         // 주문번호
-        parameters.put("partner_user_id", "yunjc536147");                            // 회원 아이디
+        parameters.put("partner_user_id", userId);                            // 회원 아이디
         parameters.put("item_name", name);                                          // 상품명
         parameters.put("quantity", "1");                                        // 상품 수량
         parameters.put("total_amount", String.valueOf(totalPrice));                                         // 상품 총액
@@ -70,13 +70,13 @@ public class KakaoPayService {
      * 사용자가 결제 수단을 선택하고 비밀번호를 입력해 결제 인증을 완료한 뒤,
      * 최종적으로 결제 완료 처리를 하는 단계
      */
-    public KakaoApproveResDto approveResponse(String tid, String pgToken) {
+    public KakaoApproveResDto approveResponse(String tid, String pgToken, String userId) {
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("cid", cid); // 가맹점 코드(테스트용)
         parameters.put("tid", tid); // 결제 고유번호
         parameters.put("partner_order_id", "1234567890"); // 주문 번호
-        parameters.put("partner_user_id", "yunjc536147"); // 회원 아이디
+        parameters.put("partner_user_id", userId); // 회원 아이디
         parameters.put("pg_token", pgToken); // 결제승인 요청을 인증하는 토큰
 
         log.info("[approveResponse] parameters: " + parameters);

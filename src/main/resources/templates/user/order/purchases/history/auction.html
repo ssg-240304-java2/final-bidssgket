@@ -42,19 +42,19 @@
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/auction" class="block">
                                 <div class="text-black">경매중</div>
-                                <div th:text="${auctionItems.size()}" class="text-red-500">0</div>
+                                <div th:text="${purchaseAuctionItems.size()}" class="text-red-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/progress" class="block">
                                 <div>구매중</div>
-<!--                                <div th:text="" class="text-black-500">0</div>-->
+                                <div th:text="${purchaseTradingItems.size()}" class="text-black-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/completed" class="block">
                                 <div>구매 완료</div>
-                                <div class="text-black-500">0</div>
+                                <div th:text="${purchaseCompletedItems.size()}" class="text-black-500">0</div>
                             </a>
                         </div>
                     </div>
@@ -70,43 +70,43 @@
                                 <th class="px-4 py-2">제품명</th>
                                 <th class="px-4 py-2">최소 입찰 금액</th>
                                 <th class="px-4 py-2">최대 입찰 금액</th>
-                                <th class="px-4 py-2">경매 참가일</th>
+                                <th class="px-4 py-2">경매 참가일자</th>
                                 <th class="px-4 py-2">상태</th>
                             </tr>
                             </thead>
-                            <tbody id="auction-table-body">
-                            <tr th:each="auction : ${auctionItems}" class="border-b">
+                            <tbody>
+                            <tr th:each="purchaseAuction : ${purchaseAuctionItems}" class="border-b">
                                 <!-- 상품 이미지 및 상품명 -->
                                 <td class="flex items-center space-x-2 px-4 py-2">
-                                    <div th:each="productImage : ${auction.product.productImages}">
+                                    <div th:each="productImage : ${purchaseAuction.product.productImages}">
                                         <img th:src="${productImage.productImg}"
-                                             th:alt="'Product image of ' + ${auction.product.productName}"
+                                             th:alt="'Product image of ' + ${purchaseAuction.product.productName}"
                                              style="width: 100px; height: 100px"
                                              data-product-image="${productImage.productImg}">
                                     </div>
                                     <div class="bg-white p-6 mb-8">
-                                        <a th:href="@{/detailAuction/{no}(no=${auction.product.productNo})}"
-                                           th:text="${auction.product.productName}"
+                                        <a th:href="@{/detailAuction/{no}(no=${purchaseAuction.product.productNo})}"
+                                           th:text="${purchaseAuction.product.productName}"
                                            class="block text-lg font-medium"
-                                           data-product-name="${auction.product.productName}">
+                                           data-product-name="${purchaseAuction.product.productName}">
                                             상품명
                                         </a>
                                     </div>
                                 </td>
                                 <!-- 최소 입찰 금액 -->
-                                <td th:text="${auction.minTenderPrice}" class="minTenderPrice px-4 py-2">
+                                <td th:text="${purchaseAuction.minTenderPrice}" class="minTenderPrice px-4 py-2">
                                     최소 입찰 금액
                                 </td>
                                 <!-- 최대 입찰 금액 -->
-                                <td th:text="${auction.maxTenderPrice}" class="maxTenderPrice px-4 py-2">
+                                <td th:text="${purchaseAuction.maxTenderPrice}" class="maxTenderPrice px-4 py-2">
                                     최대 입찰 금액
                                 </td>
                                 <!-- 경매 참가일 -->
-                                <td th:text="${auction.tenderDate}" class="tenderDate px-4 py-2">
+                                <td th:text="${purchaseAuction.tenderDate}" class="tenderDate px-4 py-2">
                                     경매 참가일
                                 </td>
                                 <!-- 상태 -->
-                                <td th:text="${auction.product.salesStatus}" class="salesStatus px-4 py-2">
+                                <td th:text="${purchaseAuction.product.salesStatus}" class="salesStatus px-4 py-2">
                                     상태
                                 </td>
                             </tr>

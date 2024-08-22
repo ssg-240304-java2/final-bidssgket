@@ -3,10 +3,9 @@ package com.ssg.bidssgket.user.domain.order.view;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
-import com.ssg.bidssgket.user.domain.order.application.OrderService;
 import com.ssg.bidssgket.user.domain.order.application.PurchaseOrderService;
+import com.ssg.bidssgket.user.domain.order.application.dto.response.ProductWithOrderDto;
 import com.ssg.bidssgket.user.domain.payment.api.service.MemberTestService;
-import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+
 
 @Slf4j
 @Controller
@@ -30,61 +30,92 @@ public class PurchaseOrderViewController {
         this.purchaseOrderService = purchaseOrderService;
     }
 
-    /* 구매 주문서 */
-
-    @GetMapping("/pending")
-    public String purchasesPending() { return "/user/order/purchases/pending"; }
-
-    @GetMapping("/shipping")
-    public String purchasesShipping() { return "/user/order/purchases/shipping"; }
-
-    @GetMapping("/delivered")
-    public String purchasesDelivered() { return "/user/order/purchases/delivered"; }
-
-    @GetMapping("/completed")
-    public String purchasesCompleted() { return "/user/order/purchases/completed"; }
-
-    @GetMapping("/cancelled")
-    public String purchasesCancelled() { return "/user/order/purchases/cancelled"; }
-
-    /* 구매 내역 */
-
-    @GetMapping("/history/auction")
-    public String getAuctionItems(Model model, HttpSession session) {
-
-        // 1. 세션에서 회원 정보 가져오기
+    private Member getMemberFromSession(HttpSession session) {
         SessionMember sessionMember = (SessionMember) session.getAttribute("member");
+
         if (sessionMember == null) {
 
-            return "redirect:/login"; // 로그인 페이지로 리다이렉트
+            return null; //
         }
 
-        // 2. 세션 정보를 통해 데이터 베이스에서 회원 정보 가져오기
         String email = sessionMember.getEmail();
         log.info("(SessionMember) Email = {}", email);
 
-        Member member = memberTestService.getMemberByEmail(email);
-        log.info("(Member) Member = {}", member);
+        return memberTestService.getMemberByEmail(email);
+    }
 
-        // 3. 회원 번호를 통해 경매중인 상품 목록 조회
-        List<Auction> auctionItems = purchaseOrderService.getPurchaseAuctionProducts(member.getMemberNo());
-        log.info("[PurchaseOrderView] auctionItems: {}", auctionItems);
+    private void addPurchaseHistoryAttributes(Model model, Member member) {
 
-        // 4. 회원 번호를 통해 구매중인 상품 목록 조회
-//        List<Product> tradingItems = purchaseOrderService.getPurchaseTradingProducts(member.getMemberNo());
+        List<Auction> purchaseAuctionItems = purchaseOrderService.getPurchaseAuctionProducts(member.getMemberNo());
+        List<ProductWithOrderDto> purchaseTradingItemWithOrder = purchaseOrderService.getPurchaseTradingItemsWithOrder(member.getMemberNo());
+        List<Product> purchaseCompletedItems = purchaseOrderService.getPurchaseCompletedProducts(member.getMemberNo());
 
-        // 5. 회원 번호를 통해 구매완료된 상품 목록 조회
-//        List<Product>
 
-        // 4. 모델에 데이터 추가
-        model.addAttribute("auctionItems", auctionItems);
+        log.info("[PurchaseOrderView] purchaseAuctionItems.size: {}", purchaseAuctionItems.size());
+        log.info("[PurchaseOrderView] purchaseTradingItems.size: {}", purchaseTradingItemWithOrder.size());
+        log.info("[PurchaseOrderView] purchaseCompletedItems.size: {}", purchaseCompletedItems.size());
+
+        model.addAttribute("purchaseAuctionItems", purchaseAuctionItems);
+        model.addAttribute("purchaseTradingItems", purchaseTradingItemWithOrder);
+        model.addAttribute("purchaseCompletedItems", purchaseCompletedItems);
+    }
+
+    @GetMapping("/history/auction")
+    public String purchaseHistoryAuction(Model model, HttpSession session) {
+        Member member = getMemberFromSession(session);
+
+        if (member == null) {
+
+            return "redirect:/login";
+        }
+
+        addPurchaseHistoryAttributes(model, member);
 
         return "/user/order/purchases/history/auction";
     }
 
     @GetMapping("/history/progress")
-    public String purchaseHistoryProgress() { return "/user/order/purchases/history/progress"; }
+    public String purchaseHistoryProgress(Model model, HttpSession session) {
+        Member member = getMemberFromSession(session);
+        if (member == null) {
+            return "redirect:/login";
+        }
+        addPurchaseHistoryAttributes(model, member);
+        return "/user/order/purchases/history/progress";
+    }
 
     @GetMapping("/history/completed")
-    public String purchaseHistoryCompleted() { return "/user/order/purchases/history/completed"; }
+    public String purchaseHistoryCompleted(Model model, HttpSession session) {
+        Member member = getMemberFromSession(session);
+        if (member == null) {
+            return "redirect:/login";
+        }
+        addPurchaseHistoryAttributes(model, member);
+        return "/user/order/purchases/history/completed";
+    }
+
+    @GetMapping("/pending")
+    public String purchasesPending() {
+        return "/user/order/purchases/pending";
+    }
+
+    @GetMapping("/shipping/{productNo}")
+    public String purchasesShipping() {
+        return "/user/order/purchases/shipping";
+    }
+
+    @GetMapping("/delivered")
+    public String purchasesDelivered() {
+        return "/user/order/purchases/delivered";
+    }
+
+    @GetMapping("/completed")
+    public String purchasesCompleted() {
+        return "/user/order/purchases/completed";
+    }
+
+    @GetMapping("/cancelled")
+    public String purchasesCancelled() {
+        return "/user/order/purchases/cancelled";
+    }
 }
