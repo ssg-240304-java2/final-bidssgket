@@ -1,5 +1,6 @@
 package com.ssg.bidssgket.user.domain.auction.view;
 
+import com.ssg.bidssgket.admin.notification.NotificationService;
 import com.ssg.bidssgket.user.domain.auction.application.AuctionService;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionReqDto;
@@ -43,6 +44,7 @@ public class AuctionViewController {
     @Autowired
     private ProductService productService;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     /*private final AuctionService auctionService;
     private final ProductService productService;
@@ -77,7 +79,7 @@ public class AuctionViewController {
      * @param redirectAttributes
      * @return
      */
-    @PostMapping("/auctionregist/{productNo}")
+    @PostMapping(value = "/auctionregist/{productNo}", produces = "text/event-stream")
     public String registerAuction(@PathVariable("productNo") Long productNo, @RequestParam(required = false) int minTenderPrice, @RequestParam(required = false) int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
@@ -90,6 +92,20 @@ public class AuctionViewController {
             }
             AuctionReqDto auctionReqDto = new AuctionReqDto(minTenderPrice, maxTenderPrice, productNo);
             auctionService.registerAuction(auctionReqDto, email);
+
+            /** ===== 알림 시작, 상품 등록 구독 -> 판매자 구독 =====*/
+
+            Long memberNo = null;
+            if (httpSession.getAttribute("member") != null) {
+                email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
+                System.out.println("email = " + email);
+                memberNo = memberRepository.findByEmail(email).get().getMemberNo();
+            }
+
+            notificationService.subscribeProduct(productNo, memberNo, "bid");
+
+            /** ===== 알림 끝 =====*/
+
             redirectAttributes.addFlashAttribute("message", "경매가 성공적으로 등록되었습니다.");
             return "redirect:/detailAuction/" + productNo;
         } catch (Exception e) {
