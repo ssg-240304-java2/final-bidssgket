@@ -7,12 +7,18 @@ import com.ssg.bidssgket.user.domain.member.application.MemberService;
 import com.ssg.bidssgket.user.domain.member.application.WishService;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.member.domain.repository.WishRepository;
+import com.ssg.bidssgket.user.domain.member.view.DTO.ProductDto;
 import com.ssg.bidssgket.user.domain.member.view.DTO.ReviewDto;
 import com.ssg.bidssgket.user.domain.member.view.DTO.WishDto;
+import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
+import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -31,7 +37,7 @@ public class MemberController {
     private final ProductRepository productRepository;
     private final MemberService memberService;
     private final AuctionRepository auctionRepository;
-    private final WishRepository wishRepository;
+    private final ProductService productService;
     private final WishService wishService;
 
     @GetMapping("/login")
@@ -52,19 +58,25 @@ public class MemberController {
         model.addAttribute("nickname", member.getMemberNickname());
         model.addAttribute("biscuit", member.getBiscuit());
         model.addAttribute("address", member.getAddress());
-        
+
         return "user/member/info";
     }
 
     @GetMapping("/wish")
-    public String getWish(Model model, HttpServletRequest request) {
+    public String getWish(Model model, HttpServletRequest request,
+                          @RequestParam(value = "page", defaultValue = "0") int page) {
         SessionMember sessionMember = (SessionMember) request.getSession().getAttribute("member");
         if (sessionMember == null) {
             return "redirect:/login";
         }
 
-        List<WishDto> wishes = wishService.getWishesByEmail(sessionMember.getEmail());
-        model.addAttribute("wishes", wishes);
+        int pageSize = 4;   // 한 페이지에 4개의 상품 표시
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        Page<WishDto> wishPage = wishService.getWishesByEmail(sessionMember.getEmail(), pageable);
+        model.addAttribute("wishes", wishPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", wishPage.getTotalPages());
 
         return "user/member/wishlist";
     }
@@ -78,6 +90,16 @@ public class MemberController {
         wishService.removeWish(sessionMember.getEmail(), productNo);
         return "redirect:/wish";
     }
+
+    @GetMapping("/detailBuyer")
+    public String getProductDetail(@RequestParam("productNo") Long productNo, Model model) {
+        ProductResDto productResDto = productService.findProductByNo(productNo);
+
+        model.addAttribute("product", productResDto);
+
+        return "user/product/detailBuyer";
+    }
+
 
     @PostMapping("/user/info/update")
     public String updateMemberInfo(@RequestParam("memberName") String memberName,
@@ -147,7 +169,7 @@ public class MemberController {
                                     @RequestParam(name = "product-rating") int productRating,
                                     @RequestParam(name = "seller-rating") int sellerRating,
                                     @RequestParam(name = "comments") String comments,
-                               HttpServletRequest request) {
+                                    HttpServletRequest request) {
         SessionMember sessionMember = (SessionMember) request.getSession().getAttribute("member");
 
         if (sessionMember != null) {

@@ -5,40 +5,35 @@ import com.ssg.bidssgket.user.domain.member.domain.repository.WishRepository;
 import com.ssg.bidssgket.user.domain.member.view.DTO.WishDto;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class WishService {
+
     private final WishRepository wishRepository;
-    private final ProductRepository productRepository;
 
-    public WishService(WishRepository wishRepository, ProductRepository productRepository) {
-        this.wishRepository = wishRepository;
-        this.productRepository = productRepository;
+    public Page<WishDto> getWishesByEmail(String email, Pageable pageable) {
+        Page<Wish> wishPage = wishRepository.findWishesByEmail(email, pageable);
+
+        List<WishDto> wishDtoList = wishPage.getContent().stream()
+                .map(WishDto::toWishDto)  // Wish 엔티티를 WishDto로 변환
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(wishDtoList, pageable, wishPage.getTotalElements());
     }
 
-    // 이메일로 Wish 리스트 조회
-    public List<WishDto> getWishesByEmail(String email) {
-        List<Wish> wishList = wishRepository.findByMemberEmail(email);
-        /*List<WishDto> wishDtoList = new ArrayList<>();
-        for (Wish wish : wishList) {
-            WishDto wishDto = WishDto.toWishDto(wish);
-            wishDtoList.add(wishDto);
-        }
-        return wishDtoList;*/
-        return wishList.stream().map(WishDto::toWishDto).toList();
-    }
-
-    // 제품 번호로 Product 조회
-    public Product getProductByProductNo(Long productNo) {
-        return productRepository.findById(productNo).orElse(null);
-    }
     public void removeWish(String email, Long productNo) {
         wishRepository.deleteByEmailAndProductNo(email, productNo);
     }
-
 }
