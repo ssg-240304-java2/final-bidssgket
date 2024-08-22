@@ -140,12 +140,15 @@
         if (--timer < 0) {
           clearInterval(intervalId);
           display.textContent = "경매가 종료되었습니다.";
-          location.href = '/auction/endAuction/'+ [[${product.productNo}]];
-          /*if(cnt != 0){
+          // location.href = '/auction/endAuction/'+ [[${product.productNo}]];
+          /*if(cnt !== 0){
             display.textContent = "경매가 종료되었습니다.";
             location.href = '/auction/endAuction/'+ [[${product.productNo}]];
           }
           cnt++;*/
+          setInterval(function() {
+            location.href = '/auction/endAuction/' + [[${product.productNo}]];
+          }, 3000);
         }
       }, 1000);
     }

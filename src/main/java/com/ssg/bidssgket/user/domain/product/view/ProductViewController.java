@@ -43,10 +43,8 @@ public class ProductViewController {
     private final ProductService productService;
     private final MemberRepository memberRepository;
     private final EventAuctionService eventAuctionService;
-    @Autowired
-    private AuctionService auctionService;
-    @Autowired
-    private ProductWishService productWishService;
+    private final AuctionService auctionService;
+    private final ProductWishService productWishService;
 
 
     @GetMapping("/register")
@@ -193,22 +191,27 @@ public class ProductViewController {
         model.addAttribute("member", member);
         boolean isSeller = products.stream()
                 .anyMatch(product -> product.getProductNo().equals(productNo));
-        boolean isAuction = auctions.stream()
-                .anyMatch(auction -> auction.getMember().getMemberNo().equals(memberNo));
-        boolean onAuction = onAuctions.stream()
-                .anyMatch(auction -> auction.getTenderDeleted().equals(false));
+        /*boolean isAuction = auctions.stream()
+                .anyMatch(auction -> auction.getMember().getMemberNo().equals(memberNo));*/
+        boolean isAuction = auctionService.findAuctionMember(productNo, memberInfo.get().getMemberNo());
+        /*boolean onAuction = onAuctions.stream()
+                .anyMatch(auction -> auction.getTenderDeleted().equals(false));*/
         boolean eventAuction = eventProducts.stream()
                 .anyMatch(product -> product.getProductNo().equals(productNo));
 
+        System.out.println("isAuction = " + isAuction);
         if (eventAuction) {
                 return "redirect:/eventAuction/detail/" + productNo;
         } else {
             if (isSeller) {
+                log.info("판매자");
                 return "redirect:/detailSeller/" + productNo;
             } else {
-                if (isAuction && onAuction) {
+                if (isAuction) {
+                    log.info("입찰 등록 및 회원");
                     return "redirect:/detailAuction/" + productNo;
                 } else {
+                    log.info("삭제된 경우 혹은 입찰자 아닌 사람");
                     return "redirect:/detailBuyer/" + productNo;
                 }
             }

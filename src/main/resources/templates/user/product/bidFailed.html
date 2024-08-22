@@ -67,7 +67,7 @@
               <div class="text-center auction-start-section">
                 <h5>경매 시작가</h5>
                 <h3>[[${product.auctionStartPrice}]] 원</h3>
-                <a th:if="${product.auctionSelected == 'true'}" th:href="@{/auction/update/{productNo}(productNo=${product.productNo})}">
+                <a th:if="${product.eventAuction != 'true'}" th:href="@{/auction/update/{productNo}(productNo=${product.productNo})}">
                   <button class="btn btn-secondary mt-2">경매 재개</button>
                 </a>
               </div>
