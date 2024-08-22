@@ -146,16 +146,16 @@
                 chatRoomNo: chatRoomNo,
                 message: chatMessage
             };
-            // 메시지를 지정된 경로로 전송
+
+            // 메시지를 지정된 경로로 전송 후, 서버로부터 응답을 받을 때 화면에 표시
             stompClient.send("/send/chat.sendMessage", {}, JSON.stringify(message));
-            console.log('Chat message sent: ' + chatMessage);
         }
 
         function showChatMessage(chatMessage) {
-
             // 메시지를 보낸 사용자가 자신인지 확인하여 메시지의 스타일을 다르게 설정
             var messageClass = chatMessage.memberNo == memberNo ? 'my-message' : 'your-message';
             var messageContainerClass = chatMessage.memberNo == memberNo ? '' : 'your-message-container';
+
             // 채팅 메시지를 화면에 추가
             $("#chat-messages").append(
                 "<div class='message-container " + messageContainerClass + "'>" +
@@ -221,7 +221,7 @@
             });
 
             // Enter 키로 메시지 전송 처리
-            $('#message-input').on('keydown', function (event) {
+            $('#message-input').on('keyup', function (event) {
                 if (event.key === 'Enter' && !event.shiftKey) { // Shift+Enter가 아닌 경우
                     event.preventDefault(); // 기본 Enter 동작(줄바꿈) 방지
 
