@@ -1,5 +1,7 @@
 package com.ssg.bidssgket.user.domain.member.api.chat.controller;
 
+import com.ssg.bidssgket.user.domain.member.api.chat.exception.ChatRoomNotFoundException;
+import com.ssg.bidssgket.user.domain.member.api.chat.exception.MemberNotFoundException;
 import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatMessage;
 import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoom;
 import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember;
@@ -10,7 +12,7 @@ import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.member.view.DTO.ChatMessageDto;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -22,10 +24,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,15 +35,15 @@ import java.util.Optional;
 public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
-    private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageService chatMessageService;
     private final MemberRepository memberRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     @GetMapping
-    public String getChatPage(Model model, HttpServletRequest request) { // 사용자의 채팅방 목록 조회
-
-        SessionMember sessionMember = (SessionMember) request.getSession().getAttribute("member");
+    public String getChatPage(Model model, HttpSession session) {
+        // 사용자의 채팅방 목록 조회
+        SessionMember sessionMember = (SessionMember) session.getAttribute("member");
         Member member = memberRepository.findByEmail(sessionMember.getEmail()).orElseThrow();
 
         List<ChatRoomMember> chatRoomMembers = member.getChatRoomMembers();
@@ -55,8 +57,9 @@ public class ChatController {
     }
 
     @GetMapping("/{chatRoomMemberNo}")
-    public String getMessagePage(@PathVariable Long chatRoomMemberNo, Model model, HttpServletRequest request) { // 각 채팅방별 내용 불러오기
-        SessionMember sessionMember = (SessionMember) request.getSession().getAttribute("member");
+    public String getMessagePage(@PathVariable Long chatRoomMemberNo, Model model, HttpSession session) {
+        // 각 채팅방별 내용 불러오기
+        SessionMember sessionMember = (SessionMember) session.getAttribute("member");
         Member member = memberRepository.findByEmail(sessionMember.getEmail()).orElseThrow();
         List<ChatRoomMember> chatRoomMembers = member.getChatRoomMembers();
 
@@ -64,76 +67,79 @@ public class ChatController {
         ChatRoom chatRoom = chatRoomMember.getChatRoom();
 
         Long chatRoomNo = chatRoom.getChatRoomNo();
-
-        List<ChatMessage> messages = chatMessageService.findMessagesByChatRoomNo(chatRoomNo);
-
         Long memberNo = member.getMemberNo();
-
         String chatRoomName = chatRoom.getName();
+
+        // 해당 채팅방의 메시지를 가져와서 DTO로 변환
+        List<ChatMessageResDto> messages = chatMessageService.findMessagesByChatRoomNo(chatRoomNo)
+                .stream()
+                .map(ChatMessageResDto::fromEntity)
+                .collect(Collectors.toList());
 
         model.addAttribute("chatRoomMembers", chatRoomMembers);
         model.addAttribute("chatRoomName", chatRoomName);
         model.addAttribute("chatRoomNo", chatRoomNo);
-        model.addAttribute("messages", messages);
+        model.addAttribute("messages", messages); // 메시지를 DTO로 변환하여 모델에 추가
         model.addAttribute("memberNo", memberNo);
         return "/user/member/chat";
     }
 
     @GetMapping("/messages")
-    public ResponseEntity<List<ChatMessage>> getChatMessages(@RequestParam Long chatRoomNo) { // 특정 채팅방의 메세지 목록을 불러옴
-        List<ChatMessage> messages = chatMessageService.findMessagesByChatRoomNo(chatRoomNo);
+    public ResponseEntity<List<ChatMessageResDto>> getChatMessages(@RequestParam Long chatRoomNo) {
+        // 특정 채팅방의 메시지 목록 API
+        List<ChatMessageResDto> messages = chatMessageService.findMessagesByChatRoomNo(chatRoomNo)
+                .stream()
+                .map(ChatMessageResDto::fromEntity)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(messages);
     }
 
     @PostMapping("/send")
-    public String saveMessage(@RequestParam Long chatRoomNo,
-                              @RequestParam Long memberNo,
-                              @RequestParam String message,
-                              @RequestParam(required = false) String imageUrl,
-                              Model model) {   // 전송된 메세지 저장
+    public ResponseEntity<String> saveMessage(@RequestBody ChatMessageDto chatMessageDto, HttpSession session) {
+        // 세션에서 사용자 정보 가져오기
+        SessionMember sessionMember = (SessionMember) session.getAttribute("member");
+        Member member = memberRepository.findByEmail(sessionMember.getEmail()).orElseThrow();
 
-        // 채팅방과 회원 정보를 데이터베이스에서 조회
-        Optional<ChatRoom> chatRoomOpt = chatRoomRepository.findById(chatRoomNo);
-        Optional<Member> memberOpt = memberRepository.findById(memberNo);
-
-        if (chatRoomOpt.isEmpty() || memberOpt.isEmpty()) {
-            model.addAttribute("error", "채팅방이나 회원 정보가 올바르지 않습니다.");
-            return "error"; // 에러 페이지로 리디렉션
-        }
-
-        ChatRoom chatRoom = chatRoomOpt.get();
-        Member member = memberOpt.get();
-
-        // ChatMessage 객체 생성
-        ChatMessage chatMessage = ChatMessage.builder()
-                .chatRoom(chatRoom)
-                .member(member)
-                .message(message)
-                .imageUrl(imageUrl)
-                .sentAt(LocalDateTime.now())
-                .build();
-
-        // 채팅 메시지 저장
-        chatMessageService.save(chatMessage);
-
-        // 성공적인 응답 반환
-        model.addAttribute("successMessage", "메시지가 성공적으로 전송되었습니다.");
-        return "redirect:/chat"; // 채팅 페이지로 리디렉션
+        // 메시지 저장
+        chatMessageService.createAndSaveChatMessage(chatMessageDto, member);
+        return ResponseEntity.ok("메시지가 성공적으로 전송되었습니다.");
     }
 
     @MessageMapping("/chat.sendMessage")
-    @SendTo("/topic/{chatRoomNo}")
-    public ChatMessage handleMessage(@Payload ChatMessageDto chatMessageDto) {  // 메세지 전송
-        ChatMessage chatMessage = chatMessageService.createAndSaveChatMessage(chatMessageDto);
-        messagingTemplate.convertAndSend("/pro/" + chatMessage.getChatRoom().getChatRoomNo(), chatMessage);
-        return chatMessage;
+    public ChatMessageResDto handleMessage(@Payload ChatMessageDto chatMessageDto) {
+        // 클라이언트로부터 받은 memberNo를 사용하여 Member 조회
+        Long memberNo = chatMessageDto.getMemberNo();
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(() -> new MemberNotFoundException("Member not found with ID: " + memberNo));
+
+        // 메시지 생성 및 저장
+        ChatMessage chatMessage = chatMessageService.createAndSaveChatMessage(chatMessageDto, member);
+        ChatMessageResDto responseDto = ChatMessageResDto.fromEntity(chatMessage);
+
+        // 동적으로 채팅방 경로를 생성하여 메시지 전송
+        messagingTemplate.convertAndSend("/pro/chatRoom/" + chatMessage.getChatRoom().getChatRoomNo(), responseDto);
+        return responseDto;
     }
 
     @MessageMapping("/chat.addUser")
-    public void addUser(ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-        // WebSocket 세션에 사용자 이름 저장
-        headerAccessor.getSessionAttributes().put("member", chatMessage.getSender());
-        messagingTemplate.convertAndSend("/pro/" + chatMessage.getChatRoom().getChatRoomNo(), chatMessage);
-    }
+    public void addUser(@Payload ChatMessageDto chatMessageDto) {
+        // 클라이언트에서 보낸 memberNo를 기반으로 Member 조회
+        Long memberNo = chatMessageDto.getMemberNo();
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(() -> new MemberNotFoundException("Member not found with ID: " + memberNo));
 
+        // 채팅방 조회
+        ChatRoom chatRoom = chatRoomRepository.findById(chatMessageDto.getChatRoomNo())
+                .orElseThrow(() -> new ChatRoomNotFoundException("ChatRoom not found"));
+
+        // 사용자 추가 알림 메시지 생성
+        ChatMessage chatMessage = ChatMessage.builder()
+                .member(member)
+                .chatRoom(chatRoom)
+                .message("User " + member.getEmail() + " has joined the chat")
+                .build();
+
+        // 동적으로 채팅방 경로를 생성하여 메시지 전송
+        messagingTemplate.convertAndSend("/pro/chatRoom/" + chatRoom.getChatRoomNo(), ChatMessageResDto.fromEntity(chatMessage));
+    }
 }

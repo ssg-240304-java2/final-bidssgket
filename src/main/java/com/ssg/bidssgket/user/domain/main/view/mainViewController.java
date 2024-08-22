@@ -64,14 +64,24 @@ public class mainViewController {
     }
 
     @GetMapping("/search")
-    public String searchProducts(Model model,@RequestParam(value = "search", required = false) String search) {
+    public String searchProducts(Model model,@RequestParam(value = "search", required = false) String search,HttpSession httpSession) {
         List<Product> products;
         if (search != null && !search.isEmpty()) {
             products = productService.searchProducts(search);
         } else {
             products = productService.getAllProducts();
         }
+        System.out.println("products = " + products.toString());
         model.addAttribute("products", products);
+        SessionMember sessionMember = (SessionMember) httpSession.getAttribute("member");
+        List<Long> wishedProductIds = new ArrayList<>();
+
+        if (sessionMember != null) {
+            MemberDTO member = auctionService.getMemberByEmail(sessionMember.getEmail());
+            wishedProductIds = productWishService.findProductNoByMemberNo(member.getMemberNo());
+            System.out.println("wishedProductIds = " + wishedProductIds);
+        }
+        model.addAttribute("wishedProductIds", wishedProductIds);
         return "user/product/list";
     }
 }
