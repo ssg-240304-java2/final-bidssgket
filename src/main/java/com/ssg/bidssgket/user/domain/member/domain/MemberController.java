@@ -4,8 +4,11 @@ import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.application.MemberService;
+import com.ssg.bidssgket.user.domain.member.application.WishService;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
+import com.ssg.bidssgket.user.domain.member.domain.repository.WishRepository;
 import com.ssg.bidssgket.user.domain.member.view.DTO.ReviewDto;
+import com.ssg.bidssgket.user.domain.member.view.DTO.WishDto;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -26,6 +31,8 @@ public class MemberController {
     private final ProductRepository productRepository;
     private final MemberService memberService;
     private final AuctionRepository auctionRepository;
+    private final WishRepository wishRepository;
+    private final WishService wishService;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -47,6 +54,29 @@ public class MemberController {
         model.addAttribute("address", member.getAddress());
         
         return "user/member/info";
+    }
+
+    @GetMapping("/wish")
+    public String getWish(Model model, HttpServletRequest request) {
+        SessionMember sessionMember = (SessionMember) request.getSession().getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/login";
+        }
+
+        List<WishDto> wishes = wishService.getWishesByEmail(sessionMember.getEmail());
+        model.addAttribute("wishes", wishes);
+
+        return "user/member/wishlist";
+    }
+
+    @PostMapping("/wishlist/delete")
+    public String deleteWish(@RequestParam Long productNo, HttpServletRequest request) {
+        SessionMember sessionMember = (SessionMember) request.getSession().getAttribute("member");
+        if (sessionMember == null) {
+            return "redirect:/login";
+        }
+        wishService.removeWish(sessionMember.getEmail(), productNo);
+        return "redirect:/wish";
     }
 
     @PostMapping("/user/info/update")
@@ -169,10 +199,8 @@ public class MemberController {
             // 리뷰를 제출한 후, memberNo의 biscuit을 업데이트
             memberService.updateBiscuitForMember(reviewee.getMemberNo());
         }
-
         return "redirect:/user/mypage";
     }
-
 
 //    @GetMapping("/private")
 //    public String privatePage() {
