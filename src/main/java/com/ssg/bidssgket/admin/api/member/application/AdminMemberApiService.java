@@ -67,4 +67,9 @@ public class AdminMemberApiService {
     }
 
 
+    public Long getMemberNoByEmail(String email) {
+        return adminMemberApiRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("No member found with the given email")).getMemberNo();
+    }
+
+
 }
