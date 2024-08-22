@@ -6,11 +6,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>채팅 목록</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
     <link rel="stylesheet" href="/user/css/chat.css">
+    <style>
+        .my-message {
+            background-color: #8D999E; /* 보낸 사람 말풍선 색상 */
+            text-align: right;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px 0;
+            display: inline-block;
+            max-width: 80%;
+            align-self: flex-end;
+        }
+
+        .your-message {
+            background-color: #FFFFFF; /* 받은 사람 말풍선 색상 */
+            text-align: left;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px 0;
+            display: inline-block;
+            max-width: 80%;
+            align-self: flex-start;
+        }
+
+        .message-container {
+            display: flex;
+            justify-content: flex-end; /* 보낸 사람 메시지를 오른쪽에 정렬 */
+        }
+
+        .your-message-container {
+            justify-content: flex-start; /* 받은 사람 메시지를 왼쪽에 정렬 */
+        }
+
+        .chat-messages {
+            padding: 10px;
+            height: 400px;
+            overflow-y: scroll;
+        }
+    </style>
 </head>
 <body>
 <main class="contents" layout:fragment="content">
@@ -41,9 +80,11 @@
         <div class="chat-container">
             <div class="chat-list">
                 <ul id="chatroom-list">
-                    <li class="chat-item" data-chatroom="1" th:each="chatRoomMember : ${chatRoomMembers}">
+<!--                    <li class="chat-item" data-chatroom="1" th:each="chatRoomMember : ${chatRoomMembers}">-->
+                    <li class="chat-item" th:each="chatRoomMember : ${chatRoomMembers}" th:data-chatroom-no="${chatRoomMember.chatRoom.chatRoomNo}">
                         <div class="chat-info">
-                            <a th:href="@{|/chat/${chatRoomMember.chatRoomMemberNo}|}">
+<!--                            <a th:href="@{|/chat/${chatRoomMember.chatRoomMemberNo}|}" >-->
+                            <a href="#" class="chat-room-link">
                                 <span class="chat-title" th:text="${chatRoomMember.chatRoom.name}"></span>
                             </a>
                         </div>
@@ -57,8 +98,10 @@
                 </div>
                 <div id="chat-messages" class="chat-messages">
                     <div th:each="message : ${messages}">
+                        <div class="message-container" th:classappend="${message.member.memberNo == memberNo} ? '' : 'your-message-container'">
                         <div class="message" th:classappend="${message.member.memberNo == memberNo} ? 'my-message' : 'your-message'">
                             <div class="message-content" th:text="${message.message}"></div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -71,100 +114,121 @@
     </div>
 
     <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', function () {
-            const chatList = document.querySelector('.chat-list');
-            const chatMessages = document.getElementById('chat-messages');
-            const chatTitle = document.getElementById('chat-title');
-            const sendButton = document.getElementById('send-button');
-            const messageInput = document.getElementById('message-input');
-            let currentChatRoomNo = null;
-            let socket = new SockJS('/ws'); // WebSocket 연결
-            let stompClient = Stomp.over(socket);
-            let subscription = null; // 현재 채팅방의 구독을 저장
+        var stompClient = null;
+        var memberNo = [[${memberNo}]]; // 서버에서 받은 memberNo 값을 사용
+        var chatRoomNo = null; // 현재 선택된 채팅방 번호를 저장
 
-            function connectToChatRoom(chatRoomNo) {
-                if (subscription) {
-                    subscription.unsubscribe(); // 기존 구독 해제
+        function connectAndSubscribe() {
+            var socket = new SockJS('/ws-stomp');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+
+                if (!chatRoomNo) {
+                    console.error("Cannot subscribe to chat room because chatRoomNo is undefined.");
+                    return;
                 }
 
-                stompClient.connect({}, function (frame) {
-                    console.log('Connected: ' + frame);
-
-                    // WebSocket 메시지 수신 처리
-                    subscription = stompClient.subscribe('/topic/' + chatRoomNo, function (messageOutput) {
-                        const message = JSON.parse(messageOutput.body);
-                        if (message.chatRoomNo == chatRoomNo) {
-                            const messageClass = message.sender === '나' ? 'my-message' : 'other-message';
-                            chatMessages.innerHTML += `<div class="message ${messageClass}"><span class="sender">${message.sender}:</span> ${message.content}</div>`;
-                            chatMessages.scrollTop = chatMessages.scrollHeight; // 스크롤을 메시지 아래로 자동으로 이동
-                        }
-                    });
+                // 특정 채팅방에 대한 구독 설정
+                stompClient.subscribe(`/pro/chatRoom/${chatRoomNo}`, function (messageOutput) {
+                    const data = JSON.parse(messageOutput.body);
+                    console.log("Received message: ", data); // 수신된 메시지를 콘솔에 출력
+                    showChatMessage(data);  // 새로운 메시지를 화면에 추가
                 });
-            }
+            });
+        }
 
-            // 채팅방 목록 클릭 처리
-            chatList.addEventListener('click', function (event) {
-                const chatItem = event.target.closest('.chat-item');
-                if (chatItem) {
-                    const chatRoomNo = chatItem.getAttribute('data-chatroom');
-                    if (chatRoomNo !== currentChatRoomNo) {
-                        currentChatRoomNo = chatRoomNo;
-                        chatTitle.textContent = `채팅방 ${currentChatRoomNo}`;
+        function sendChatMessage(chatMessage) {
+            // 클라이언트에서 서버로 전송할 메시지 객체 생성
+            const message = {
+                memberNo: memberNo,
+                chatRoomNo: chatRoomNo,
+                message: chatMessage
+            };
+            // 메시지를 지정된 경로로 전송
+            stompClient.send("/send/chat.sendMessage", {}, JSON.stringify(message));
+            console.log('Chat message sent: ' + chatMessage);
+        }
 
-                        // 채팅방의 기존 메시지 로드
-                        fetch(`/chat/messages?chatRoomNo=${currentChatRoomNo}`)
-                            .then(response => response.json())
-                            .then(messages => {
-                                chatMessages.innerHTML = messages.map(message =>
-                                    `<div class="message ${message.sender === '나' ? 'my-message' : 'other-message'}">
-                            <span class="sender">${message.sender}:</span> ${message.message}
-                        </div>`
-                                ).join('');
-                                chatMessages.scrollTop = chatMessages.scrollHeight; // 스크롤을 메시지 아래로 자동으로 이동
-                            });
+        function showChatMessage(chatMessage) {
 
-                        // WebSocket 연결 및 구독
-                        connectToChatRoom(currentChatRoomNo);
+            // 메시지를 보낸 사용자가 자신인지 확인하여 메시지의 스타일을 다르게 설정
+            var messageClass = chatMessage.memberNo == memberNo ? 'my-message' : 'your-message';
+            var messageContainerClass = chatMessage.memberNo == memberNo ? '' : 'your-message-container';
+            // 채팅 메시지를 화면에 추가
+            $("#chat-messages").append(
+                "<div class='message-container " + messageContainerClass + "'>" +
+                "<div class='message " + messageClass + "'>" + chatMessage.message +
+                "</div></div>"
+            );
+            // 스크롤을 최신 메시지 위치로 자동으로 이동
+            $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
+        }
+
+        $(document).ready(function () {
+            // 채팅방 이름을 클릭하면 해당 채팅방에 접속
+            $('.chat-room-link').on('click', function (event) {
+                event.preventDefault();  // 기본 클릭 이벤트(페이지 이동)를 방지
+
+                var chatItem = $(this).closest('.chat-item'); // 클릭된 링크의 부모 요소에서 채팅방 정보를 가져옴
+                chatRoomNo = chatItem.data('chatroom-no');  // 클릭된 채팅방 번호를 가져옴
+
+                // chatRoomNo가 undefined인지 확인
+                if (!chatRoomNo) {
+                    console.error("Chat room number is undefined.");
+                    return;
+                }
+
+                $("#chat-title").text($(this).find('.chat-title').text()); // 채팅방 제목을 업데이트
+
+                // jQuery를 사용하여 서버에서 해당 채팅방의 기존 메시지를 가져옴
+                $.ajax({
+                    url: "/chat/messages",
+                    type: "GET",
+                    data: { chatRoomNo: chatRoomNo },
+                    success: function(messages) {
+                        console.log("Fetched messages:", messages); // 데이터 확인용 콘솔 로그
+
+                        // 기존 메시지를 화면에 표시
+                        $("#chat-messages").html(messages.map(function(message) {
+                            var messageClass = message.memberNo == memberNo ? 'my-message' : 'your-message';
+                            var messageContainerClass = message.memberNo == memberNo ? '' : 'your-message-container';
+                            return "<div class='message-container " + messageContainerClass + "'>" +
+                                "<div class='message " + messageClass + "'>" + message.message +
+                                "</div></div>";
+                        }).join(''));
+
+                        // 스크롤을 최신 메시지 위치로 자동으로 이동
+                        $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
+                    },
+                    error: function(error) {
+                        console.error("Error fetching chat messages:", error);
+                        $("#chat-messages").html("<div class='error'>Failed to load messages. Please try again later.</div>");
                     }
+                });
+
+                connectAndSubscribe();  // WebSocket을 통해 채팅방에 연결 및 메시지 구독 시작
+            });
+
+            // 메시지 전송 버튼 클릭 시 메시지 전송
+            $('#send-button').on('click', function () {
+                var chatMessage = $('#message-input').val(); // 입력된 메시지 가져오기
+                if (chatMessage && chatRoomNo) { // 메시지와 채팅방이 설정되어 있는지 확인
+                    sendChatMessage(chatMessage); // 메시지 전송
+                    $('#message-input').val('');  // 입력 필드 초기화
                 }
             });
 
-            // 메시지 전송 처리
-            function sendMessage() {
-                const message = messageInput.value;
-                const currentChatRoomNo = [[${chatRoomNo}]];
-                const memberNo = [[${memberNo}]];
-                if (message && currentChatRoomNo) {
-                    // 서버에 메시지 전송
-                    fetch(`/chat/send?chatRoomNo=${currentChatRoomNo}&memberNo=${memberNo}&message=${encodeURIComponent(message)}`, {
-                        method: 'POST'
-                    }).then(response => {
-                        if (response.ok) {
-                            // WebSocket을 통해 서버에 메시지 전송
-                            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({
-                                chatRoomNo: currentChatRoomNo,
-                                sender: '나',
-                                content: message
-                            }));
+            // Enter 키로 메시지 전송 처리
+            $('#message-input').on('keydown', function (event) {
+                if (event.key === 'Enter' && !event.shiftKey) { // Shift+Enter가 아닌 경우
+                    event.preventDefault(); // 기본 Enter 동작(줄바꿈) 방지
 
-                            // 메시지 추가 및 입력 필드 초기화
-                            chatMessages.innerHTML += `<div class="message my-message"><span class="sender">나:</span> ${message}</div>`;
-                            messageInput.value = '';
-                            chatMessages.scrollTop = chatMessages.scrollHeight; // 스크롤을 메시지 아래로 자동으로 이동
-                        }
-                    });
-                }
-            }
-
-            sendButton.addEventListener('click', sendMessage);
-
-            // 입력 필드에서 Enter 키를 눌렀을 때 메시지 전송
-            messageInput.addEventListener('keydown', function (event) {
-                if (event.key === 'Enter') {
-                    // Shift + Enter는 줄바꿈
-                    if (!event.shiftKey) {
-                        event.preventDefault(); // 기본 Enter 동작 방지 (줄바꿈)
-                        sendMessage();
+                    var chatMessage = $('#message-input').val().trim(); // 메시지 입력 필드의 값을 가져오고 공백 제거
+                    if (chatMessage !== '') { // 메시지가 비어 있지 않을 때만 전송
+                        sendChatMessage(chatMessage); // 메시지 전송
+                        $('#message-input').val('');  // 입력 필드 초기화
                     }
                 }
             });

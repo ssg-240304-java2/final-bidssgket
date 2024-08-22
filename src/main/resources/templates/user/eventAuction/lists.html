@@ -45,8 +45,9 @@
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a th:href="@{/eventAuction/detail/{productNo}(productNo=${product.productNo})}" th:text="${product.productName}" style="text-decoration-line: none; color: black;"></a>
-                                <button class="wishheartbtn" onclick="toggleHeart(this)">
-                                    <img src="/user/main/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                <button class="wishheartbtn" th:onclick="toggleHeart(this, [[${product.productNo}]])">
+                                    <img th:src="@{/user/main/images/heart.png}" th:if="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 있음" class="wishheart">
+                                    <img th:src="@{/user/main/images/empty_heart2.png}" th:unless="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 없음" class="wishheart">
                                 </button>
                             </h5>
                             <p class="card-text">경매 종료 일자: <span th:text="${#temporals.format(product.auctionEndTime, 'yyyy-MM-dd HH:mm')}" id="auction-end-1"></span></p>
@@ -103,20 +104,29 @@
 <!-- Bootstrap JS (for tab functionality) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function toggleHeart(button) {
-        const emptyHeart = "/user/images/empty_heart2.png";
-        const filledHeart = "/user/images/heart.png";
-        const imgElement = button.querySelector('.wishheart');
-        const currentSrc = imgElement.getAttribute('src');
+    function toggleHeart(button, productNo){
+        const imgElement = button.children[0];
 
-        if (currentSrc === emptyHeart) {
-            imgElement.setAttribute('src', filledHeart);
-            imgElement.setAttribute('alt', '관심 있음');
-            console.log("하트가 채워짐");
-        } else {
-            imgElement.setAttribute('src', emptyHeart);
-            imgElement.setAttribute('alt', '관심 없음');
-        }
+        fetch(`/wish/toggle`, {
+            method: "POST",
+            headers: {
+                "Content-type": 'application/json'
+            },
+            body: JSON.stringify({ "productNo" : productNo })
+        }).then((res) => {
+            console.log(res);
+            return res.text();
+        })
+            .then(result => {
+                console.log('--->', result);
+                if (result === "fail") {
+                    window.location.href = "/login";
+                } else {
+                    const isWished = imgElement.src.includes('heart.png');
+                    imgElement.src = isWished ? '/user/main/images/empty_heart2.png' : '/user/main/images/heart.png';
+                }
+            })
+            .catch(error => console.error('Error:', error));
     }
 
     document.addEventListener('DOMContentLoaded', function() {

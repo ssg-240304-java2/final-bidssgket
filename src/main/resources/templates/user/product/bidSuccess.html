@@ -21,17 +21,13 @@
   <main class="contents" layout:fragment="content">
     <div class="container mt-5">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4"> <!-- 이미지 슬라이드를 위한 1/3 열 -->
           <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="..." class="d-block w-100" alt="...">
-              </div>
-              <div class="carousel-item">
-                <img src="..." class="d-block w-100" alt="...">
-              </div>
-              <div class="carousel-item">
-                <img src="..." class="d-block w-100" alt="...">
+              <div th:each="productImage, iterStat : ${product.productImages}"
+                   th:classappend="${iterStat.index == 0} ? 'active' : ''"
+                   class="carousel-item">
+                <img th:src="@{${productImage.productImg}}" class="d-block w-100" alt="...">
               </div>
             </div>
             <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
@@ -59,14 +55,14 @@
           <p>카테고리: <span th:text="${product.category}"></span></p>
           <p>상품 설명: <span th:text="${product.productDesc}"></span></p>
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4" th:if="${product.buyNowPrice != null}">
               <div class="text-center buy-now-section">
                 <h5>즉시 구매가</h5>
                 <h3 th:text="|${product.buyNowPrice}원|"></h3>
               </div>
             </div>
             <div class="col-md-4">
-              <div class="text-center auction-start-section">
+              <div class="text-center auction-start-section"  th:if="${product.auctionStartPrice != null}">
                 <h5>경매 시작가</h5>
                 <h3 th:text="|${product.auctionStartPrice}원|"></h3>
                 <button id="abandonBidButton" class="btn btn-primary mt-2">낙찰 포기</button>
@@ -83,10 +79,6 @@
         </div>
       </div>
       <div class="row mt-5">
-        <div class="col-md-6">
-          <h4>시세 조회</h4>
-          <canvas id="priceChart" class="chart-table"></canvas>
-        </div>
         <div class="col-md-6"> <!-- 표를 위한 넓은 열 -->
           <h4>입찰 현황</h4>
           <div class="table-responsive chart-table"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
@@ -165,20 +157,6 @@
         form.submit();
       }
 
-      var ctx = document.getElementById('priceChart').getContext('2d');
-      var chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['2024.08.01', '2024.08.02', '2024.08.03', '2024.08.04', '2024.08.05', '2024.08.06', '2024.08.07'],
-          datasets: [{
-            label: '가격',
-            backgroundColor: 'rgba(0, 119, 204, 0.3)',
-            borderColor: 'rgb(0, 119, 204)',
-            data: [3000, 4000, 3200, 4800, 5300, 4500, 5000]
-          }]
-        },
-        options: {}
-      });
     </script>
   </main>
 </body>
