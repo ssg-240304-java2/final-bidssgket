@@ -68,7 +68,6 @@ public class ProductViewController {
         Product product = productService.registProduct(registProductReqDto, productImages);
 
         /** ===== 알림 시작, 상품 등록 구독 -> 판매자 구독 =====*/
-
         String email = null;
         Long memberNo = null;
         if (httpSession.getAttribute("member") != null) {
