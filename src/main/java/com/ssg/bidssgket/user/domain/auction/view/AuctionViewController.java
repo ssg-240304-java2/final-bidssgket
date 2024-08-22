@@ -197,11 +197,6 @@ public class AuctionViewController {
                 }
             }
         }
-        /*if (isSeller && isAuctionEnded) {
-            auctionService.endAuction(productNo);
-            redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
-            return "redirect:/detailSeller/" + productNo;
-        }*/
         if (isAuctionParticipant && isAuctionEnded) {
             boolean isWinningBidder = auctionService.isWinningBidder(memberNo, productNo);
             auctionService.endAuction(productNo);
