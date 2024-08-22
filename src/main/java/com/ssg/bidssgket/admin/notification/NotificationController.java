@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/notify")
+@RequestMapping("")
 public class NotificationController {
     private final NotificationService notificationService;
     private final AdminMemberApiService adminMemberApiService;
@@ -57,7 +57,7 @@ public class NotificationController {
     /**
      * 경매 마감 알림(seller)
      */
-    @GetMapping(value = "/close/seller/{productNo}", produces = "text/event-stream")
+    @GetMapping(value = "/detailSeller/admin/notify/close/seller/{productNo}", produces = "text/event-stream")
     public String pushAuctionClosedSeller(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
                                     @PathVariable(value = "productNo") Long productNo){
 
@@ -71,7 +71,7 @@ public class NotificationController {
     /**
      * 경매 마감 알림(buyer)
      */
-    @GetMapping(value = "/close/buyer/{productNo}", produces = "text/event-stream")
+    @GetMapping(value = "/detailSeller/admin/notify/close/buyer/{productNo}", produces = "text/event-stream")
     public String pushAuctionClosedBuyer(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
                                     @PathVariable(value = "productNo") Long productNo){
 
@@ -84,9 +84,9 @@ public class NotificationController {
 
 
     /**
-     * 경매 유찰 알림
+     * 경매 유찰 알림 d
      */
-    @GetMapping(value = "/cancel/{productNo}", produces = "text/event-stream")
+    @GetMapping(value = "/bidFailed/admin/notify/cancel/{productNo}", produces = "text/event-stream")
     public String pushAuctionCanceled(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
                                       @PathVariable(value = "productNo") Long productNo){
 
@@ -98,9 +98,9 @@ public class NotificationController {
     }
 
     /**
-     * 판매 상태 변경 알림(경매자)
+     * 판매 상태 변경 알림(경매자) d
      */
-    @GetMapping(value = "/change/{productNo}", produces = "text/event-stream")
+    @GetMapping(value = "/detailSeller/admin/notify/change/{productNo}", produces = "text/event-stream")
     public String pushProductStatusChanged(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
                                            @PathVariable(value = "productNo") Long productNo){
 

@@ -29,13 +29,15 @@
     /*=========== 알람 기능 시작 =============*/
     var productNo = [[${product.productNo}]];
 
-    const eventSource = new EventSource('admin/notify/close/buyer/' + productNo)
+    const eventSource1 = new EventSource('/detailSeller/admin/notify/close/buyer/' + productNo)
 
-    console.log(eventSource)
+    const eventSource2 = new EventSource('/detailSeller/admin/notify/close/seller/' + productNo)
 
-    console.log("=====")
+    console.log(eventSource1)
 
-    eventSource.addEventListener("canceled", function(event) {
+    console.log("===== =====")
+
+    eventSource1.addEventListener("canceled", function(event) {
       console.log(event.data)
 
       // 브라우저 푸시 알림 생성
@@ -57,9 +59,39 @@
         });
 
         // 알림이 클릭되면 EventSource를 닫습니다.
-        eventSource.close();
+        eventSource1.close();
 
       }
+
+      console.log(eventSource2)
+
+      console.log("===== =====")
+
+      eventSource2.addEventListener("canceled", function(event) {
+        console.log(event.data)
+
+        // 브라우저 푸시 알림 생성
+        if (Notification.permission === 'granted') {
+          new Notification('Bidssgket', {
+            body: event.data,
+          });
+
+          // 첫 번째 알림을 수신한 후, SSE 연결 종료 및 서버에 알림 중단 요청
+          $.ajax({
+            url: `/stop-notification`,
+            type: 'DELETE',
+            success: function(result) {
+              console.log(result);
+            },
+            error: function(xhr, status, error) {
+              console.error('Error:', error);
+            }
+          });
+
+          // 알림이 클릭되면 EventSource를 닫습니다.
+          eventSource2.close();
+
+        }
 
 
     })

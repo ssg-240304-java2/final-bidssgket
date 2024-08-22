@@ -32,7 +32,7 @@
     /*=========== 알람 기능 시작 =============*/
     var productNo = [[${product.productNo}]];
 
-    const eventSource = new EventSource('admin/notify/cancel/' + productNo)
+    const eventSource = new EventSource('bidFailed/admin/notify/cancel/' + productNo)
 
     console.log(eventSource)
 
