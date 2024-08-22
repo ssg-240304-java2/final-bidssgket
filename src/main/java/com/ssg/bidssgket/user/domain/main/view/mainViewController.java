@@ -26,10 +26,8 @@ public class mainViewController {
 
     private final ProductService productService;
     private final EventAuctionService eventAuctionService;
-    @Autowired
-    private ProductWishService productWishService;
-    @Autowired
-    private AuctionService auctionService;
+    private final ProductWishService productWishService;
+    private final AuctionService auctionService;
 
 
     @GetMapping("/")

@@ -38,15 +38,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/auction")
 public class AuctionViewController {
-    @Autowired
-    private AuctionService auctionService;
-    @Autowired
-    private ProductService productService;
+    private final AuctionService auctionService;
+    private final ProductService productService;
     private final MemberRepository memberRepository;
 
-    /*private final AuctionService auctionService;
-    private final ProductService productService;
-    private final MemberRepository memberRepository;*/
 
 
     /***
@@ -220,9 +215,9 @@ public class AuctionViewController {
         }
 
         if (isAuctionEnded) {
-//            auctionService.endAuction(productNo);
-//            redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
-            return "redirect:/detailBuyer/" + productNo;
+            auctionService.endAuction(productNo);
+            redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
+            return "redirect:/";
         }
 
         return "redirect:/";
