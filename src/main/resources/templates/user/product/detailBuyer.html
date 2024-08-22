@@ -49,14 +49,18 @@
       </div>
       <div class="col-md-8 d-flex flex-column justify-content-center"> <!-- 버튼들을 위한 넓은 열 -->
         <div class="d-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center">
-          <h3>경매 종료:</h3>
-          <h3 id="timer" class="ml-3"></h3>
-        </div>
-          <div>
-            <button class="btn btn-success">채팅하기</button> <!-- 채팅하기 버튼 추가 -->
-            <button class="btn btn-danger ml-2" data-toggle="modal" data-target="#reportModal">신고하기</button>
+          <div class="d-flex align-items-center">
+            <h3>경매 종료:</h3>
+            <h3 id="timer" class="ml-3"></h3>
           </div>
+          <div class="d-flex align-items-center">
+            <form th:action="@{/chat/start}" method="post" class="mr-2">
+              <input type="hidden" name="productNo" th:value="${product.productNo}" />
+              <button type="submit" class="btn btn-success">채팅하기</button>
+            </form>
+            <button class="btn btn-danger" data-toggle="modal" data-target="#reportModal">신고하기</button>
+          </div>
+
         </div>
         <div class="auction-header">
           <select id="auctionType" class="form-control mb-3" th:value="${product.salesStatus}" disabled>
@@ -95,7 +99,7 @@
             <div class="button-group d-flex justify-content-center mb-3"> <!-- 버튼들을 수평으로 정렬 -->
               <a th:href="@{/auction/auctionregistform/{productNo}(productNo=${product.productNo})}">
                 <button type="button" class="btn btn-primary"
-                  th:disabled="${product.auctionSelected == false}">입찰 등록</button>
+                        th:disabled="${product.auctionSelected == false}">입찰 등록</button>
               </a>
             </div>
           </div>
@@ -132,6 +136,10 @@
 
 
     <div class="row mt-5">
+      <div class="col-md-6"> <!-- 차트를 위한 넓은 열 -->
+        <h4>시세 조회</h4>
+        <canvas id="priceChart" class="chart-table"></canvas>
+      </div>
       <div class="col-md-6"> <!-- 표를 위한 넓은 열 -->
         <h4>입찰 현황</h4>
         <div class="table-responsive chart-table"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
@@ -200,6 +208,21 @@
       var display = document.querySelector('#timer');
       startTimer(duration, display);
     };
+
+    var ctx = document.getElementById('priceChart').getContext('2d');
+    var chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['2024.08.01', '2024.08.02', '2024.08.03', '2024.08.04', '2024.08.05', '2024.08.06', '2024.08.07'],
+        datasets: [{
+          label: '가격',
+          backgroundColor: 'rgba(0, 119, 204, 0.3)',
+          borderColor: 'rgb(0, 119, 204)',
+          data: [3000, 4000, 3200, 4800, 5300, 4500, 5000]
+        }]
+      },
+      options: {}
+    });
 
     document.getElementById("submitReport").addEventListener('click', function() {
       // FormData 객체를 생성합니다.
