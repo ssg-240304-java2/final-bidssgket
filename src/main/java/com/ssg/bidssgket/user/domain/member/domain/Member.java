@@ -2,7 +2,6 @@ package com.ssg.bidssgket.user.domain.member.domain;
 
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember;
-import com.ssg.bidssgket.user.domain.order.domain.DeliveryAddress;
 import com.ssg.bidssgket.user.domain.order.domain.Parcel;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
 import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
@@ -94,9 +93,6 @@ public class Member implements UserDetails {
 
     @OneToMany(mappedBy = "reviewee", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, orphanRemoval = true)
-    private List<DeliveryAddress> deliveryAddress = new ArrayList<>(); // 배송지 정보 [FK]
 
     @Builder
     private Member(String memberName, String memberId, String phone, String pwd,String memberNickname, String email, Role role, Integer biscuit, Address address, Boolean isDeleted, Boolean isPenalty) {
@@ -222,14 +218,6 @@ public class Member implements UserDetails {
     public void addPay(Pay pay) {
         pay.setMember(this);
         this.pay = pay;
-    }
-
-    public void addDeliveryAddress(DeliveryAddress deliveryAddress) {
-        if (deliveryAddress.getMember() != null) {
-            deliveryAddress.getMember().getDeliveryAddress().remove(deliveryAddress);
-        }
-        deliveryAddress.setMember(this);
-        this.deliveryAddress.add(deliveryAddress);
     }
 
     @Override
