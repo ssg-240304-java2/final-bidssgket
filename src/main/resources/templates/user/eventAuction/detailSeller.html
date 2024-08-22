@@ -80,18 +80,46 @@
         </div>
       </div>
     </div>
+    <div class="row mt-5" style="width: 100%;">
+      <div class="col-md-6"> <!-- 표를 위한 넓은 열 -->
+        <h4>입찰 현황</h4>
+        <div class="table-responsive chart-table" style="width: 100%;"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
+          <table id="bidMessage" class="table table-bordered" style="width: 100%;">
+            <thead>
+            <tr>
+              <th style="width: 33%;">입찰자</th>
+              <th style="width: 33%;">입찰가</th>
+              <th style="width: 34%;">입찰 등록 날짜</th>
+            </tr>
+            </thead>
+            <tbody id="bidding">
+            <tr th:each="auction : ${auctions}">
+              <td th:text="${auction.member.email.split('@')[0].length() > 4 ? auction.member.email.split('@')[0].substring(0, auction.member.email.split('@')[0].length() - 4) + '****' + '@' + auction.member.email.split('@')[1] : '****' + '@' + auction.member.email.split('@')[1]}"></td>
+              <td th:text="${#numbers.formatInteger(auction.maxTenderPrice, 0)} + ' 원'"></td>
+              <td th:text="${#temporals.format(auction.tenderDate, 'yyyy.MM.dd HH:mm:ss')}"></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
   <script>
-
-    var duration = /*[[${durationMillis}]]*/ 0;
 
     function startTimer(duration, display) {
       var timer = duration, days, hours, minutes, seconds;
-      setInterval(function () {
+      var intervalId = setInterval(function () {
+        if ("[[${product.salesStatus}]]" === 'sale_completed') {
+          clearInterval(intervalId);
+          display.textContent = "판매가 완료되었습니다.";
+          return;
+        }
         days = parseInt(timer / (3600 * 24), 10);
         hours = parseInt((timer % (3600 * 24)) / 3600, 10);
         minutes = parseInt((timer % 3600) / 60, 10);
@@ -105,14 +133,31 @@
         display.textContent = days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
 
         if (--timer < 0) {
-          timer = duration;
+          clearInterval(intervalId);
+          display.textContent = "경매가 종료되었습니다.";
+          location.href = '/eventAuction/endAuction/'+ [[${product.productNo}]];
         }
       }, 1000);
     }
 
     window.onload = function () {
+      var auctionendtime = "[[${product.auctionEndTime}]]";
+      var auctionstarttime = new Date().getTime();
+      console.log(auctionstarttime);
+      var endTimeMs = new Date(auctionendtime).getTime();
+      console.log(auctionendtime);
+      console.log(auctionstarttime);
+      console.log(endTimeMs);
+      var duration = (endTimeMs - auctionstarttime) / 1000;
+      if (duration < 0) {
+        duration = 0;
+      }
       var display = document.querySelector('#timer');
       startTimer(duration, display);
+      if (duration === 0 || "[[${product.salesStatus}]]" !== 'selling') {
+        document.getElementById('deleteAuction').disabled = true;
+        document.getElementById('modifyAuction').disabled = true;
+      }
     };
 
 
@@ -135,6 +180,79 @@
           alert("삭제 실패!!!!!")
         }
       });
+    });
+  </script>
+  <script th:inline="javascript">
+    var stompClient = null;
+    var productNo = [[${product.productNo}]];
+    var memberNo = [[${memberNo}]];
+    var minTenderPrice = [[${lastPrice}]];
+    var email = [[${member.email}]]
+
+    function connectAndSubscribe() {
+      var socket = new SockJS('/ws-stomp');
+      stompClient = Stomp.over(socket);
+
+      stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe(`/pro/auction`, function (frame) {
+          console.log('Received: ', frame.body);
+          const data = JSON.parse(frame.body);
+          showBid(data);  // 새로운 입찰 내역을 테이블에 추가
+        });
+      });
+    }
+
+    function sendBid(bidAmount) {
+      const message = {
+        memberNo: memberNo,
+        productNo: productNo,
+        maxTenderPrice: bidAmount,
+        minTenderPrice: minTenderPrice
+      };
+      stompClient.send(`/send/auction`, {}, JSON.stringify(message));
+      console.log('Bid sent: ' + bidAmount);
+    }
+
+    function showBid(bidMessage) {
+      $("#bidding").prepend(
+              "<tr>" +
+              "<td>" + "실시간 입찰자" + "</td>" +
+              "<td>" + bidMessage.maxTenderPrice + " 원" + "</td>" +
+              "<td>" + new Date().toLocaleString() + "</td>" +
+              "</tr>"
+      );
+    }
+
+    function maskEmail(email) {
+      var emailParts = email.split('@');
+      var emailLocalPart = emailParts[0];
+      var emailDomainPart = emailParts[1];
+
+      if (emailLocalPart.length > 4) {
+        emailLocalPart = emailLocalPart.substring(0, emailLocalPart.length - 4) + '****';
+      } else {
+        emailLocalPart = '****';
+      }
+
+      return emailLocalPart + '@' + emailDomainPart;
+    }
+
+    document.getElementById("onAuctionBtn").addEventListener('click', function () {
+      var bidAmount = prompt("입찰 금액을 입력하세요:"); // 입찰 금액 입력창
+      if (bidAmount) {
+        if (parseInt(bidAmount) < minTenderPrice) {
+          alert("최소 " + minTenderPrice + "원 이상을 입력해주세요.");
+        } else {
+          sendBid(bidAmount); // 최소 입찰가 이상일 경우 입찰 메시지 전송
+        }
+      } else {
+        alert("입찰 금액을 입력하세요.");
+      }
+    });
+
+    $(document).ready(function () {
+      connectAndSubscribe();  // 페이지가 로드될 때 WebSocket 연결 및 구독
     });
   </script>
 </main>

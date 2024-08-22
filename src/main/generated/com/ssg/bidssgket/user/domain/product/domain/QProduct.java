@@ -61,8 +61,6 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final com.ssg.bidssgket.user.domain.order.domain.QPurchaseOrder purchaseOrder;
 
-    public final com.ssg.bidssgket.user.domain.member.domain.QReview review;
-
     public final com.ssg.bidssgket.user.domain.order.domain.QSaleOrder saleOrder;
 
     public final EnumPath<SalesStatus> salesStatus = createEnum("salesStatus", SalesStatus.class);
@@ -90,7 +88,6 @@ public class QProduct extends EntityPathBase<Product> {
         super(type, metadata, inits);
         this.member = inits.isInitialized("member") ? new com.ssg.bidssgket.user.domain.member.domain.QMember(forProperty("member"), inits.get("member")) : null;
         this.purchaseOrder = inits.isInitialized("purchaseOrder") ? new com.ssg.bidssgket.user.domain.order.domain.QPurchaseOrder(forProperty("purchaseOrder"), inits.get("purchaseOrder")) : null;
-        this.review = inits.isInitialized("review") ? new com.ssg.bidssgket.user.domain.member.domain.QReview(forProperty("review"), inits.get("review")) : null;
         this.saleOrder = inits.isInitialized("saleOrder") ? new com.ssg.bidssgket.user.domain.order.domain.QSaleOrder(forProperty("saleOrder"), inits.get("saleOrder")) : null;
     }
 

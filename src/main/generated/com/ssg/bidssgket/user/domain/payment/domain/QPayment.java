@@ -40,13 +40,13 @@ public class QPayment extends EntityPathBase<Payment> {
 
     public final EnumPath<com.ssg.bidssgket.user.domain.payment.domain.enums.PaymentStatus> paymentStatus = createEnum("paymentStatus", com.ssg.bidssgket.user.domain.payment.domain.enums.PaymentStatus.class);
 
+    public final EnumPath<com.ssg.bidssgket.user.domain.payment.domain.enums.PaymentTransactionType> paymentTransactionType = createEnum("paymentTransactionType", com.ssg.bidssgket.user.domain.payment.domain.enums.PaymentTransactionType.class);
+
     public final EnumPath<com.ssg.bidssgket.user.domain.payment.domain.enums.PaymentType> paymentType = createEnum("paymentType", com.ssg.bidssgket.user.domain.payment.domain.enums.PaymentType.class);
 
     public final com.ssg.bidssgket.user.domain.order.domain.QPurchaseOrder purchaseOrder;
 
     public final com.ssg.bidssgket.user.domain.order.domain.QSaleOrder saleOrder;
-
-    public final EnumPath<com.ssg.bidssgket.user.domain.order.domain.enums.TransactionType> transactionType = createEnum("transactionType", com.ssg.bidssgket.user.domain.order.domain.enums.TransactionType.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;

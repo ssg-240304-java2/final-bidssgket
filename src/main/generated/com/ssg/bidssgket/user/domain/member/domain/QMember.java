@@ -50,15 +50,15 @@ public class QMember extends EntityPathBase<Member> {
 
     public final ListPath<com.ssg.bidssgket.user.domain.payment.domain.Payment, com.ssg.bidssgket.user.domain.payment.domain.QPayment> payments = this.<com.ssg.bidssgket.user.domain.payment.domain.Payment, com.ssg.bidssgket.user.domain.payment.domain.QPayment>createList("payments", com.ssg.bidssgket.user.domain.payment.domain.Payment.class, com.ssg.bidssgket.user.domain.payment.domain.QPayment.class, PathInits.DIRECT2);
 
+    public final StringPath phone = createString("phone");
+
     public final ListPath<com.ssg.bidssgket.user.domain.product.domain.Product, com.ssg.bidssgket.user.domain.product.domain.QProduct> products = this.<com.ssg.bidssgket.user.domain.product.domain.Product, com.ssg.bidssgket.user.domain.product.domain.QProduct>createList("products", com.ssg.bidssgket.user.domain.product.domain.Product.class, com.ssg.bidssgket.user.domain.product.domain.QProduct.class, PathInits.DIRECT2);
 
     public final ListPath<com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder, com.ssg.bidssgket.user.domain.order.domain.QPurchaseOrder> purchaseOrders = this.<com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder, com.ssg.bidssgket.user.domain.order.domain.QPurchaseOrder>createList("purchaseOrders", com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder.class, com.ssg.bidssgket.user.domain.order.domain.QPurchaseOrder.class, PathInits.DIRECT2);
 
     public final StringPath pwd = createString("pwd");
 
-    public final QReview reviewee;
-
-    public final QReview reviewer;
+    public final ListPath<Review, QReview> reviews = this.<Review, QReview>createList("reviews", Review.class, QReview.class, PathInits.DIRECT2);
 
     public final EnumPath<Role> role = createEnum("role", Role.class);
 
@@ -86,8 +86,6 @@ public class QMember extends EntityPathBase<Member> {
         super(type, metadata, inits);
         this.address = inits.isInitialized("address") ? new QAddress(forProperty("address")) : null;
         this.pay = inits.isInitialized("pay") ? new com.ssg.bidssgket.user.domain.payment.domain.QPay(forProperty("pay"), inits.get("pay")) : null;
-        this.reviewee = inits.isInitialized("reviewee") ? new QReview(forProperty("reviewee"), inits.get("reviewee")) : null;
-        this.reviewer = inits.isInitialized("reviewer") ? new QReview(forProperty("reviewer"), inits.get("reviewer")) : null;
     }
 
 }
