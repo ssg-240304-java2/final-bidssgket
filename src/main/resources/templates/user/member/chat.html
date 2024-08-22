@@ -221,7 +221,7 @@
             });
 
             // Enter 키로 메시지 전송 처리
-            $('#message-input').on('keydown', function (event) {
+            $('#message-input').on('keyup', function (event) {
                 if (event.key === 'Enter' && !event.shiftKey) { // Shift+Enter가 아닌 경우
                     event.preventDefault(); // 기본 Enter 동작(줄바꿈) 방지
 
