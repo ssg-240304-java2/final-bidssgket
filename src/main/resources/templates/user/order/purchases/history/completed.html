@@ -42,19 +42,19 @@
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/auction" class="block">
                                 <div>경매중</div>
-                                <div class="text-black-500">0</div>
+                                <div th:text="${purchaseAuctionItems.size()}" class="text-red-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/progress" class="block">
                                 <div>구매중</div>
-                                <div class="text-black-500">0</div>
+                                <div th:text="${purchaseTradingItems.size()}" class="text-black-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/completed" class="block">
                                 <div>구매 완료</div>
-                                <div class="text-red-500">0</div>
+                                <div th:text="${purchaseCompletedItems.size()}" class="text-black-500">0</div>
                             </a>
                         </div>
                     </div>
@@ -69,22 +69,41 @@
                             <tr class="text-left border-b text-gray-500 text-sm">
                                 <th class="px-4 py-2">제품명</th>
                                 <th class="px-4 py-2">결제 금액</th>
-                                <th class="px-4 py-2">종료 일자</th>
+                                <th class="px-4 py-2">결제 일자</th>
                                 <th class="px-4 py-2">상태</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr class="border-b">
+                            <tr th:each="product : ${purchaseCompletedItems}" class="border-b">
+                                <!-- 상품 이미지 및 상품명 -->
                                 <td class="flex items-center space-x-2 px-4 py-2">
-                                    <img src="https://placehold.co/100x100" alt="나이키 에어 줌 알파플라이 넥스트% 3 블루프린트 운동화" class="w-24 h-24 mr-4">
+                                    <div th:each="productImage : ${product.productImages}">
+                                        <img th:src="${productImage.productImg}"
+                                             th:alt="'Product image of ' + ${product.productName}"
+                                             style="width: 100px; height: 100px"
+                                             data-product-image="${productImage.productImg}">
+                                    </div>
                                     <div class="bg-white p-6 mb-8">
-                                        <a href="#" class="block text-lg font-medium">나이키 에어 줌 알파플라이 넥스트% 3 블루프린트</a>
-                                        <div class="text-gray-600">260</div>
+                                        <a th:href="@{/detailAuction/{no}(no=${product.productNo})}"
+                                           th:text="${product.productName}"
+                                           class="block text-lg font-medium"
+                                           data-product-name="${purchaseCompletedItems.product.productName}">
+                                            상품명
+                                        </a>
                                     </div>
                                 </td>
-                                <td class="px-4 py-2">300,000원</td>
-                                <td class="px-4 py-2">24/07/31</td>
-                                <td class="px-4 py-2">구매 완료</td>
+<!--                                &lt;!&ndash; 결제 금액 &ndash;&gt;-->
+<!--                                <td th:text="${product.purchaseOrder.get}" class="minTenderPrice px-4 py-2">-->
+<!--                                    결제 금액-->
+<!--                                </td>-->
+<!--                                &lt;!&ndash; 경매 참가일 &ndash;&gt;-->
+<!--                                <td th:text="${auction.tenderDate}" class="tenderDate px-4 py-2">-->
+<!--                                    경매 참가일-->
+<!--                                </td>-->
+<!--                                &lt;!&ndash; 상태 &ndash;&gt;-->
+<!--                                <td th:text="${auction.product.salesStatus}" class="salesStatus px-4 py-2">-->
+<!--                                    상태-->
+<!--                                </td>-->
                             </tr>
                             </tbody>
                         </table>

@@ -38,6 +38,9 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
     @Query(value = "SELECT a.* FROM auction a WHERE a.product_no = :productNo ORDER BY a.max_tender_price DESC", nativeQuery = true)
     List<Auction> findByProductNoOrderByMaxTenderPriceDesc(Long productNo);
 
+    @Query(value = "SELECT a.* FROM auction a WHERE a.member_no = :memberNo and a.bid_success = false ORDER BY a.tender_date DESC", nativeQuery = true)
+    List<Auction> findAuctionItemsByMember(Long memberNo);
+
     @Query(value = "SELECT COUNT(*) FROM auction a WHERE a.product_no = :productNo AND a.member_no = :memberNo AND a.tender_deleted='false'", nativeQuery = true)
     int findAuctionMember(Long productNo, Long memberNo);
 

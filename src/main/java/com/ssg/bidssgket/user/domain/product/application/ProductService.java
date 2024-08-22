@@ -189,6 +189,7 @@ public class ProductService {
         return auctionRepository.findAuctionByProductNo(productNo);
     }
 
+
     /***
      * 유찰된 상품 판매 재개 시 판매 상태 변화
      * @param productNo

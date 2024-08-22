@@ -34,7 +34,26 @@ public class PaymentReqDto {
     @NotNull
     private OrderTransactionType orderTransactionType; // 주문 거래 유형
 
-    public PaymentReqDto(String email, Long productNo, PaymentType paymentType, PaymentTransactionType paymentTransactionType, int paymentAmount, DeliveryType deliveryType, OrderTransactionType orderTransactionType) {
+    @NotNull
+    private String receiverName; // 받는 사람
+
+    @NotNull
+    private String contactNumber; // 연락처
+
+    @NotNull
+    private String postcode; // 우편번호
+
+    @NotNull
+    private String deliveryAddress; // 주소
+
+    @NotNull
+    private String detailAddress; // 상세 주소
+
+    @NotNull
+    private String deliveryRequest; // 배송 요청 사항
+
+    public PaymentReqDto(String email, Long productNo, PaymentType paymentType, PaymentTransactionType paymentTransactionType, int paymentAmount, DeliveryType deliveryType, OrderTransactionType orderTransactionType,
+                         String receiverName, String contactNumber, String postcode, String deliveryAddress, String detailAddress, String deliveryRequest) {
         this.email = email;
         this.productNo = productNo;
         this.paymentType = paymentType;
@@ -42,5 +61,12 @@ public class PaymentReqDto {
         this.paymentAmount = paymentAmount;
         this.deliveryType = deliveryType;
         this.orderTransactionType = orderTransactionType;
+
+        this.receiverName = receiverName;
+        this.contactNumber = contactNumber;
+        this.postcode = postcode;
+        this.deliveryAddress = deliveryAddress;
+        this.detailAddress = detailAddress;
+        this.deliveryRequest = deliveryRequest;
     }
 }

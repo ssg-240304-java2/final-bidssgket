@@ -50,8 +50,12 @@ public class SaleOrder extends BaseTimeAndDeleteEntity {
     @JoinColumn(name = "parcelNo")
     private Parcel parcel; // 택배 정보 [FK]
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deliveryAddressNo")
+    private DeliveryAddress deliveryAddress;
+
     @Builder
-    private SaleOrder(OrderTransactionType orderTransactionType, DeliveryType deliveryType, OrderStatus orderStatus, Member member, Product product, Payment payment, Parcel parcel) {
+    private SaleOrder(OrderTransactionType orderTransactionType, DeliveryType deliveryType, OrderStatus orderStatus, Member member, Product product, Payment payment, Parcel parcel, DeliveryAddress deliveryAddress) {
         this.orderTransactionType = orderTransactionType;
         this.deliveryType = deliveryType;
         this.orderStatus = orderStatus;
@@ -59,6 +63,7 @@ public class SaleOrder extends BaseTimeAndDeleteEntity {
         this.product = product;
         this.payment = payment;
         this.parcel = parcel;
+        this.deliveryAddress = deliveryAddress;
     }
 
     /**
@@ -70,9 +75,10 @@ public class SaleOrder extends BaseTimeAndDeleteEntity {
      * @param product 상품
      * @param payment 결제 정보
      * @param parcel 택배 정보
+     * @param deliveryAddress 배송지 정보
      * @return 생성된 SaleOrder 객체
      */
-    public static SaleOrder addSaleOrder(OrderTransactionType orderTransactionType, DeliveryType deliveryType, OrderStatus orderStatus, Member member, Product product, Payment payment, Parcel parcel) {
+    public static SaleOrder addSaleOrder(OrderTransactionType orderTransactionType, DeliveryType deliveryType, OrderStatus orderStatus, Member member, Product product, Payment payment, Parcel parcel, DeliveryAddress deliveryAddress) {
         return SaleOrder.builder()
                 .orderTransactionType(orderTransactionType)
                 .deliveryType(deliveryType)
@@ -81,6 +87,7 @@ public class SaleOrder extends BaseTimeAndDeleteEntity {
                 .product(product)
                 .payment(payment)
                 .parcel(parcel)
+                .deliveryAddress(deliveryAddress)
                 .build();
     }
 
@@ -117,5 +124,13 @@ public class SaleOrder extends BaseTimeAndDeleteEntity {
      */
     public void setParcel(Parcel parcel) {
         this.parcel = parcel;
+    }
+
+    /***
+     * 배송지 정보 설정 메서드
+     * @param deliveryAddress
+     */
+    public void setDeliveryAddress(DeliveryAddress deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
     }
 }
