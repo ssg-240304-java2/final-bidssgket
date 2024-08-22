@@ -30,6 +30,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final ListPath<com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember, com.ssg.bidssgket.user.domain.member.api.chat.model.QChatRoomMember> chatRoomMembers = this.<com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember, com.ssg.bidssgket.user.domain.member.api.chat.model.QChatRoomMember>createList("chatRoomMembers", com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember.class, com.ssg.bidssgket.user.domain.member.api.chat.model.QChatRoomMember.class, PathInits.DIRECT2);
 
+    public final ListPath<com.ssg.bidssgket.user.domain.order.domain.DeliveryAddress, com.ssg.bidssgket.user.domain.order.domain.QDeliveryAddress> deliveryAddress = this.<com.ssg.bidssgket.user.domain.order.domain.DeliveryAddress, com.ssg.bidssgket.user.domain.order.domain.QDeliveryAddress>createList("deliveryAddress", com.ssg.bidssgket.user.domain.order.domain.DeliveryAddress.class, com.ssg.bidssgket.user.domain.order.domain.QDeliveryAddress.class, PathInits.DIRECT2);
+
     public final StringPath email = createString("email");
 
     public final BooleanPath isDeleted = createBoolean("isDeleted");

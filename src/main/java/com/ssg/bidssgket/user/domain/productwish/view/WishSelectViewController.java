@@ -22,14 +22,10 @@ import java.util.Map;
 @RequestMapping("/wish")
 public class WishSelectViewController {
 
-    @Autowired
-    private ProductWishService productWishService;
-    @Autowired
-    private AuctionService auctionService;
-    @Autowired
-    private MemberService memberService;
-    @Autowired
-    private ProductService productService;
+    private final ProductWishService productWishService;
+    private final AuctionService auctionService;
+    private final MemberService memberService;
+    private final ProductService productService;
 
     @ResponseBody
     @PostMapping("/toggle")
