@@ -34,16 +34,16 @@ public class NotificationController {
     /**
      * 경매 참가 구독 -> 구매자들 구독
      */
-    @GetMapping(value = "/auction/subscribe/buyer", produces = "text/event-stream")
-    public SseEmitter subscribeAuction(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
-                                       @RequestParam(value = "productNo") Long productNo,
-                                       @RequestParam(value = "memberNo") Long memberNo) {
-
-        log.info("===== 경매 참가 Subscribe =====");
-
-
-        return notificationService.subscribeAuction(productNo, memberNo, "bid", lastEventId);
-    }
+//    @GetMapping(value = "/auction/subscribe/buyer", produces = "text/event-stream")
+//    public SseEmitter subscribeAuction(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
+//                                       @RequestParam(value = "productNo") Long productNo,
+//                                       @RequestParam(value = "memberNo") Long memberNo) {
+//
+//        log.info("===== 경매 참가 Subscribe =====");
+//
+//
+//        return notificationService.subscribeAuction(productNo, memberNo, "bid", lastEventId);
+//    }
 
 
 

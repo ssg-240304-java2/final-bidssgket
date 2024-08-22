@@ -100,7 +100,7 @@ public class AuctionViewController {
                 memberNo = memberRepository.findByEmail(email).get().getMemberNo();
             }
 
-            notificationService.subscribeProduct(productNo, memberNo, "bid");
+            notificationService.subscribeAuction(productNo, memberNo, "bid");
 
             /** ===== 알림 끝 =====*/
 
