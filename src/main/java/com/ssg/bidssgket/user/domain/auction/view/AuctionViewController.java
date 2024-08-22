@@ -38,15 +38,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/auction")
 public class AuctionViewController {
-    @Autowired
-    private AuctionService auctionService;
-    @Autowired
-    private ProductService productService;
+    private final AuctionService auctionService;
+    private final ProductService productService;
     private final MemberRepository memberRepository;
 
-    /*private final AuctionService auctionService;
-    private final ProductService productService;
-    private final MemberRepository memberRepository;*/
 
 
     /***

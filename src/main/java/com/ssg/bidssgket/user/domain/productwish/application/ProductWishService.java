@@ -11,6 +11,7 @@ import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import com.ssg.bidssgket.user.domain.productwish.domain.dto.MemberDTO;
 import com.ssg.bidssgket.user.domain.productwish.domain.dto.WishDTO;
 import com.ssg.bidssgket.user.domain.productwish.domain.repository.ProductWishRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,13 +22,11 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProductWishService {
-    @Autowired
-    private ProductWishRepository productWishRepository;
-    @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductWishRepository productWishRepository;
+    private final MemberRepository memberRepository;
+    private final ProductRepository productRepository;
 
     public void toggleWish(Long productNo, String email) {
         Member member = memberRepository.findByEmail(email)
