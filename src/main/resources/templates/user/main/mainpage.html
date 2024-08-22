@@ -134,7 +134,7 @@
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a th:href="@{/detail/{productNo}(productNo=${product.productNo})}" th:text="${product.productName}" style="text-decoration-line: none; color: black;"></a>
-                                <button class="wishheartbtn" th:onclick="toggleHeart(this, [[${product.productNo}]])">
+                                <button class="wishheartbtn" th:data-product-no="${product.productNo}" th:onclick="toggleHeart(this)">
                                     <img th:src="@{/user/main/images/redh.png}" th:if="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 있음" class="wishheart">
                                     <img th:src="@{/user/main/images/empty_heart2.png}" th:unless="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 없음" class="wishheart">
                                 </button>
@@ -172,8 +172,8 @@
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a th:href="@{/eventAuction/detail/{productNo}(productNo=${product.productNo})}" th:text="${product.productName}" style="text-decoration-line: none; color: black;"></a>
-                                <button class="wishheartbtn" th:onclick="toggleHeart(this, [[${product.productNo}]])">
-                                    <img th:src="@{/user/main/images/heart.png}" th:if="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 있음" class="wishheart">
+                                <button class="wishheartbtn" th:data-product-no="${product.productNo}" th:onclick="toggleHeart(this)">
+                                    <img th:src="@{/user/main/images/redh.png}" th:if="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 있음" class="wishheart">
                                     <img th:src="@{/user/main/images/empty_heart2.png}" th:unless="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 없음" class="wishheart">
                                 </button>
                             </h5>
@@ -192,7 +192,8 @@
 <!-- Bootstrap JS (for tab functionality) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function toggleHeart(button, productNo){
+    function toggleHeart(button) {
+        const productNo = button.getAttribute('data-product-no');
         const imgElement = button.children[0];
 
         fetch(`/wish/toggle`, {
@@ -200,13 +201,11 @@
             headers: {
                 "Content-type": 'application/json'
             },
-            body: JSON.stringify({ "productNo" : productNo })
+            body: JSON.stringify({ "productNo": productNo })
         }).then((res) => {
-            console.log(res);
             return res.text();
         })
             .then(result => {
-                console.log('--->', result);
                 if (result === "fail") {
                     window.location.href = "/login";
                 } else {
@@ -217,11 +216,11 @@
             .catch(error => console.error('Error:', error));
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // 모든 경매 종료 시간 요소를 선택
         const auctionEndTimes = document.querySelectorAll('[id^="auction-end-"]');
 
-        auctionEndTimes.forEach(function(element) {
+        auctionEndTimes.forEach(function (element) {
             let dateTime = element.textContent;
 
             // T를 /로 대체
@@ -244,8 +243,7 @@
         }
         fetch(`/wish/status?productNo=${productNo}`)
             .then(response => {
-                console.log(response);
-                response.json();
+                return response.json();
             })
             .then(isWished => {
                 const imgElement = button.querySelector('.wishheart');
