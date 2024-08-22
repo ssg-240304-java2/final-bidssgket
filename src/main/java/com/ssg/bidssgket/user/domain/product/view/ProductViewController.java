@@ -43,10 +43,8 @@ public class ProductViewController {
     private final ProductService productService;
     private final MemberRepository memberRepository;
     private final EventAuctionService eventAuctionService;
-    @Autowired
-    private AuctionService auctionService;
-    @Autowired
-    private ProductWishService productWishService;
+    private final AuctionService auctionService;
+    private final ProductWishService productWishService;
 
 
     @GetMapping("/register")
