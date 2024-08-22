@@ -28,6 +28,38 @@
             padding: 10px 20px;
             cursor: pointer;
         }
+        .btn-amount {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-amount:hover {
+            background-color: #f0f0f0;
+        }
+        .disabled {
+            background-color: #e0e0e0;
+            cursor: not-allowed;
+            color: #a0a0a0;
+        }
+        .enabled {
+            background-color: #4CAF50;
+            cursor: pointer;
+            color: #fff;
+        }
+        .btn-payment-method {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-payment-method.selected {
+            background-color: #e0f7fa;
+        }
     </style>
 </head>
 <body>
@@ -56,65 +88,61 @@
             </ul>
         </aside>
         <section class="flex-1 p-4" style="max-width: 1230px;">
-        <div class="mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg" style="width: 600px;">
-            <h1 class="text-xl font-bold mb-4">비스킷 페이 충전</h1>
-            <div class="mb-4 w-full text-right">
-                <span class="text-lg font-bold">보유 페이</span>
-                <span id="balance-display" class="text-lg">0원</span>
+            <div class="mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg" style="width: 600px;">
+                <h1 class="text-xl font-bold mb-4">비스킷 페이 충전</h1>
+                <div class="mb-4 w-full text-right">
+                    <span class="text-lg font-bold">보유 페이 : </span>
+                    <span th:text="${pay.getPayBalance()}" id="pay-balance" class="text-lg">0원</span>
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" id="amount-input" class="text-1xl p-2 w-96"
+                           placeholder="충전할 금액을 입력해 주세요."
+                           oninput="validateAmount(this)"
+                           onfocus="moveCursorToLeftOfSuffix(this)">
+                </div>
+                <div class="border-t border-gray-300 mb-4"></div>
+                <div class="grid grid-cols-4 gap-2">
+                    <button class="btn-amount" data-amount="10000">+1만</button>
+                    <button class="btn-amount" data-amount="50000">+5만</button>
+                    <button class="btn-amount" data-amount="100000">+10만</button>
+                    <button class="btn-amount" data-amount="1000000">+100만</button>
+                </div>
             </div>
-            <div class="input-wrapper">
-                <input type="text" id="amount-input" class="text-1xl p-2 w-96"
-                       placeholder="충전할 금액을 입력해 주세요.">
+            <div class="mx-auto mt-4 p-6 bg-white rounded-lg shadow-lg" style="width: 600px;">
+                <div class="flex justify-between items-center mb-4">
+                    <h1 class="text-xl font-bold">결제수단</h1>
+                </div>
+                <div class="flex gap-2 mb-4">
+                    <div class="btn-payment-method" id="payment-method-kakao" data-method="kakao">Kakao Pay</div>
+                    <!-- 다른 결제수단 버튼도 여기에 추가 가능 -->
+                </div>
+                <div>
+                    <div id="payment-method-error" class="text-red-500 mb-2 hidden">결제 수단을 선택해 주세요.</div>
+                    <button id="btn-submit" class="w-full py-4 text-white bg-gray-300 rounded-lg disabled" disabled>충전하기</button>
+                </div>
             </div>
-            <div class="border-t border-gray-300 mb-4"></div>
-            <div class="grid grid-cols-4 gap-2">
-                <button class="border border-gray-300 rounded py-2 text-center text-sm font-medium">+1만</button>
-                <button class="border border-gray-300 rounded py-2 text-center text-sm font-medium">+5만</button>
-                <button class="border border-gray-300 rounded py-2 text-center text-sm font-medium">+10만</button>
-                <button class="border border-gray-300 rounded py-2 text-center text-sm font-medium">+100만</button>
-            </div>
-        </div>
-        <div class="mx-auto mt-4 p-6 bg-white rounded-lg shadow-lg" style="width: 600px;">
-            <div class="flex justify-between items-center mb-4">
-                <h1 class="text-xl font-bold">결제수단</h1>
-            </div>
-            <div>
-                <buton id="btn-pay-ready">kakao pay <i class="fa-solid fa-comment"></i></buton>
-                <button class="w-full py-4 mt-6 text-white bg-gray-300 rounded-lg">충전하기</button>
-            </div>
-        </div>
         </section>
     </div>
 
     <script type="text/javascript">
-        // 카카오페이 결제 팝업창 연결
-        $(function() {
-            $("#btn-pay-ready").click(function(e) {
-                let data = {
-                    name: '비스킷 페이 충전', // 카카오페이에 보낼 대표 상품명
-                    totalPrice: 100000 // 총 결제 금액
-                }
-                $.ajax({
-                    url: '/user/payment/ready',
-                    type: 'POST',
-                    data: JSON.stringify(data),
-                    contentType: 'application/json',
-                    success: function(response) {
-                        location.href = response.next_redirect_pc_url;
-                    },
-                    error: function(xhr, err, status) {
-                        console.log(xhr.responseText);
-                        alert(err + "이(가) 발생했습니다: " + status);
-                    }
-                });
+        // 충전 금액을 입력란에 추가하는 기능
+        document.querySelectorAll('.btn-amount').forEach(button => {
+            button.addEventListener('click', function() {
+                const amount = this.getAttribute('data-amount');
+                const input = document.getElementById('amount-input');
+                let currentValue = input.value.replace(/[^\d]/g, ''); // 숫자만 추출
+                currentValue = parseInt(currentValue, 10) || 0; // 현재 값 가져오기
+                const newValue = currentValue + parseInt(amount, 10); // 새로운 값 계산
+                input.value = formatNumber(newValue) + '원'; // 새로운 값 포맷팅
+                input.classList.add('input-bold'); // 숫자가 입력되면 굵게 표시
+                moveCursorToLeftOfSuffix(input); // 커서 위치 조정
+                updateSubmitButtonState(); // 충전하기 버튼 상태 업데이트
             });
         });
-    </script>
 
-    <!-- 충전 금액 포맷팅 및 숫자 제한 -->
-    <script>
+        // 입력값 포맷팅 및 숫자만 입력받기
         function formatNumber(value) {
-            return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
 
         function moveCursorToLeftOfSuffix(input) {
@@ -126,36 +154,107 @@
             }
         }
 
-        document.getElementById('amount-input').addEventListener('input', function (e) {
-            let value = e.target.value.replace(/[^0-9]/g, ''); // 숫자가 아닌 문자 제거
+        function validateAmount(input) {
+            let value = input.value.replace(/[^0-9]/g, ''); // 숫자만 허용
             if (value) {
-                e.target.value = formatNumber(value) + '원'; // 숫자 포맷팅 및 "원" 추가
-                e.target.classList.add('input-bold'); // 숫자가 입력되면 굵게 표시
-                moveCursorToLeftOfSuffix(e.target);
+                input.value = formatNumber(value) + '원'; // 숫자 포맷팅
+                input.classList.add('input-bold'); // 숫자가 입력되면 굵게 표시
+                moveCursorToLeftOfSuffix(input); // 커서 위치 조정
+                updateSelectedAmount(parseInt(value, 10)); // 선택된 금액 업데이트
+                updateSubmitButtonState(); // 충전하기 버튼 상태 업데이트
             } else {
-                e.target.value = ''; // 입력값이 없으면 빈 문자열로 설정
-                e.target.classList.remove('input-bold'); // 숫자가 없으면 굵게 표시 제거
+                input.value = '';                 // 입력값이 없으면 빈 문자열
+                input.classList.remove('input-bold'); // 숫자가 없으면 굵게 표시 제거
+                updateSelectedAmount(0); // 선택된 금액 업데이트
+                updateSubmitButtonState(); // 충전하기 버튼 상태 업데이트
             }
-        });
+        }
 
-        document.getElementById('amount-input').addEventListener('keydown', function (e) {
-            const suffix = '원';
-            if (e.key === 'ArrowRight') {
-                const value = e.target.value;
-                if (value.endsWith(suffix)) {
-                    const cursorPosition = e.target.selectionStart;
-                    if (cursorPosition >= value.length - suffix.length) {
-                        e.preventDefault();
-                        moveCursorToLeftOfSuffix(e.target);
-                    }
+        function updateSelectedAmount(amount) {
+            const amountElement = document.getElementById('selected-amount');
+            if (amount > 0) {
+                amountElement.textContent = `충전할 금액: ${formatNumber(amount)}원`;
+            } else {
+                amountElement.textContent = '';
+            }
+        }
+
+        function updateSubmitButtonState() {
+            const amountInput = document.getElementById('amount-input');
+            const submitButton = document.getElementById('btn-submit');
+            const paymentMethodSelected = document.querySelector('.btn-payment-method.selected');
+            const amount = amountInput.value.replace(/[^\d]/g, '');
+            const errorElement = document.getElementById('payment-method-error');
+
+            if (amount && paymentMethodSelected) {
+                submitButton.classList.remove('bg-gray-300', 'disabled');
+                submitButton.classList.add('bg-green-500', 'enabled');
+                submitButton.disabled = false;
+                submitButton.textContent = `충전하기 (${formatNumber(amount)}원)`;
+                errorElement.classList.add('hidden'); // 오류 메시지 숨기기
+            } else {
+                submitButton.classList.remove('bg-green-500', 'enabled');
+                submitButton.classList.add('bg-gray-300', 'disabled');
+                submitButton.disabled = true;
+                submitButton.textContent = '충전하기';
+                if (!paymentMethodSelected) {
+                    errorElement.classList.remove('hidden'); // 오류 메시지 표시
                 }
             }
+        }
+
+        // 결제 수단 선택 기능
+        document.querySelectorAll('.btn-payment-method').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.btn-payment-method').forEach(btn => btn.classList.remove('selected'));
+                this.classList.add('selected');
+                updateSubmitButtonState(); // 결제 수단이 선택되었으므로 버튼 상태 업데이트
+            });
         });
 
-        document.getElementById('amount-input').addEventListener('mouseup', function (e) {
-            setTimeout(() => {
-                moveCursorToLeftOfSuffix(e.target);
-            }, 0);
+        document.getElementById('amount-input').addEventListener('input', function() {
+            updateSubmitButtonState(); // 입력값 변화에 따라 버튼 상태 업데이트
+        });
+
+        document.getElementById('btn-submit').addEventListener('click', function() {
+            const selectedPaymentMethod = document.querySelector('.btn-payment-method.selected');
+            if (!selectedPaymentMethod) {
+                alert('결제 수단을 선택해 주세요.');
+                return;
+            }
+
+            const amount = document.getElementById('amount-input').value.replace(/[^\d]/g, '');
+            if (!amount) {
+                alert('충전할 금액을 입력해 주세요.');
+                return;
+            }
+
+            if (selectedPaymentMethod.getAttribute('data-method') === 'kakao') {
+                const data = {
+                    name: '비스킷 페이 충전',
+                    totalPrice: parseInt(amount, 10)
+                };
+                $.ajax({
+                    url: '/user/payment/ready',
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        location.href = response.next_redirect_pc_url; // 카카오페이 결제 페이지로 리디렉션
+                    },
+                    error: function(xhr, err, status) {
+                        console.error('결제 준비 오류:', err);
+                    }
+                });
+            }
+            // 다른 결제 수단의 경우 추가 구현 필요
+        });
+
+        // 보유 잔액 포맷팅
+        document.addEventListener("DOMContentLoaded", function() {
+            const payBalanceElement = document.getElementById('pay-balance');
+            const payBalanceValue = parseInt(payBalanceElement.textContent.replace(/[^0-9]/g, ''), 10);
+            payBalanceElement.textContent = new Intl.NumberFormat('ko-KR').format(payBalanceValue) + '원';
         });
     </script>
 </main>

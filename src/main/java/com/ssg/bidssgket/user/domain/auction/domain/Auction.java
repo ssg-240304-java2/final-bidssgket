@@ -69,4 +69,5 @@ public class Auction{
     public void updateBidSuccess(boolean bidSuccess) {
         this.bidSuccess = bidSuccess;
     }
+
 }
