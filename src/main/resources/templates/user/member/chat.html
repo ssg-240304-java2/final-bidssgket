@@ -91,7 +91,7 @@
             </a>
             <ul class="space-y-2">
                 <li>
-                    <a href="/user/mypage" class="block text-left w-full font-bold text-black transform hover:scale-105 transition-transform duration-300">쇼핑 정보</a>
+                    <a href="/user/mypage" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">쇼핑 정보</a>
                 </li>
                 <li>
                     <a href="/user/order/purchases/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">구매 내역</a>
@@ -103,7 +103,7 @@
                     <a href="/user/payment/info" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">결제</a>
                 </li>
                 <li>
-                    <a href="/chat" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">채팅</a>
+                    <a href="/chat" class="block text-left w-full  font-bold text-black transform hover:scale-105 transition-transform duration-300">채팅</a>
                 </li>
             </ul>
         </aside>
@@ -111,10 +111,10 @@
         <div class="chat-container">
             <div class="chat-list">
                 <ul id="chatroom-list">
-<!--                    <li class="chat-item" data-chatroom="1" th:each="chatRoomMember : ${chatRoomMembers}">-->
+                    <!--                    <li class="chat-item" data-chatroom="1" th:each="chatRoomMember : ${chatRoomMembers}">-->
                     <li class="chat-item" th:each="chatRoomMember : ${chatRoomMembers}" th:data-chatroom-no="${chatRoomMember.chatRoom.chatRoomNo}">
                         <div class="chat-info">
-<!--                            <a th:href="@{|/chat/${chatRoomMember.chatRoomMemberNo}|}" >-->
+                            <!--                            <a th:href="@{|/chat/${chatRoomMember.chatRoomMemberNo}|}" >-->
                             <a href="#" class="chat-room-link">
                                 <span class="chat-title" th:text="${chatRoomMember.chatRoom.name}"></span>
                             </a>
@@ -130,10 +130,10 @@
                 <div id="chat-messages" class="chat-messages">
                     <div th:each="message : ${messages}">
                         <div class="message-container" th:classappend="${message.member.memberNo == memberNo} ? '' : 'your-message-container'">
-                        <div class="message" th:classappend="${message.member.memberNo == memberNo} ? 'my-message' : 'your-message'">
-                            <div class="message-content" th:text="${message.message}"></div>
-                            <div class="message-time" th:text="${#temporals.format(message.sentAt, 'yyyy.MM.dd HH:mm:ss')}"></div>
-                        </div>
+                            <div class="message" th:classappend="${message.member.memberNo == memberNo} ? 'my-message' : 'your-message'">
+                                <div class="message-content" th:text="${message.message}"></div>
+                                <div class="message-time" th:text="${#temporals.format(message.sentAt, 'yyyy.MM.dd HH:mm:ss')}"></div>
+                            </div>
                         </div>
                         <div class="member-name" th:text="${message.member.name}"></div>
                     </div>
