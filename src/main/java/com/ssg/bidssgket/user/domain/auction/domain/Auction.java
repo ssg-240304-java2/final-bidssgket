@@ -24,7 +24,7 @@ public class Auction{
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "memberNo")
     private Member member;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="productNo")
     private Product product;
 
@@ -69,4 +69,5 @@ public class Auction{
     public void updateBidSuccess(boolean bidSuccess) {
         this.bidSuccess = bidSuccess;
     }
+
 }

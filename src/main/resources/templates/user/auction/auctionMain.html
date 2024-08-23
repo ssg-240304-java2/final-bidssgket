@@ -46,8 +46,9 @@
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a th:href="@{/detail/{productNo}(productNo=${product.productNo})}" th:text="${product.productName}" style="text-decoration-line: none; color: black;"></a>
-                                <button class="wishheartbtn" onclick="toggleHeart(this)">
-                                    <img src="/user/main/images/empty_heart2.png" alt="관심 없음" class="wishheart">
+                                <button class="wishheartbtn" th:data-product-no="${product.productNo}" th:onclick="toggleHeart(this)">
+                                    <img th:src="@{/user/main/images/redh.png}" th:if="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 있음" class="wishheart">
+                                    <img th:src="@{/user/main/images/empty_heart2.png}" th:unless="${#lists.contains(wishedProductIds, product.productNo)}" alt="관심 없음" class="wishheart">
                                 </button>
                             </h5>
                             <p class="card-text">경매 종료: <span th:text="${product.auctionEndTime}" id="auction-end-1"></span></p>
@@ -105,19 +106,63 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function toggleHeart(button) {
-        const emptyHeart = "/user/images/empty_heart2.png";
-        const filledHeart = "/user/images/heart.png";
-        const imgElement = button.querySelector('.wishheart');
-        const currentSrc = imgElement.getAttribute('src');
+        const productNo = button.getAttribute('data-product-no');
+        const imgElement = button.children[0];
 
-        if (currentSrc === emptyHeart) {
-            imgElement.setAttribute('src', filledHeart);
-            imgElement.setAttribute('alt', '관심 있음');
-            console.log("하트가 채워짐");
-        } else {
-            imgElement.setAttribute('src', emptyHeart);
-            imgElement.setAttribute('alt', '관심 없음');
+        fetch(`/wish/toggle`, {
+            method: "POST",
+            headers: {
+                "Content-type": 'application/json'
+            },
+            body: JSON.stringify({ "productNo": productNo })
+        }).then((res) => {
+            return res.text();
+        })
+            .then(result => {
+                if (result === "fail") {
+                    window.location.href = "/login";
+                } else {
+                    const isWished = imgElement.src.includes('redh.png');
+                    imgElement.src = isWished ? '/user/main/images/empty_heart2.png' : '/user/main/images/redh.png';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // 모든 경매 종료 시간 요소를 선택
+        const auctionEndTimes = document.querySelectorAll('[id^="auction-end-"]');
+
+        auctionEndTimes.forEach(function (element) {
+            let dateTime = element.textContent;
+
+            // T를 /로 대체
+            let formattedDateTime = dateTime.replace('T', ' / ');
+
+            // 변경된 내용을 다시 요소에 할당
+            element.textContent = formattedDateTime;
+
+            document.querySelectorAll('.wishheartbtn').forEach(button => {
+                const productNo = button.getAttribute('data-product-no');
+                checkProductWishStatus(button, productNo);
+            });
+        });
+    });
+
+    function checkProductWishStatus(button, productNo) {
+        if (!productNo) {
+            console.error('없는 상품 번호');
+            return;
         }
+        fetch(`/wish/status?productNo=${productNo}`)
+            .then(response => {
+                return response.json();
+            })
+            .then(isWished => {
+                const imgElement = button.querySelector('.wishheart');
+                imgElement.src = isWished ? '/user/main/images/redh.png' : '/user/main/images/empty_heart2.png';
+            })
+            .catch(error => console.error('Error:', error));
     }
 </script>
 </body>

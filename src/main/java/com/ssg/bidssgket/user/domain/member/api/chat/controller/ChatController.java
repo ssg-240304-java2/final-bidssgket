@@ -8,10 +8,14 @@ import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember;
 import com.ssg.bidssgket.user.domain.member.api.chat.repository.ChatRoomMemberRepository;
 import com.ssg.bidssgket.user.domain.member.api.chat.repository.ChatRoomRepository;
 import com.ssg.bidssgket.user.domain.member.api.chat.service.ChatMessageService;
+import com.ssg.bidssgket.user.domain.member.api.chat.service.ChatRoomService;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.member.view.DTO.ChatMessageDto;
+import com.ssg.bidssgket.user.domain.product.domain.Product;
+import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,11 +43,12 @@ public class ChatController {
     private final MemberRepository memberRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ProductRepository productRepository;
+    private final ChatRoomService chatRoomService;
 
     @GetMapping
-    public String getChatPage(Model model, HttpSession session) {
-        // 사용자의 채팅방 목록 조회
-        SessionMember sessionMember = (SessionMember) session.getAttribute("member");
+    public String getChatPage(Model model, HttpServletRequest request) {
+        SessionMember sessionMember = (SessionMember) request.getSession().getAttribute("member");
         Member member = memberRepository.findByEmail(sessionMember.getEmail()).orElseThrow();
 
         List<ChatRoomMember> chatRoomMembers = member.getChatRoomMembers();
@@ -57,31 +62,59 @@ public class ChatController {
     }
 
     @GetMapping("/{chatRoomMemberNo}")
-    public String getMessagePage(@PathVariable Long chatRoomMemberNo, Model model, HttpSession session) {
-        // 각 채팅방별 내용 불러오기
-        SessionMember sessionMember = (SessionMember) session.getAttribute("member");
+    public String getMessagePage(@PathVariable Long chatRoomMemberNo, Model model, HttpServletRequest request) { // 각 채팅방별 내용 불러오기
+        SessionMember sessionMember = (SessionMember) request.getSession().getAttribute("member");
         Member member = memberRepository.findByEmail(sessionMember.getEmail()).orElseThrow();
-        List<ChatRoomMember> chatRoomMembers = member.getChatRoomMembers();
+        List<ChatRoomMember> chatRoomMembers = member.getChatRoomMembers(); //현재 사용자가 속한 모든 채팅방 조회
 
         ChatRoomMember chatRoomMember = chatRoomMemberRepository.findById(chatRoomMemberNo).orElseThrow();
         ChatRoom chatRoom = chatRoomMember.getChatRoom();
 
         Long chatRoomNo = chatRoom.getChatRoomNo();
-        Long memberNo = member.getMemberNo();
-        String chatRoomName = chatRoom.getName();
 
-        // 해당 채팅방의 메시지를 가져와서 DTO로 변환
-        List<ChatMessageResDto> messages = chatMessageService.findMessagesByChatRoomNo(chatRoomNo)
-                .stream()
-                .map(ChatMessageResDto::fromEntity)
-                .collect(Collectors.toList());
+        List<ChatMessage> messages = chatMessageService.findMessagesByChatRoomNo(chatRoomNo);
+
+        Long memberNo = member.getMemberNo();
+
+        String chatRoomName = chatRoom.getName();
 
         model.addAttribute("chatRoomMembers", chatRoomMembers);
         model.addAttribute("chatRoomName", chatRoomName);
         model.addAttribute("chatRoomNo", chatRoomNo);
-        model.addAttribute("messages", messages); // 메시지를 DTO로 변환하여 모델에 추가
+        model.addAttribute("messages", messages);
         model.addAttribute("memberNo", memberNo);
         return "/user/member/chat";
+    }
+
+    @PostMapping("/start")
+    public String startChat(@RequestParam Long productNo, HttpServletRequest request) {
+        SessionMember sessionMember = (SessionMember) request.getSession().getAttribute("member");
+        Member currentUser = memberRepository.findByEmail(sessionMember.getEmail()).orElseThrow();
+
+        // 상품 조회
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productNo));
+
+        // 기존 채팅방 조회
+        ChatRoom existingChatRoom = chatRoomService.findByProductNo(productNo);
+
+        if (existingChatRoom != null) {
+            // 이미 존재하는 채팅방으로 리디렉션
+            return "redirect:/chat/" + existingChatRoom.getChatRoomNo();
+        }
+
+        // 채팅방 생성
+        ChatRoom newChatRoom = chatRoomService.createRoom(productNo);
+
+        // 판매자와 현재 사용자 채팅방에 추가
+        Long sellerId = product.getMember().getMemberNo();
+        Long currentUserId = currentUser.getMemberNo();
+
+        chatRoomService.addMember(newChatRoom.getChatRoomNo(), sellerId);
+        chatRoomService.addMember(newChatRoom.getChatRoomNo(), currentUserId);
+
+        // 새로 생성된 채팅방으로 리디렉션
+        return "redirect:/chat/" + newChatRoom.getChatRoomNo();
     }
 
     @GetMapping("/messages")

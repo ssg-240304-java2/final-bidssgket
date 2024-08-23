@@ -8,6 +8,39 @@
     <title>마이 페이지</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .biscuit-container {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Ensure overflow is hidden to keep the image within bounds */
+        }
+
+        .biscuit-progress {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                    transparent 50%,
+                    transparent 100%
+            );
+            clip-path: circle(50% at 50% 50%);
+        }
+
+        .biscuit-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            transition: clip-path 0.3s ease;
+        }
+    </style>
 </head>
 <body>
 <main class="contents" layout:fragment="content">
@@ -43,22 +76,26 @@
                             <div class="bg-white text-blue-500 rounded-full h-8 w-8 flex justify-center items-center shadow-md">
                                 <i class="fas fa-cookie-bite"></i>
                             </div>
-                            <span id="user-nickname" class="text-white text-lg font-semibold">회원 닉네임</span>
+                            <span id="user-nickname" class="text-white text-lg font-semibold" th:text="${memberNickname}"></span>
                         </div>
                         <div class="bg-blue-700 p-4 rounded-lg shadow-lg mt-4">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-2 text-white">
                                     <span class="text-sm font-medium">비스킷 지수</span>
+                                    <div class="biscuit-container">
+                                        <div class="biscuit-progress"></div>
+                                        <img id="biscuitImage" src="https://kr.object.ncloudstorage.com/bidssgket-file/cookie.png" alt="Biscuit" class="biscuit-image">
+                                    </div>
                                 </div>
                                 <div class="flex items-center text-2xl font-bold text-orange-300 space-x-1">
-                                    <span>85</span>
+                                    <span id="biscuitValue" th:text="${biscuit}"></span>
                                 </div>
                             </div>
                             <div class="mt-2 relative">
                                 <div class="relative w-full h-2 bg-blue-300 rounded-full">
-                                    <div class="absolute top-0 left-0 h-2 bg-orange-300 rounded-full" style="width: 85%;"></div>
-                                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0.5 h-4 bg-yellow-300"></div>
-                                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -mt-2 text-yellow-300">
+                                    <div class="absolute top-0 left-0 h-2 bg-orange-300 rounded-full" th:style="'width: ' + ${biscuit} + '%'"></div>
+                                    <div th:style="'left: ' + ${biscuit} + '%'" class="absolute top-0 transform -translate-x-1/2 -translate-y-1/2 w-0.5 h-4 bg-yellow-300"></div>
+                                    <div th:style="'left: ' + ${biscuit} + '%'" class="absolute top-0 transform -translate-x-1/2 -translate-y-1/2 -mt-2 text-yellow-300">
                                         <i class="fas fa-star text-xs"></i>
                                     </div>
                                 </div>
@@ -67,7 +104,7 @@
                     </div>
                     <div class="flex justify-center space-x-4 mt-4">
                         <button class="bg-blue-700 text-white py-2 px-4 flex-1 rounded-lg shadow-md hover:bg-blue-800 transition-colors duration-200" onclick="window.location.href='/info'">회원 정보 조회</button>
-                        <button class="bg-blue-700 text-white py-2 px-4 flex-1 rounded-lg shadow-md hover:bg-blue-800 transition-colors duration-200">관심 상품 조회</button>
+                        <button class="bg-blue-700 text-white py-2 px-4 flex-1 rounded-lg shadow-md hover:bg-blue-800 transition-colors duration-200" onclick="window.location.href='/wish'">관심 상품 조회</button>
                     </div>
                 </div>
 
@@ -82,7 +119,7 @@
                         </div>
                         <div> </div>
                         <div class="flex justify-end mt-12">
-                            <div class="text-white text-2xl font-bold">0원</div>
+                            <div th:text="${pay.getPayBalance()}" id="pay-balance" class="text-white text-2xl font-bold">0원</div>
                         </div>
                     </div>
                     <div class="flex justify-center space-x-4 mt-4">
@@ -99,19 +136,19 @@
                 <div class="flex justify-between mt-4">
                     <div class="text-center w-1/4">
                         <p>전체</p>
-                        <p class="text-red-500 text-2xl">0</p>
+                        <p th:text="${purchaseAuctionItems.size() + purchaseTradingItems.size() + purchaseCompletedItems.size()}" class="text-red-500 text-2xl">0</p>
                     </div>
                     <div class="text-center w-1/4">
                         <p>경매중</p>
-                        <p class="text-black text-2xl">0</p>
+                        <p th:text="${purchaseAuctionItems.size()}" class="text-black text-2xl">0</p>
                     </div>
                     <div class="text-center w-1/4">
                         <p>구매 중</p>
-                        <p class="text-black text-2xl">0</p>
+                        <p th:text="${purchaseTradingItems.size()}" class="text-black text-2xl">0</p>
                     </div>
                     <div class="text-center w-1/4">
                         <p>구매 완료</p>
-                        <p class="text-black text-2xl">0</p>
+                        <p th:text="${purchaseCompletedItems.size()}" class="text-black text-2xl">0</p>
                     </div>
                 </div>
             </div>
@@ -123,24 +160,44 @@
                 <div class="flex justify-between mt-4">
                     <div class="text-center w-1/4">
                         <p>전체</p>
-                        <p class="text-green-500 text-2xl">0</p>
+                        <p th:text="${saleAuctionItems.size() + saleTradingItems.size() + saleCompletedItems.size()}" class="text-green-500 text-2xl">0</p>
                     </div>
                     <div class="text-center w-1/4">
                         <p>경매중</p>
-                        <p class="text-black text-2xl">0</p>
+                        <p th:text="${saleAuctionItems.size()}" class="text-black text-2xl">0</p>
                     </div>
                     <div class="text-center w-1/4">
                         <p>판매 중</p>
-                        <p class="text-black text-2xl">0</p>
+                        <p th:text="${saleTradingItems.size()}" class="text-black text-2xl">0</p>
                     </div>
                     <div class="text-center w-1/4">
                         <p>판매 완료</p>
-                        <p class="text-black text-2xl">0</p>
+                        <p th:text="${saleCompletedItems.size()}" class="text-black text-2xl">0</p>
                     </div>
                 </div>
             </div>
         </section>
     </div>
+    <script>
+        window.onload = function() {
+            var biscuitValue = parseInt(document.getElementById('biscuitValue').textContent.trim(), 10); // `biscuit` 값 가져오기
+            var biscuitImage = document.getElementById('biscuitImage');
+
+            var percentage = Math.min(biscuitValue, 100); // `biscuit` 값의 범위를 0%에서 100%로 제한
+
+            // 이미지의 클립 경로를 업데이트하여 표시 비율 조정
+            biscuitImage.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
+        };
+    </script>
+
+    <!-- 가격 포맷팅 -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const payBalanceElement = document.getElementById('pay-balance');
+            const payBalanceValue = parseInt(payBalanceElement.textContent.replace(/[^0-9]/g, ''), 10);
+            payBalanceElement.textContent = new Intl.NumberFormat('ko-KR').format(payBalanceValue) + '원';
+        });
+    </script>
 </main>
 </body>
 </html>

@@ -11,6 +11,7 @@ import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import com.ssg.bidssgket.user.domain.productwish.domain.dto.MemberDTO;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class AuctionService {
 

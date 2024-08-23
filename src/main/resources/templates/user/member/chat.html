@@ -49,6 +49,37 @@
             height: 400px;
             overflow-y: scroll;
         }
+        .message-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+
+        .message-content {
+            background-color: #F1F1F1;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .message-time {
+            font-size: 10px;
+            text-align: right;
+            margin-top: 5px;
+            color: #888888;
+        }
+
+        .member-name {
+            font-size: 12px;
+            text-align: left;
+            margin-top: 5px;
+            color: #555555;
+            margin-bottom: 15px;
+        }
+
+        .your-message-container .member-name {
+            text-align: right;
+        }
     </style>
 </head>
 <body>
@@ -101,8 +132,10 @@
                         <div class="message-container" th:classappend="${message.member.memberNo == memberNo} ? '' : 'your-message-container'">
                         <div class="message" th:classappend="${message.member.memberNo == memberNo} ? 'my-message' : 'your-message'">
                             <div class="message-content" th:text="${message.message}"></div>
+                            <div class="message-time" th:text="${#temporals.format(message.sentAt, 'yyyy.MM.dd HH:mm:ss')}"></div>
                         </div>
                         </div>
+                        <div class="member-name" th:text="${message.member.name}"></div>
                     </div>
                 </div>
                 <div class="chat-input">
@@ -134,36 +167,56 @@
                 stompClient.subscribe(`/pro/chatRoom/${chatRoomNo}`, function (messageOutput) {
                     const data = JSON.parse(messageOutput.body);
                     console.log("Received message: ", data); // 수신된 메시지를 콘솔에 출력
-                    showChatMessage(data);  // 새로운 메시지를 화면에 추가
+                    showChatMessage(data);  // ** 새로운 메시지를 화면에 추가 **
+                    showNotification(data);
                 });
             });
         }
 
         function sendChatMessage(chatMessage) {
-            // 클라이언트에서 서버로 전송할 메시지 객체 생성
             const message = {
                 memberNo: memberNo,
                 chatRoomNo: chatRoomNo,
                 message: chatMessage
             };
-            // 메시지를 지정된 경로로 전송
+            // ** WebSocket을 통해 메시지를 서버로 전송 **
             stompClient.send("/send/chat.sendMessage", {}, JSON.stringify(message));
-            console.log('Chat message sent: ' + chatMessage);
+            console.log('Chat message sent to server: ' + chatMessage);
         }
 
+        // ** 서버에서 받은 메시지를 화면에 추가하는 함수 **
         function showChatMessage(chatMessage) {
-
-            // 메시지를 보낸 사용자가 자신인지 확인하여 메시지의 스타일을 다르게 설정
             var messageClass = chatMessage.memberNo == memberNo ? 'my-message' : 'your-message';
             var messageContainerClass = chatMessage.memberNo == memberNo ? '' : 'your-message-container';
+
             // 채팅 메시지를 화면에 추가
             $("#chat-messages").append(
                 "<div class='message-container " + messageContainerClass + "'>" +
                 "<div class='message " + messageClass + "'>" + chatMessage.message +
                 "</div></div>"
             );
+
             // 스크롤을 최신 메시지 위치로 자동으로 이동
             $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
+        }
+
+        // ** 알림을 표시하는 함수 **
+        function showNotification(chatMessage) {
+            if (Notification.permission === "granted") {
+                const notification = new Notification("새로운 메세지가 도착했습니다📩", {
+                    body: chatMessage.message,
+                    icon: "/user/main/images/empty_heart2.png" // 원하는 아이콘 이미지 경로를 입력하세요
+                });
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        const notification = new Notification("새로운 메세지가 도착했습니다📩", {
+                            body: chatMessage.message,
+                            icon: "/user/main/images/empty_heart2.png"
+                        });
+                    }
+                });
+            }
         }
 
         $(document).ready(function () {
@@ -174,7 +227,6 @@
                 var chatItem = $(this).closest('.chat-item'); // 클릭된 링크의 부모 요소에서 채팅방 정보를 가져옴
                 chatRoomNo = chatItem.data('chatroom-no');  // 클릭된 채팅방 번호를 가져옴
 
-                // chatRoomNo가 undefined인지 확인
                 if (!chatRoomNo) {
                     console.error("Chat room number is undefined.");
                     return;
@@ -215,23 +267,32 @@
             $('#send-button').on('click', function () {
                 var chatMessage = $('#message-input').val(); // 입력된 메시지 가져오기
                 if (chatMessage && chatRoomNo) { // 메시지와 채팅방이 설정되어 있는지 확인
-                    sendChatMessage(chatMessage); // 메시지 전송
+                    sendChatMessage(chatMessage); // ** 서버로 메시지 전송 **
                     $('#message-input').val('');  // 입력 필드 초기화
                 }
             });
 
             // Enter 키로 메시지 전송 처리
-            $('#message-input').on('keydown', function (event) {
+            $('#message-input').on('keyup', function (event) {
                 if (event.key === 'Enter' && !event.shiftKey) { // Shift+Enter가 아닌 경우
                     event.preventDefault(); // 기본 Enter 동작(줄바꿈) 방지
 
                     var chatMessage = $('#message-input').val().trim(); // 메시지 입력 필드의 값을 가져오고 공백 제거
                     if (chatMessage !== '') { // 메시지가 비어 있지 않을 때만 전송
-                        sendChatMessage(chatMessage); // 메시지 전송
+                        sendChatMessage(chatMessage); // ** 서버로 메시지 전송 **
                         $('#message-input').val('');  // 입력 필드 초기화
                     }
                 }
             });
+
+            // ** 알림 권한 요청 **
+            if (Notification.permission !== "granted") {
+                Notification.requestPermission().then(permission => {
+                    if (permission !== "granted") {
+                        console.log("Notification permission denied.");
+                    }
+                });
+            }
         });
     </script>
 </main>

@@ -3,35 +3,14 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{user/fragments/layout}">
+
 <head>
     <meta charset="UTF-8">
-    <title>관심목록</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관심상품 목록</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif; /* 기본 글꼴 설정 */
-            margin: 0;
-            color: #333;
-        }
-
-        header {
-
-            padding: 0;
-            text-align: center;
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center; /* 가운데 정렬 */
-        }
-
-        .header img {
-            margin-right: 0.5rem; /* 이미지와 텍스트 사이의 간격 조절 */
-        }
-
-        .header h1 {
-            margin: 0; /* h1 태그의 기본 여백 제거 */
-        }
 
         main {
             display: flex;
@@ -45,6 +24,7 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            margin-top: -3rem;
         }
 
         .wishlist-item {
@@ -61,7 +41,6 @@
             width: 50px;
             height: 50px;
             object-fit: cover;
-
             margin-left: 2rem;
         }
 
@@ -98,41 +77,82 @@
         .remove-button:hover {
             background-color: #444;
         }
+
+        aside ul li a.active {
+            color: black;
+        }
+
+        .container {
+            display: inline-flex;
+            height: 60%;
+        }
     </style>
 </head>
-<body>
-<header>
-    <div class="header">
-        <img src="/css/heart.png" alt="Heart Icon" width="50" height="50">
-        <h1>관심상품 목록</h1>
-    </div>
-</header>
 
-<main>
-    <div class="wishlist-container">
-        <div class="wishlist-item">
-            <img src="image.png" alt="상품 이미지">
-            <div class="item-details">
-                <div class="item-name">상품이름</div>
-                <div class="item-price">상품가격</div>
+<body>
+<main class="contents" layout:fragment="content">
+    <div class="container">
+        <aside class="w-1/4" style="margin-left: 5%;">
+            <a href="/user/mypage" class="block">
+                <h2 class="text-2xl font-bold mb-4 transform hover:scale-105 transition-transform duration-300">마이 페이지</h2>
+            </a>
+            <ul class="space-y-2">
+                <li>
+                    <a href="/user/mypage" class="block text-left w-full font-bold text-black transform hover:scale-105 transition-transform duration-300">쇼핑 정보</a>
+                </li>
+                <li>
+                    <a href="/user/order/purchases/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">구매 내역</a>
+                </li>
+                <li>
+                    <a href="/user/order/sales/history/auction" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">판매 내역</a>
+                </li>
+                <li>
+                    <a href="/user/payment/info" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">결제</a>
+                </li>
+                <li>
+                    <a href="/chat" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">채팅</a>
+                </li>
+            </ul>
+        </aside>
+
+        <div class="w-3/4">
+
+            <div class="wishlist-container">
+                <div style="display: inline-flex;">
+                    <img src="https://kr.object.ncloudstorage.com/bidssgket-file/heart.png" alt="Heart Icon" width="50" height="50">
+                    <h1 style="margin-top: 1.8%;">관심상품 목록</h1>
+                </div>
+                <div th:each="wish : ${wishes}" class="wishlist-item">
+                    <a th:href="@{/detailBuyer(productNo=${wish.productDto.productNo})}" style="display: contents;">
+                        <img th:src="@{|${wish.productDto.productImageDto.productImg == null ? '/path/to/default/image.jpg' : wish.productDto.productImageDto.productImg}|}">
+                        <div class="item-details">
+                            <div class="item-name" th:text="${wish.productDto.productName}">상품이름</div>
+                            <div class="item-price" th:text="${wish.productDto.auctionStartPrice}">상품가격</div>
+                        </div>
+                    </a>
+                    <form th:action="@{/wishlist/delete}" method="post" style="display: inline;">
+                        <input type="hidden" name="productNo" th:value="${wish.productDto.productNo}">
+                        <button type="submit" class="remove-button">삭제</button>
+                    </form>
+                </div>
+
             </div>
-            <button class="remove-button">삭제</button>
-        </div>
-        <div class="wishlist-item">
-            <img src="image.png" alt="상품 이미지">
-            <div class="item-details">
-                <div class="item-name">상품이름</div>
-                <div class="item-price">상품가격</div>
+            <div style="width: 49%; margin-top: 1%; position : absolute; bottom : 0; margin-bottom: 5%;">
+                <ul class="flex justify-center space-x-2">
+                    <li th:if="${currentPage > 0}">
+                        <a th:href="@{/wish(page=${currentPage - 1})}" class="block p-2 border border-gray-300">이전</a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                        <a th:href="@{/wish(page=${i})}"
+                           th:text="${i + 1}"
+                           th:classappend="${i == currentPage} ? 'font-bold text-black-500' : ''"
+                           class="block p-2 border border-gray-300"></a>
+                    </li>
+                    <li th:if="${currentPage + 1 < totalPages}">
+                        <a th:href="@{/wish(page=${currentPage + 1})}" class="block p-2 border border-gray-300">다음</a>
+                    </li>
+                </ul>
             </div>
-            <button class="remove-button">삭제</button>
-        </div>
-        <div class="wishlist-item">
-            <img src="image.png" alt="상품 이미지">
-            <div class="item-details">
-                <div class="item-name">상품이름</div>
-                <div class="item-price">상품가격</div>
-            </div>
-            <button class="remove-button">삭제</button>
         </div>
     </div>
 </main>

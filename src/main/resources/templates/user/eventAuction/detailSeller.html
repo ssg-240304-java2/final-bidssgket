@@ -46,7 +46,6 @@
           <h3>경매 종료:</h3>
           <h3 id="timer" class="ml-3"></h3>
         </div>
-          <button class="btn btn-success">채팅하기</button> <!-- 채팅하기 버튼 추가 -->
         </div>
         <div class="auction-header">
           <select id="auctionType" class="form-control mb-3" th:value="${product.salesStatus}" disabled>
@@ -161,33 +160,42 @@
     };
 
 
-    document.getElementById('updateBtn').addEventListener('click',function (){
-      let productNo = [[${product.productNo}]];
-      location.href = '/update/'+ productNo;
-    });
+    document.getElementById("submitReport").addEventListener('click', function() {
+      // FormData 객체를 생성합니다.
+      const formData = new FormData();
 
-    document.getElementById('deleteBtn').addEventListener('click',function (){
-      let productNo = [[${product.productNo}]];
+      // FormData에 데이터를 추가합니다.
+      formData.append('memberNo', document.getElementById("memberNo").value);
+      formData.append('productNo', document.getElementById("productNo").value);
+      formData.append('complainContent', document.getElementById("reportReason").value);
+      formData.append('acceptance', 'waiting');
+
+      // AJAX 요청을 jQuery로 보냅니다.
       $.ajax({
-        url: '/api/products/delete?productNo=' + productNo,
-        type: 'delete',
-        data: productNo,
-        success: function (){
-          alert("삭제에 성공하였습니다!!🚮")
-          location.href = '/';
+        url: '/api/products/report', // 서버로 요청을 보낼 URL입니다.
+        type: 'POST', // 요청 타입을 POST로 설정합니다.
+        processData: false, // 기본적으로 jQuery는 데이터를 쿼리 문자열로 처리하지만, FormData를 사용하면 이를 false로 설정해야 합니다.
+        contentType: false, // 기본적으로 jQuery는 application/x-www-form-urlencoded를 사용하지만, FormData를 사용하면 contentType을 false로 설정해야 합니다.
+        data: formData, // FormData 객체를 데이터로 전송합니다.
+        success: function(response) {
+          alert("신고가 접수되었습니다.");
+          $('#reportModal').modal('hide'); // 신고 접수 후 모달을 닫습니다.
+          window.location.href = '/detailAuction/' + document.getElementById("productNo").value; // 특정 페이지로 리디렉션합니다.
         },
-        error: function () {
-          alert("삭제 실패!!!!!")
+        error: function(error) {
+          alert("신고 접수에 실패했습니다.");
         }
       });
     });
+
   </script>
   <script th:inline="javascript">
     var stompClient = null;
     var productNo = [[${product.productNo}]];
     var memberNo = [[${memberNo}]];
     var minTenderPrice = [[${lastPrice}]];
-    var email = [[${member.email}]]
+    var email = [[${member}]]
+
 
     function connectAndSubscribe() {
       var socket = new SockJS('/ws-stomp');
@@ -208,16 +216,17 @@
         memberNo: memberNo,
         productNo: productNo,
         maxTenderPrice: bidAmount,
-        minTenderPrice: minTenderPrice
+        minTenderPrice: minTenderPrice,
       };
       stompClient.send(`/send/auction`, {}, JSON.stringify(message));
       console.log('Bid sent: ' + bidAmount);
     }
 
     function showBid(bidMessage) {
+      var maskedEmail = maskEmail(bidMessage.email);
       $("#bidding").prepend(
               "<tr>" +
-              "<td>" + "실시간 입찰자" + "</td>" +
+              "<td>" + maskedEmail + "</td>" +
               "<td>" + bidMessage.maxTenderPrice + " 원" + "</td>" +
               "<td>" + new Date().toLocaleString() + "</td>" +
               "</tr>"

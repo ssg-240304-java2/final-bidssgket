@@ -1,6 +1,9 @@
 package com.ssg.bidssgket.user.domain.order.application;
 
+import com.ssg.bidssgket.user.domain.auction.domain.Auction;
+import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
+import com.ssg.bidssgket.user.domain.order.domain.DeliveryAddress;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
 import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
 import com.ssg.bidssgket.user.domain.order.domain.enums.DeliveryType;
@@ -10,10 +13,14 @@ import com.ssg.bidssgket.user.domain.order.domain.repository.PurchaseOrderReposi
 import com.ssg.bidssgket.user.domain.order.domain.repository.SaleOrderRepository;
 import com.ssg.bidssgket.user.domain.payment.domain.Payment;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
+@Slf4j
 public class OrderService {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
@@ -25,7 +32,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void createOrders(Member member, Product product, Payment payment, OrderTransactionType orderTransactionType, DeliveryType deliveryType) {
+    public void createOrders(Member member, Product product, Payment payment, OrderTransactionType orderTransactionType, DeliveryType deliveryType, DeliveryAddress deliveryAddress) {
 
         OrderStatus orderStatus = determineOrderStatus(deliveryType);
 
@@ -37,7 +44,8 @@ public class OrderService {
                 member,
                 product,
                 deliveryType == DeliveryType.ESCROW ? payment : null,
-                null // 초기에는 Parcel 정보가 없을 수 있음
+                null, // 초기에는 Parcel 정보가 없을 수 있음
+                deliveryType == DeliveryType.ESCROW ? deliveryAddress : null
         );
 
         // 구매 주문서 저장
@@ -51,7 +59,8 @@ public class OrderService {
                 member,
                 product,
                 deliveryType == DeliveryType.ESCROW ? payment : null,
-                null // 초기에는 Parcel 정보가 없을 수 있음
+                null, // 초기에는 Parcel 정보가 없을 수 있음
+                deliveryType == DeliveryType.ESCROW ? deliveryAddress : null
         );
 
         // 판매 주문서 저장
