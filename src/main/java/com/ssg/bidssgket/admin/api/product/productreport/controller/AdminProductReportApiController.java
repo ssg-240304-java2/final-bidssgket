@@ -28,7 +28,7 @@ public class AdminProductReportApiController {
     @GetMapping("/waiting/list")
     public ResponseEntity<Page<AdminProductReportResDto>> getWaitingProductReportList(@PageableDefault(size = 32, sort="complainDate", direction = Sort.Direction.DESC) Pageable pageable){
 
-        log.info("==== get waiting product report List ====");
+        log.info("==== Get waiting product report List ====");
 
         Page<AdminProductReportResDto> productReportList = adminProductService.getWaitingProductReportList(pageable);
 
@@ -43,7 +43,7 @@ public class AdminProductReportApiController {
     @GetMapping("/approval/list")
     public ResponseEntity<Page<AdminProductReportResDto>> getApproveProductReportList(@PageableDefault(size = 32, sort="complainDate", direction = Sort.Direction.DESC) Pageable pageable){
 
-        log.info("==== get approval product report List ====");
+        log.info("==== Get approval product report List ====");
 
         Page<AdminProductReportResDto> productReportList = adminProductService.getApprovalProductReportList(pageable);
 
@@ -57,7 +57,8 @@ public class AdminProductReportApiController {
     @GetMapping("/rejection/list")
     public ResponseEntity<Page<AdminProductReportResDto>> getRejectProductReportList(@PageableDefault(size = 32, sort="complainDate", direction = Sort.Direction.DESC) Pageable pageable){
 
-        log.info("==== get rejection product report List ====");
+        log.info("==== Get rejection product report List ====");
+
 
         Page<AdminProductReportResDto> productReportList = adminProductService.getRejectionProductReportList(pageable);
 
@@ -68,11 +69,13 @@ public class AdminProductReportApiController {
     /**
      * 상품 신고 승인
      */
-    @PutMapping("/approval/{complainNo}")
+    @PostMapping("/approval/{complainNo}")
     public ResponseEntity<String> approveProductReport(@PathVariable(name = "complainNo") Long complainNo){
+        log.info("==== Approve product report ====");
+
         adminProductService.approveProductReport(complainNo);
 
-        return new ResponseEntity<>("성공적으로 승인했습니다..", HttpStatus.OK);
+        return new ResponseEntity<>("성공적으로 승인했습니다.", HttpStatus.OK);
     }
 
 
@@ -82,6 +85,8 @@ public class AdminProductReportApiController {
      */
     @PutMapping("/rejection/{complainNo}")
     public ResponseEntity<String> rejectProductReport(@PathVariable(name = "complainNo") Long complainNo){
+        log.info("==== Reject product report ====");
+
         adminProductService.rejectProductReport(complainNo);
 
         return new ResponseEntity<>("성공적으로 반려했습니다.", HttpStatus.OK);
