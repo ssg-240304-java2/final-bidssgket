@@ -1,6 +1,5 @@
 package com.ssg.bidssgket.admin.view.admin.product;
 
-import com.ssg.bidssgket.admin.api.member.application.AdminMemberApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -28,7 +27,7 @@ public class AdminProductViewController {
 
 
     /**
-     * 상품 목록 조회 페이지
+     * 상품 상세 조회 페이지
      */
     @GetMapping("/info/{productNo}")
     public String productInfoPage() {
