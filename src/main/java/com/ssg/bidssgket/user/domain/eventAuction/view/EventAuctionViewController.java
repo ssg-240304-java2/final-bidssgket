@@ -152,6 +152,7 @@ public class EventAuctionViewController {
         model.addAttribute("product", product);
         List<Auction> auctions = productService.findAuctionByProductNo(productNo);
         model.addAttribute("auctions", auctions);
+        model.addAttribute("member", member);
         return "user/eventAuction/detailSeller";
     }
 
