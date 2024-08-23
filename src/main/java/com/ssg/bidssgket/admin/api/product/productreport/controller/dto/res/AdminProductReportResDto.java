@@ -1,6 +1,7 @@
 package com.ssg.bidssgket.admin.api.product.productreport.controller.dto.res;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ssg.bidssgket.user.domain.product.domain.Acceptance;
 import com.ssg.bidssgket.user.domain.product.domain.ProductReport;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,7 +29,16 @@ public class AdminProductReportResDto {
         this.complainContent = productReport.getComplainContent();
         this.complainDate = productReport.getComplainDate();
         this.memberNo = productReport.getMember().getMemberNo();
-        this.acceptance = "";
+        if(productReport.getAcceptance().equals(Acceptance.waiting)){
+            this.acceptance = "대기";
+        }
+        else if(productReport.getAcceptance().equals(Acceptance.approval)){
+            this.acceptance = "승인";
+        }
+        else{
+            this.acceptance = "반려";
+        }
+
     }
 
 }

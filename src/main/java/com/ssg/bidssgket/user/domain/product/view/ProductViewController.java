@@ -1,8 +1,8 @@
 package com.ssg.bidssgket.user.domain.product.view;
 
 import com.ssg.bidssgket.user.domain.auction.application.AuctionService;
+import com.ssg.bidssgket.admin.notification.NotificationService;
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
-import com.ssg.bidssgket.user.domain.auction.domain.repository.AuctionRepository;
 import com.ssg.bidssgket.user.domain.eventAuction.application.EventAuctionService;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
@@ -44,10 +44,10 @@ public class ProductViewController {
     private final MemberRepository memberRepository;
     private final EventAuctionService eventAuctionService;
     private final AuctionService auctionService;
-    private final ProductWishService productWishService;
+    private final NotificationService notificationService;
 
 
-    @GetMapping("/register")
+    @GetMapping(value = "/register", produces = "text/event-stream")
     public String registController(Model model, HttpSession httpSession) {
         String member = ((SessionMember) httpSession.getAttribute("member")).getEmail();
         Optional<Member> memberInfo = memberRepository.findByEmail(member);
@@ -63,16 +63,30 @@ public class ProductViewController {
         return "user/product/register";
     }
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register", produces = "text/event-stream")
     public String registProduct(@ModelAttribute RegistProductReqDto registProductReqDto,
                                 @RequestParam("productImages")List<MultipartFile> productImages,
                                 HttpSession httpSession) {
         System.out.println("registProductReqDto.getMemberNo() = " + registProductReqDto.getMemberNo());
-        productService.registProduct(registProductReqDto, productImages);
+        Product product = productService.registProduct(registProductReqDto, productImages);
+
+        /** ===== 알림 시작, 상품 등록 구독 -> 판매자 구독 =====*/
+        String email = null;
+        Long memberNo = null;
+        if (httpSession.getAttribute("member") != null) {
+            email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
+            System.out.println("email = " + email);
+            memberNo = memberRepository.findByEmail(email).get().getMemberNo();
+        }
+
+        notificationService.subscribeProduct(product.getProductNo(), memberNo, "product");
+
+        /** ===== 알림 끝 =====*/
+
         return "redirect:/list";
     }
 
-    @GetMapping("/update/{productNo}")
+    @GetMapping(value = "/update/{productNo}", produces = "text/event-stream")
     public String updatePageController(Model model, @PathVariable("productNo") Long productNo) {
         log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
@@ -88,12 +102,12 @@ public class ProductViewController {
     }
 
 
-    @GetMapping("/bidFailed")
+    @GetMapping(value = "/bidFailed", produces = "text/event-stream")
     public String bidFailedController() {
         return "/user/product/bidFailed";
     }
 
-    @GetMapping("/bidSuccess")
+    @GetMapping(value = "/bidSuccess", produces = "text/event-stream")
     public String bidSuccessController() {
         return "/user/product/bidSuccess";
     }
@@ -126,7 +140,7 @@ public class ProductViewController {
         return "user/product/detailBuyer";
     }
 
-    @GetMapping("/detailSeller/{productNo}")
+    @GetMapping(value = "/detailSeller/{productNo}", produces = "text/event-stream")
     public String detailSellerController(Model model, @PathVariable("productNo") Long productNo) {
         log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
