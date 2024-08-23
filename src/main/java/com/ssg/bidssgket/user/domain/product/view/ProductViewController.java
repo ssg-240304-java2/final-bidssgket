@@ -45,6 +45,7 @@ public class ProductViewController {
     private final EventAuctionService eventAuctionService;
     private final AuctionService auctionService;
     private final NotificationService notificationService;
+    private final ProductWishService productWishService;
 
 
     @GetMapping(value = "/register", produces = "text/event-stream")
