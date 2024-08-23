@@ -43,6 +43,8 @@ public class QProduct extends EntityPathBase<Product> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
+    public final com.ssg.bidssgket.user.domain.order.domain.QDeliveryAddress deliveryAddress;
+
     public final BooleanPath eventAuction = createBoolean("eventAuction");
 
     public final BooleanPath imdPurchase = createBoolean("imdPurchase");
@@ -60,8 +62,6 @@ public class QProduct extends EntityPathBase<Product> {
     public final ListPath<ProductReport, QProductReport> productReports = this.<ProductReport, QProductReport>createList("productReports", ProductReport.class, QProductReport.class, PathInits.DIRECT2);
 
     public final com.ssg.bidssgket.user.domain.order.domain.QPurchaseOrder purchaseOrder;
-
-    public final com.ssg.bidssgket.user.domain.member.domain.QReview review;
 
     public final com.ssg.bidssgket.user.domain.order.domain.QSaleOrder saleOrder;
 
@@ -88,9 +88,9 @@ public class QProduct extends EntityPathBase<Product> {
 
     public QProduct(Class<? extends Product> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.deliveryAddress = inits.isInitialized("deliveryAddress") ? new com.ssg.bidssgket.user.domain.order.domain.QDeliveryAddress(forProperty("deliveryAddress"), inits.get("deliveryAddress")) : null;
         this.member = inits.isInitialized("member") ? new com.ssg.bidssgket.user.domain.member.domain.QMember(forProperty("member"), inits.get("member")) : null;
         this.purchaseOrder = inits.isInitialized("purchaseOrder") ? new com.ssg.bidssgket.user.domain.order.domain.QPurchaseOrder(forProperty("purchaseOrder"), inits.get("purchaseOrder")) : null;
-        this.review = inits.isInitialized("review") ? new com.ssg.bidssgket.user.domain.member.domain.QReview(forProperty("review"), inits.get("review")) : null;
         this.saleOrder = inits.isInitialized("saleOrder") ? new com.ssg.bidssgket.user.domain.order.domain.QSaleOrder(forProperty("saleOrder"), inits.get("saleOrder")) : null;
     }
 

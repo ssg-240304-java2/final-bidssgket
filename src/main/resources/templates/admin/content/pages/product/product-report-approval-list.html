@@ -17,7 +17,7 @@
 
 	</style>
 
-	<h1 class="mt-4">상품 신고 목록</h1>
+	<h1 class="mt-4">상품 신고 승인 목록</h1>
 <!--	<ol class="breadcrumb mb-4">-->
 <!--		<li class="breadcrumb-item active">회원 신고 목록</li>-->
 <!--	</ol>-->
@@ -41,7 +41,7 @@
 
 								$.ajax({
 									type: "GET",
-									url: "/admin/api/product/report/list?page="+page, //여기 api 따
+									url: "/admin/api/product/report/approval/list?page="+page, //여기 api 따
 									// dataType: "json",
 									success: function (productReportList) {
 										const option = {
@@ -62,8 +62,7 @@
 														<th scope="col">상품번호</th>
 														<th scope="col">신고자 회원번호</th>
 														<th scope="col">신고일자</th>
-														<th scope="col">신고내용</th>
-														<th scope="col">반려</th>
+														<th scope="col" >신고내용</th>
 													</tr>
 													`
 										)
@@ -77,10 +76,7 @@
 															<th scope="col">${productReport.productNo}</th>
 															<th scope="col">${productReport.memberNo}</th>
 															<th scope="col">${productReport.complainDate}</th>
-															<th scope="col">${productReport.complainContent}</th>
-															<th scope="col">
-																<button onclick="reject(${productReport.complainNo})"></button>
-															</th>
+															<th scope="col" style="max-width: 800px">${productReport.complainContent}</th>
 														</tr>
 														`
 											);
@@ -140,78 +136,6 @@
 							})
 
 
-							function clickPage(page){
-
-								$.ajax({
-									type: "GET",
-									url: "/admin/api/product/report/list?page="+page, //여기 api 따
-									// dataType: "json",
-									success: function (productReportList) {
-										const option = {
-											maximumFractionDigits: 4
-										};
-
-
-										let productReportListSpace = $("#productReportListSpace");
-										productReportListSpace.empty();
-										makePagenation(productReportList);
-
-										console.log(productReportList);
-
-										productReportListSpace.append(
-												`
-													<tr>
-														<th scope="col">신고번호</th>
-														<th scope="col">상품번호</th>
-														<th scope="col">신고자 회원번호</th>
-														<th scope="col">신고일자</th>
-														<th scope="col">신고내용</th>
-														<th scope="col">반려</th>
-													</tr>
-													`
-										)
-
-
-										productReportList.content.forEach(function(productReport){
-											productReportListSpace.append(
-													`
-														<tr>
-															<th scope="col">${productReport.complainNo}</th>
-															<th scope="col">${productReport.productNo}</th>
-															<th scope="col">${productReport.memberNo}</th>
-															<th scope="col">${productReport.complainDate}</th>
-															<th scope="col">${productReport.complainContent}</th>
-															<th scope="col">
-																<button onclick="reject(${productReport.complainNo})">반려</button>
-															</th>
-														</tr>
-														`
-											);
-
-										})
-
-									},
-									error: function () {
-										// alert("현재 신고된 유저가 존재하지 않습니다!");
-									}
-								})
-							}
-
-							function reject(complainNo){
-
-								$.ajax({
-									type: "DELETE",
-									url: "/admin/api/product/report/"+complainNo, //여기 api 따
-									// dataType: "json",
-									success: function (success) {
-										alert(success);
-										location.reload(true);
-									},
-									error: function () {
-										// alert("현재 신고된 유저가 존재하지 않습니다!");
-									}
-								})
-							}
 
 						</script>
 					</div>
