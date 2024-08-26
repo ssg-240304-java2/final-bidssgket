@@ -16,7 +16,7 @@
 <main class="contents" layout:fragment="content">
   <div class="container mt-5">
     <div class="header mb-4">
-      <h2 class="title">상품 등록</h2>
+      <h2 class="title">번개 경매 등록</h2>
       <hr class="title-underline">
     </div>
     <form th:action="@{/eventAuction/regist}" th:object="${registProductReqDto}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
@@ -97,8 +97,28 @@
     document.getElementById('productImages').addEventListener('change', function(event) {
       const files = event.target.files;
       const thumbnailContainer = document.getElementById('thumbnailContainer');
+      const maxTotalFileSize = 24 * 1024 * 1024; // 24MB
+      let totalFileSize = 0;
+
       thumbnailContainer.innerHTML = ''; // Clear previous thumbnails
+
+      if (files.length > 6) {
+        alert('사진은 최대 6장까지만 업로드할 수 있습니다.');
+        event.target.value = ''; // 파일 선택 초기화
+        return;
+      }
+
       for (let i = 0; i < files.length; i++) {
+
+        totalFileSize += files[i].size; // 파일 크기를 총합에 더함
+
+        if (totalFileSize > maxTotalFileSize) {
+          alert('사진의 총 용량이 24MB를 초과했습니다. 다시 선택해주세요.');
+          event.target.value = ''; // 파일 선택 초기화
+          thumbnailContainer.innerHTML = ''; // 미리보기 이미지 삭제
+          return;
+        }
+
         const reader = new FileReader();
         reader.onload = function(e) {
           const img = document.createElement('img');

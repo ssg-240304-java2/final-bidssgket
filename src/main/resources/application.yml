@@ -2,20 +2,21 @@ server:
   port: 8080
 
 spring:
-  spring:
-    servlet:
-      multipart:
-        max-file-size: 50MB
-        max-request-size: 50MB
-  thymeleaf:
-    cache: false
   profiles:
     include:
-#      - dev
-#      - oauth
+      #      - dev
+      #      - oauth
       - local
       - local-oauth
+
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+
+  thymeleaf:
+    cache: false
+
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
