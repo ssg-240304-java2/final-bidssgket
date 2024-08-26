@@ -331,21 +331,16 @@
       <h1>Create Account</h1>
       <br>
       <input type="text" placeholder="이름" />
+      <input type="text" placeholder="닉네임"/>
       <input type="email" placeholder="아이디" />
-      <input type="password" placeholder="비밀번호" />
-      <div class="id">
-        <input type="text" placeholder="주민등록번호" maxlength="6" style="width: 45%;" />
-        <span style="margin: 0 5px;">-</span>
-        <input type="text" maxlength="7" style="width: 45%;" />
-      </div>
-      <input type="text" placeholder="닉네임" />
-      <input type="text" placeholder="전화번호('-'제외)" />
+      <input type="password" placeholder="비밀번호 영문,특수문자 " />
+      <input type="text" placeholder="전화번호('-'포함)" />
       <div class="postal-container">
-        <input type="text" placeholder="우편번호" id="postalCode" />
-        <button type="button" id="addressSearch">주소찾기</button>
+        <input type="text" id="postcode" name="postcode" placeholder="우편번호"/>
+        <button type="button" onclick="sample6_execDaumPostcode()" id="search-address-button" class="search-address-button">주소 찾기</button>
       </div>
-      <input type="text" placeholder="도로명주소" />
-      <input type="text" placeholder="상세주소" />
+      <input type="text"  id="address" name="address" placeholder="주소" />
+      <input type="text" id="detailAddress" name="detailAddress" placeholder="상세주소" />
       <button style="margin-top: 20px">sign up</button>
     </form>
   </div>
@@ -459,6 +454,44 @@
       )`;
     cookieImage.style.transform = `rotate(${rotation}deg)`;
   });
+
+  function sample6_execDaumPostcode() {
+    new daum.Postcode({
+      oncomplete: function(data) {
+        var addr = ''; // 주소 변수
+        var extraAddr = ''; // 참고항목 변수
+
+        if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+          addr = data.roadAddress;
+        } else { // 사용자가 지번 주소를 선택했을 경우(J)
+          addr = data.jibunAddress;
+        }
+
+        // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+        if (data.userSelectedType === 'R') {
+          // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+          if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+            extraAddr += data.bname;
+          }
+          // 건물명이 있고, 공동주택일 경우 추가한다.
+          if (data.buildingName !== '' && data.apartment === 'Y') {
+            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+          }
+          // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+          if (extraAddr !== '') {
+            extraAddr = ' (' + extraAddr + ')';
+          }
+        } else {
+          extraAddr = '';
+        }
+
+        // 우편번호와 주소 정보를 필드에 넣기
+        document.getElementById('postcode').value = data.zonecode;
+        document.getElementById('address').value = addr + extraAddr; // 주소와 참고항목을 결합하여 입력
+        document.getElementById('detailAddress').focus();
+      }
+    }).open();
+  }
 </script>
 </body>
 </html>
