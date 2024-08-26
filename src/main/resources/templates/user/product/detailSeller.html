@@ -16,6 +16,13 @@
       width: 100%;
     }
   </style>
+  <script>
+    let message = `[[${message}]]`;
+    console.log(message);
+    if(message){
+      window.alert(message);
+    }
+  </script>
 </head>
 <body>
 <main class="contents" layout:fragment="content">
@@ -159,6 +166,12 @@
       var auctionstarttime = new Date().getTime();
       var endTimeMs = new Date(auctionendtime).getTime();
       var duration = (endTimeMs - auctionstarttime) / 1000;
+      console.log(auctionendtime);
+      console.log('duration>>> ', duration)
+      console.log(endTimeMs);
+      if (window.Notification) {
+        Notification.requestPermission();
+      }
 
       if (duration < 0) {
         duration = 0;
@@ -196,11 +209,11 @@
 
     /** 알림기능 적용 시작 */
 
-    window.onload = function () {
+  /*  window.onload = function () {
       if (window.Notification) {
         Notification.requestPermission();
       }
-    }
+    }*/
 
     /** 알림기능 적용 끝 */
 
