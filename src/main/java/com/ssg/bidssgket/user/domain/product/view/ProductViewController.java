@@ -44,6 +44,7 @@ public class ProductViewController {
     private final MemberRepository memberRepository;
     private final EventAuctionService eventAuctionService;
     private final AuctionService auctionService;
+    private final NotificationService notificationService;
     private final ProductWishService productWishService;
     private final NotificationService notificationService;
 
