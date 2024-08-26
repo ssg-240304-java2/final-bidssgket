@@ -46,7 +46,6 @@ public class ProductViewController {
     private final AuctionService auctionService;
     private final NotificationService notificationService;
     private final ProductWishService productWishService;
-    private final NotificationService notificationService;
 
 
     @GetMapping(value = "/register", produces = "text/event-stream")
@@ -163,6 +162,7 @@ public class ProductViewController {
     public String categoryController(Model model, @PathVariable("category") Category category, HttpSession httpSession) {
         log.info("category: {}", category);
         List<Product> products = productService.getProductsByCategory(category);
+        model.addAttribute("category", category.name());
         model.addAttribute("products", products);
         SessionMember sessionMember = (SessionMember) httpSession.getAttribute("member");
         List<Long> wishedProductIds = new ArrayList<>();

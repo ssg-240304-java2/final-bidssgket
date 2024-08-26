@@ -1,13 +1,11 @@
 package com.ssg.bidssgket.user.domain.member.view.DTO;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatMessageDto {
     private Long chatMessageNo;
