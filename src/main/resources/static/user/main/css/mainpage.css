@@ -78,11 +78,29 @@
     margin-top: 1rem !important;
 }
 
-.carousel-banner img {
+/*.carousel-banner img {
     margin-top: 10px;
-    height: 490px;
+    height: 520px;
     width: 100%;
     object-fit: cover;
+}*/
+.carousel-banner {
+    position: relative;
+    width: 100%;
+}
+
+.carousel-banner img {
+    width: 100%;
+    object-fit: cover;
+}
+
+.carousel-banner-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
 }
 
 .category-section {
@@ -93,9 +111,9 @@
 }
 
 .category-card {
-    width: 18%;
+    width: 19%;
     min-width: 140px;
-    height: 80px;
+    height: 90px;
     text-align: center;
     border: none;
     border-radius: 10px;
