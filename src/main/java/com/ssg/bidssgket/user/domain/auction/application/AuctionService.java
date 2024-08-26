@@ -59,9 +59,14 @@ public class AuctionService {
 
     public int getMinBid(Long productNo) {
         List<Auction> auctions = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
-        if (auctions.isEmpty()) {
-            Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productNo));
+        Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productNo));
+        /*if (auctions.isEmpty()) {
             return (int) (product.getAuctionStartPrice() * 1.01);
+        } else {
+            return (int) (auctions.get(0).getMinTenderPrice() * 1.01);
+        }*/
+        if (auctions.isEmpty()) {
+            return (int) (product.getAuctionStartPrice() * 0.8);
         } else {
             return (int) (auctions.get(0).getMinTenderPrice() * 1.01);
         }
@@ -116,17 +121,31 @@ public class AuctionService {
 
     @Transactional
     public void endAuction(Long productNo) {
-        System.out.println("productNo = " + productNo);
         Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
         product.setSalesStatus(SalesStatus.trading);
-
         List<Auction> auction = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
-        if (!auction.isEmpty()) {
+
+        /*if (!auction.isEmpty()) {
             Auction firstBid = auction.get(0);
             Auction secondBid = auction.size() > 1 ? auction.get(1) : firstBid;
 
             firstBid.updateBidSuccess(true);
             product.setBidSuccessPrice(secondBid.getMinTenderPrice());
+        } else {
+            product.setSalesStatus(SalesStatus.sale_pause);
+            auctionRepository.deleteAll(auction);
+        }*/
+        if (!auction.isEmpty()) {
+            Auction firstBid = auction.get(0);
+            if (firstBid.getMinTenderPrice() < product.getAuctionStartPrice()) {
+                product.setSalesStatus(SalesStatus.sale_pause);
+                auctionRepository.deleteAll(auction);
+            } else {
+                Auction secondBid = auction.size() > 1 ? auction.get(1) : firstBid;
+                firstBid.updateBidSuccess(true);
+                product.setBidSuccessPrice(secondBid.getMinTenderPrice());
+                product.setSalesStatus(SalesStatus.trading);
+            }
         } else {
             product.setSalesStatus(SalesStatus.sale_pause);
             auctionRepository.deleteAll(auction);

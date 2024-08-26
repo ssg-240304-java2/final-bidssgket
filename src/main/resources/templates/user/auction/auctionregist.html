@@ -17,12 +17,22 @@
             const errorMessage = document.getElementById('error-message');
             const submitButton = document.querySelector('#btnSubmit');
 
-            console.log(minTenderPriceInput);
-
-            // 최소 입찰가보다 큰 금액만 최대 입찰가로 입력 가능
             maxTenderPriceInput.addEventListener('input', function () {
-                if (parseInt(maxTenderPriceInput.value) <= parseInt(minTenderPriceInput.value)) {
+                /*if (parseInt(maxTenderPriceInput.value) <= parseInt(minTenderPriceInput.value)) {
                     errorMessage.textContent = '최대 입찰가는 최소 입찰가보다 커야 합니다.';
+                    submitButton.disabled = true;
+                } else {
+                    errorMessage.textContent = '';
+                    submitButton.disabled = false;
+                }*/
+                const minTenderPriceValue = parseFloat(minTenderPriceInput.value);
+                const maxTenderPriceValue = parseFloat(maxTenderPriceInput.value);
+
+                if (maxTenderPriceValue <= minTenderPriceValue) {
+                    errorMessage.textContent = '최대 입찰가는 최소 입찰가보다 커야 합니다.';
+                    submitButton.disabled = true;
+                } else if (maxTenderPriceValue < minTenderPriceValue * 1.01) {
+                    errorMessage.textContent = '최대 입찰가는 최소 입찰가의 1% 이상이어야 합니다.';
                     submitButton.disabled = true;
                 } else {
                     errorMessage.textContent = '';
