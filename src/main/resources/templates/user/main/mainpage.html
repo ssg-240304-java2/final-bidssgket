@@ -99,6 +99,7 @@
         </a>
     </div>
 </section>
+<br>
 <main class="container mt-5">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
@@ -202,18 +203,6 @@
     /** 알림기능 적용 끝 */
     function toggleHeart(button) {
         const productNo = button.getAttribute('data-product-no');
-
-    /** 알림기능 적용 시작 */
-
-    window.onload = function () {
-        if (window.Notification) {
-            Notification.requestPermission();
-        }
-    }
-
-    /** 알림기능 적용 끝 */
-
-    function toggleHeart(button, productNo) {
         const imgElement = button.children[0];
 
         fetch(`/wish/toggle`, {
@@ -237,36 +226,6 @@
             })
             .catch(error => console.error('Error:', error));
     }
-
-
-
-        function toggleHeart(button) {
-            const emptyHeart = "/user/images/empty_heart2.png";
-            const filledHeart = "/user/images/heart.png";
-            const imgElement = button.querySelector('.wishheart');
-            const currentSrc = imgElement.getAttribute('src');
-
-            fetch(`/wish/toggle`, {
-                method: "POST",
-                headers: {
-                    "Content-type": 'application/json'
-                },
-                body: JSON.stringify({"productNo": productNo})
-            }).then((res) => {
-                console.log(res);
-                return res.text();
-            })
-                .then(result => {
-                    console.log('--->', result);
-                    if (result === "fail") {
-                        window.location.href = "/login";
-                    } else {
-                        const isWished = imgElement.src.includes('heart.png');
-                        imgElement.src = isWished ? '/user/main/images/empty_heart2.png' : '/user/main/images/heart.png';
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
 
     document.addEventListener('DOMContentLoaded', function () {
         // 모든 경매 종료 시간 요소를 선택

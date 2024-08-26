@@ -17,12 +17,12 @@
     }
 
     /** 알림기능 적용 시작 */
+
     /*window.onload = function () {
       if (window.Notification) {
         Notification.requestPermission();
       }
     }*/
-
 
     /** 알림기능 적용 끝 */
 
@@ -212,6 +212,7 @@
           }
         }, 1000);
       }
+
       window.onload = function () {
         var auctionEndTime = new Date("[[${product.auctionEndTime}]]").getTime();
         var now = new Date().getTime();
