@@ -78,7 +78,6 @@ public class mainViewController {
         } else {
             products = productService.getAllProducts();
         }
-        System.out.println("products = " + products.toString());
         model.addAttribute("products", products);
         SessionMember sessionMember = (SessionMember) httpSession.getAttribute("member");
         List<Long> wishedProductIds = new ArrayList<>();
