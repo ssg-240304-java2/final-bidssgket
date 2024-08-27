@@ -29,9 +29,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Controller
@@ -58,11 +60,15 @@ public class AuctionViewController {
         ProductResDto product = auctionService.getProductById(productNo);
         int minBidValue = auctionService.getMinBid(productNo);
 
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+        String formattedMinBid = numberFormat.format(minBidValue);
+
         AuctionResponseDto auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
 
         model.addAttribute("member", member);
         model.addAttribute("product", product);
-        model.addAttribute("minBid", minBidValue);
+//        model.addAttribute("minBid", minBidValue);
+        model.addAttribute("formattedMinBid", formattedMinBid);
         model.addAttribute("auction", auction);
         return "user/auction/auctionregist";
     }
@@ -122,10 +128,20 @@ public class AuctionViewController {
         ProductResDto product = auctionService.getProductById(productNo);
         AuctionResponseDto auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
 
+        int minBid = auction.getMinTenderPrice();
+        int maxBid = auction.getMaxTenderPrice();
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+        String formattedMinBid = numberFormat.format(minBid);
+        String formattedMaxBid = numberFormat.format(maxBid);
+
+
+
         model.addAttribute("member", member);
         model.addAttribute("product", product);
-        model.addAttribute("minBid", auction.getMinTenderPrice());
-        model.addAttribute("maxBid", auction.getMaxTenderPrice());
+        /*model.addAttribute("minBid", auction.getMinTenderPrice());
+        model.addAttribute("maxBid", auction.getMaxTenderPrice());*/
+        model.addAttribute("formattedMinBid", formattedMinBid);
+        model.addAttribute("formattedMaxBid", formattedMaxBid);
         model.addAttribute("auction", auction);
         return "user/auction/auctionregistmodify";
     }
