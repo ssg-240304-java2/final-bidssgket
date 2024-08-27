@@ -52,8 +52,8 @@
                                 </button>
                             </h5>
                             <p class="card-text">경매 종료: <span th:text="${product.auctionEndTime}" id="auction-end-1"></span></p>
-                            <p class="card-text">즉시 구매 가격: <span th:text="|${product.buyNowPrice}원|" id="current-price-1"></span></p>
-                            <p class="card-text">경매 시작가: <span th:text="|${product.auctionStartPrice}원|" id="starting-price-1"></span></p>
+                            <p class="card-text" th:if="${product.buyNowPrice != null}">즉시 구매 가격: <span th:text="|${product.buyNowPrice}원|" id="current-price-1"></span></p>
+                            <p class="card-text" th:if="${product.auctionStartPrice != null}">경매 시작가: <span th:text="|${product.auctionStartPrice}원|" id="starting-price-1"></span></p>
                         </div>
                     </div>
                 </div>
@@ -125,6 +125,28 @@
             })
             .catch(error => console.error('Error:', error));
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // 모든 '즉시 구매 가격' 요소를 선택
+        const buyNowPriceElements = document.querySelectorAll('[id^="current-price-1"]');
+        const auctionStartPriceElements = document.querySelectorAll('[id^="starting-price-1"]');
+
+        // '즉시 구매 가격'에 콤마 추가
+        buyNowPriceElements.forEach(function(element) {
+            const price = parseInt(element.textContent);
+            if (!isNaN(price)) {
+                element.textContent = price.toLocaleString();
+            }
+        });
+
+        // '경매 시작가'에 콤마 추가
+        auctionStartPriceElements.forEach(function(element) {
+            const price = parseInt(element.textContent);
+            if (!isNaN(price)) {
+                element.textContent = price.toLocaleString();
+            }
+        });
+    });
 </script>
 </body>
 </html>

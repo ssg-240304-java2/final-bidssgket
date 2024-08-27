@@ -110,6 +110,18 @@
         });
     });
 
+    document.addEventListener("DOMContentLoaded", function() {
+        const auctionStartPriceElements = document.querySelectorAll('[id^="starting-price-1"]');
+
+        // '경매 시작가'에 콤마 추가
+        auctionStartPriceElements.forEach(function(element) {
+            const price = parseInt(element.textContent);
+            if (!isNaN(price)) {
+                element.textContent = price.toLocaleString();
+            }
+        });
+    });
+
     function checkProductWishStatus(button, productNo) {
         if (!productNo) {
             console.error('없는 상품 번호');

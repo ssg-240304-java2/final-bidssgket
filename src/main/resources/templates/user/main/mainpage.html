@@ -24,7 +24,7 @@
             <img src="/user/main/images/kreambanner2.png" class="d-block w-100" alt="Second slide">
         </div>
         <div class="carousel-item">
-            <!--            <img src="/user/main/images/adbanner.png" class="d-block w-100" alt="Third slide">-->
+            <img src="/user/main/images/kreambanner2.png" class="d-block w-100" alt="Second slide">
         </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -99,6 +99,7 @@
         </a>
     </div>
 </section>
+<br>
 <main class="container mt-5">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
@@ -191,6 +192,29 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // 모든 '즉시 구매 가격' 요소를 선택
+        const buyNowPriceElements = document.querySelectorAll('[id^="current-price-1"]');
+        const auctionStartPriceElements = document.querySelectorAll('[id^="starting-price-1"]');
+
+        // '즉시 구매 가격'에 콤마 추가
+        buyNowPriceElements.forEach(function(element) {
+            const price = parseInt(element.textContent);
+            if (!isNaN(price)) {
+                element.textContent = price.toLocaleString();
+            }
+        });
+
+        // '경매 시작가'에 콤마 추가
+        auctionStartPriceElements.forEach(function(element) {
+            const price = parseInt(element.textContent);
+            if (!isNaN(price)) {
+                element.textContent = price.toLocaleString();
+            }
+        });
+    });
+
     /** 알림기능 적용 시작 */
 
     window.onload = function () {
@@ -202,18 +226,6 @@
     /** 알림기능 적용 끝 */
     function toggleHeart(button) {
         const productNo = button.getAttribute('data-product-no');
-
-    /** 알림기능 적용 시작 */
-
-    window.onload = function () {
-        if (window.Notification) {
-            Notification.requestPermission();
-        }
-    }
-
-    /** 알림기능 적용 끝 */
-
-    function toggleHeart(button, productNo) {
         const imgElement = button.children[0];
 
         fetch(`/wish/toggle`, {
@@ -238,36 +250,6 @@
             .catch(error => console.error('Error:', error));
     }
 
-
-
-        function toggleHeart(button) {
-            const emptyHeart = "/user/images/empty_heart2.png";
-            const filledHeart = "/user/images/heart.png";
-            const imgElement = button.querySelector('.wishheart');
-            const currentSrc = imgElement.getAttribute('src');
-
-            fetch(`/wish/toggle`, {
-                method: "POST",
-                headers: {
-                    "Content-type": 'application/json'
-                },
-                body: JSON.stringify({"productNo": productNo})
-            }).then((res) => {
-                console.log(res);
-                return res.text();
-            })
-                .then(result => {
-                    console.log('--->', result);
-                    if (result === "fail") {
-                        window.location.href = "/login";
-                    } else {
-                        const isWished = imgElement.src.includes('heart.png');
-                        imgElement.src = isWished ? '/user/main/images/empty_heart2.png' : '/user/main/images/heart.png';
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
     document.addEventListener('DOMContentLoaded', function () {
         // 모든 경매 종료 시간 요소를 선택
         const auctionEndTimes = document.querySelectorAll('[id^="auction-end-"]');
@@ -275,18 +257,18 @@
         auctionEndTimes.forEach(function (element) {
             let dateTime = element.textContent;
 
-                // T를 /로 대체
-                let formattedDateTime = dateTime.replace('T', ' / ');
+            // T를 /로 대체
+            let formattedDateTime = dateTime.replace('T', ' / ');
 
-                // 변경된 내용을 다시 요소에 할당
-                element.textContent = formattedDateTime;
+            // 변경된 내용을 다시 요소에 할당
+            element.textContent = formattedDateTime;
 
-                document.querySelectorAll('.wishheartbtn').forEach(button => {
-                    const productNo = button.getAttribute('data-product-no');
-                    checkProductWishStatus(button, productNo);
-                });
+            document.querySelectorAll('.wishheartbtn').forEach(button => {
+                const productNo = button.getAttribute('data-product-no');
+                checkProductWishStatus(button, productNo);
             });
         });
+    });
 
     function checkProductWishStatus(button, productNo) {
         if (!productNo) {

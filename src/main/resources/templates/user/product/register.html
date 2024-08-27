@@ -62,9 +62,10 @@
               </div>
               <div class="mb-3">
                 <label for="buyNowPrice" class="form-label">즉시 판매가</label>
-                <input type="text" class="form-control" id="buyNowPrice" name="buyNowPrice" th:field="*{buyNowPrice}" placeholder="즉시 판매가격을 입력하세요." disabled>
+                <input type="text" class="form-control" id="buyNowPrice" name="buyNowPrice"
+                       th:field="*{buyNowPrice}" placeholder="즉시 판매가격을 입력하세요." disabled
+                       oninput="formatPriceInput(this)">
               </div>
-            </div>
             <div class="col-md-6">
               <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" id="auctionSelected" name="auctionSelected" th:field="*{auctionSelected}">
@@ -72,7 +73,9 @@
               </div>
               <div class="mb-3">
                 <label for="auctionStartPrice" class="form-label">경매 시작가</label>
-                <input type="text" class="form-control" id="auctionStartPrice" name="auctionStartPrice" th:field="*{auctionStartPrice}" placeholder="경매 시작 가격을 입력하세요." disabled>
+                <input type="text" class="form-control" id="auctionStartPrice" name="auctionStartPrice"
+                       th:field="*{auctionStartPrice}" placeholder="경매 시작 가격을 입력하세요." disabled
+                       oninput="formatPriceInput(this)">
               </div>
             </div>
           </div>
@@ -92,6 +95,32 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+
+    function formatPriceInput(input) {
+      // 입력된 값에서 숫자 이외의 문자를 모두 제거
+      let value = input.value.replace(/[^0-9]/g, '');
+
+      // 세 자리마다 콤마 추가
+      value = new Intl.NumberFormat().format(value);
+
+      // 포맷팅된 값을 다시 입력 필드에 설정
+      input.value = value;
+    }
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+      const buyNowPriceField = document.getElementById('buyNowPrice');
+      const auctionStartPriceField = document.getElementById('auctionStartPrice');
+
+      // 콤마 제거 후 숫자만 남기고 전송되도록 처리
+      if (buyNowPriceField && buyNowPriceField.value) {
+        buyNowPriceField.value = buyNowPriceField.value.replace(/,/g, '');
+      }
+
+      if (auctionStartPriceField && auctionStartPriceField.value) {
+        auctionStartPriceField.value = auctionStartPriceField.value.replace(/,/g, '');
+      }
+    });
+
     document.getElementById('uploadButton').addEventListener('click', function() {
       document.getElementById('productImages').click();
     });
@@ -205,6 +234,7 @@
         auctionStartPriceField.disabled = true; // 체크 해제 시 필드 비활성화
       }
     });
+
   </script>
 </main>
 </body>
