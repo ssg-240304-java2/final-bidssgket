@@ -52,7 +52,17 @@ public class ProductApiController {
     @PostMapping("/register")
     public ResponseEntity<ProductApiResDto> registProduct(@ModelAttribute RegistProductReqDto registProductReqDto,
                                                           @RequestParam("productImages") List<MultipartFile> productImages,
+                                                          @RequestParam String buyNowPrice, @RequestParam String auctionStartPrice,
                                                           HttpSession httpSession) {
+
+        // 콤마를 제거하고 Integer로 변환
+        Integer buyNowPriceInt = Integer.parseInt(buyNowPrice);
+        Integer auctionStartPriceInt = Integer.parseInt(auctionStartPrice);
+
+        // 변환된 값을 registProductReqDto에 설정
+        registProductReqDto.setBuyNowPrice(String.valueOf(buyNowPriceInt));
+        registProductReqDto.setAuctionStartPrice(String.valueOf(auctionStartPriceInt));
+
         String member = ((SessionMember) httpSession.getAttribute("member")).getEmail();
         Optional<Member> memberInfo = memberRepository.findByEmail(member);
         Long registMember = memberInfo.get().getMemberNo();
