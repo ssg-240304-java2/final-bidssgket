@@ -38,10 +38,40 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
     @Query(value = "SELECT a.* FROM auction a WHERE a.product_no = :productNo ORDER BY a.max_tender_price DESC", nativeQuery = true)
     List<Auction> findByProductNoOrderByMaxTenderPriceDesc(Long productNo);
 
-    @Query(value = "SELECT a.* FROM auction a WHERE a.member_no = :memberNo and a.bid_success = false ORDER BY a.tender_date DESC", nativeQuery = true)
+//    @Query(value = "SELECT a.* FROM auction a WHERE a.member_no = :memberNo and a.bid_success = false ORDER BY a.tender_date DESC", nativeQuery = true)
+    @Query(value = """
+        SELECT a.*
+        FROM auction a
+        INNER JOIN (
+            SELECT product_no, MAX(max_tender_price) AS max_price
+            FROM auction
+            WHERE member_no = :memberNo AND bid_success = false
+            GROUP BY product_no
+        ) AS latest
+        ON a.product_no = latest.product_no AND a.max_tender_price = latest.max_price
+        WHERE a.member_no = :memberNo AND a.bid_success = false
+        ORDER BY a.tender_date DESC
+    """, nativeQuery = true)
     List<Auction> findAuctionItemsByMember(Long memberNo);
 
     @Query(value = "SELECT COUNT(*) FROM auction a WHERE a.product_no = :productNo AND a.member_no = :memberNo AND a.tender_deleted='false'", nativeQuery = true)
     int findAuctionMember(Long productNo, Long memberNo);
 
+    @Query(value = """
+    SELECT a.*
+    FROM auction a
+    INNER JOIN (
+        SELECT product_no, MAX(max_tender_price) AS max_price
+        FROM auction
+        WHERE product_no IN (
+            SELECT product_no
+            FROM product
+            WHERE member_no = :memberNo
+        )
+        AND bid_success = false
+        GROUP BY product_no
+    ) AS latest
+    ON a.product_no = latest.product_no AND a.max_tender_price = latest.max_price
+""", nativeQuery = true)
+    List<Auction> findAuctionSalesItemsByMember(Long memberNo);
 }

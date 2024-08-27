@@ -71,7 +71,7 @@ public class PaymentService {
             deliveryAddressRepository.save(deliveryAddressEntity);
 
             // 6. 상품 상태를 trading으로 변경
-            updateProductStatusToTrading(product);
+            updateProductStatusToSaleCompleted(product);
 
         }
 
@@ -143,9 +143,9 @@ public class PaymentService {
         return payChange;
     }
 
-    private void updateProductStatusToTrading(Product product) {
+    private void updateProductStatusToSaleCompleted(Product product) {
 
-        product.setSalesStatus(SalesStatus.trading); // 상품 상태를 trading 으로 변경
+        product.setSalesStatus(SalesStatus.sale_completed); // 상품 상태를 sale_completed으로 변경
         productRepository.save(product); // 변경된 상태를 DB에 저장
     }
 }
