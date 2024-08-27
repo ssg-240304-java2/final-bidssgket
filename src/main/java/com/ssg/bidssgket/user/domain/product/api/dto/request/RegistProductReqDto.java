@@ -61,4 +61,23 @@ public class RegistProductReqDto extends FileDto{
     public void setAuctionEndTime(LocalDateTime auctionEndTime) {
         this.auctionEndTime = auctionEndTime;
     }
+
+    public Integer getBuyNowPrice() {
+        return buyNowPrice;
+    }
+
+    public void setBuyNowPrice(String buyNowPrice) {
+        // 콤마를 제거하고 Integer로 변환
+        this.buyNowPrice = Integer.parseInt(buyNowPrice.replace(",", ""));
+    }
+
+    public Integer getAuctionStartPrice() {
+        return auctionStartPrice;
+    }
+
+    public void setAuctionStartPrice(String auctionStartPrice) {
+        // 콤마를 제거하고 Integer로 변환
+        this.auctionStartPrice = Integer.parseInt(auctionStartPrice.replace(",", ""));
+    }
+
 }

@@ -88,7 +88,7 @@
         <div class="price-sections">
           <div class="buy-now-section text-center">
             <h5>즉시 구매가</h5>
-            <h3 th:if="${product.buyNowPrice != null}" th:text="|${product.buyNowPrice}원|"></h3>
+            <h3 th:if="${product.buyNowPrice != null}" th:text="|${product.buyNowPrice}원|" id="buy-now-price"></h3>
             <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#deliveryTypeModal"
                     th:disabled="${product.imdPurchase == false}">
               즉시 구매하기
@@ -97,7 +97,7 @@
           </div>
           <div class="auction-start-section text-center">
             <h5>경매 시작가</h5>
-            <h3 th:if="${product.auctionStartPrice != null}" th:text="|${product.auctionStartPrice}원|"></h3>
+            <h3 th:if="${product.auctionStartPrice != null}" th:text="|${product.auctionStartPrice}원|" id="auction-start-price"></h3>
             <div class="button-group d-flex justify-content-center mb-3">
               <a th:href="@{/auction/auctionregistform/{productNo}(productNo=${product.productNo})}">
                 <!--<button type="button" class="btn btn-primary"
@@ -203,7 +203,7 @@
             <tbody>
             <tr th:each="auction : ${auctions}">
               <td th:text="${auction.member.email.split('@')[0].length() > 4 ? auction.member.email.split('@')[0].substring(0, auction.member.email.split('@')[0].length() - 4) + '****' + '@' + auction.member.email.split('@')[1] : '****' + '@' + auction.member.email.split('@')[1]}"></td>
-              <td th:text="${#numbers.formatInteger(auction.minTenderPrice, 0)} + ' 원'"></td>
+              <td th:text="${#numbers.formatInteger(auction.minTenderPrice, 0)} + ' 원'" id="bid-price"></td>
               <td th:text="${#temporals.format(auction.tenderDate, 'yyyy.MM.dd HH:mm:ss')}"></td>
             </tr>
             </tbody>
@@ -314,6 +314,31 @@
       var checkoutUrl = `/user/payment/checkout/${productNo}?deliveryType=${deliveryType}`;
       window.location.href = checkoutUrl;
     });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const buyNowPriceElement = document.getElementById('buy-now-price');
+      const auctionStartPriceElement = document.getElementById('auction-start-price');
+
+      if (buyNowPriceElement) {
+        let price = parseInt(buyNowPriceElement.textContent.replace(/[^0-9]/g, ''));
+        buyNowPriceElement.textContent = price.toLocaleString() + '원';
+      }
+
+      if (auctionStartPriceElement) {
+        let price = parseInt(auctionStartPriceElement.textContent.replace(/[^0-9]/g, ''));
+        auctionStartPriceElement.textContent = price.toLocaleString() + '원';
+      }
+
+      // 테이블 입찰가 포맷팅
+      const bidPriceElements = document.querySelectorAll('#bid-price');
+
+      bidPriceElements.forEach(function(element) {
+        let price = parseInt(element.textContent.replace(/[^0-9]/g, ''));
+        element.textContent = price.toLocaleString() + ' 원';
+      });
+
+    });
+
   </script>
 </main>
 </body>

@@ -62,7 +62,9 @@
                                 <td class="text-lg font-semibold text-right">결제 금액</td>
                             </tr>
                             <tr>
-                                <td id="price" th:text="${product.buyNowPrice}" class="text-lg font-bold text-right"></td>
+                                <td id="price" class="text-lg font-bold text-right"
+                                    th:text="${isAuctionPay ? product.bidSuccessPrice : product.buyNowPrice}">
+                                </td>
                             </tr>
                             <tr>
                                 <td class="text-sm text-red-500 text-right">결제 만료일</td>
@@ -286,7 +288,7 @@
                         paymentButton.textContent = '페이 충전하기';
                         paymentButton.classList.remove('bg-green-500', 'hover:bg-green-600');
                         paymentButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
-                        paymentButton.deisabled = false;
+                        paymentButton.disabled = false;
 
                         paymentButton.addEventListener('click', function () {
                             const insufficientAmount = paymentAmount - payBalance;
@@ -307,6 +309,12 @@
                             const detailAddress = detailAddressField.value.trim();
                             const deliveryRequest = deliveryRequestField.value;
 
+                            // isAuctionPay에 따른 deliveryType 설정
+                            let finalDeliveryType = deliveryType; // 기본적으로 기존 deliveryType 사용
+                            if ('[[${isAuctionPay}]]' === 'true') {
+                                finalDeliveryType = 'ESCROW'; // 경매 결제일 경우 ESCROW로 설정
+                            }
+
                             // 결제 처리 로직
                             const paymentData = {
                                 email: memberEmail,
@@ -314,7 +322,7 @@
                                 paymentAmount: paymentAmount,
                                 paymentType: 'BISCUIT_PAY',
                                 paymentTransactionType: 'WITHDRAWAL',
-                                deliveryType: deliveryType,
+                                deliveryType: finalDeliveryType,
                                 orderTransactionType: orderTransactionType,
                                 receiverName: receiverName,
                                 contactNumber: contactNumber,
