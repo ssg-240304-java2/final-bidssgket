@@ -17,10 +17,25 @@
             const submitButton = document.querySelector('.submit-btn');
             const frm = document.getElementById('modifyform');
 
-            // 최소 입찰가보다 큰 금액만 최대 입찰가로 입력 가능
+            function formatCurrency(value) {
+                value = value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                if (!value) return '';
+                return parseInt(value).toLocaleString('ko-KR') + ' 원'; // Format number and append '원'
+            }
+
+            // Function to parse the formatted currency back to an integer
+            function parseCurrency(value) {
+                return value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+            }
+
+            // Event listener for formatting currency input
             maxTenderPriceInput.addEventListener('input', function () {
-                const minTenderPriceValue = parseFloat(document.getElementById('minTenderPrice').value) || 0;
-                const maxTenderPriceValue = parseFloat(maxTenderPriceInput.value) || 0;
+                let formattedValue = formatCurrency(maxTenderPriceInput.value);
+                maxTenderPriceInput.value = formattedValue;
+
+                // Validation for max tender price
+                const minTenderPriceValue = parseFloat(document.getElementById('minTenderPrice').value.replace(/[^0-9]/g, '')) || 0;
+                const maxTenderPriceValue = parseFloat(maxTenderPriceInput.value.replace(/[^0-9]/g, '')) || 0;
 
                 if (maxTenderPriceValue <= minTenderPriceValue) {
                     errorMessage.textContent = '최대 입찰가는 최소 입찰가보다 커야 합니다.';
@@ -31,10 +46,12 @@
                 }
             });
 
-            // form 제출 전 필드 값을 설정
+            // Event listener for form submission
             submitButton.addEventListener('click', function (event) {
                 event.preventDefault();
-                maxTenderPriceField.value = maxTenderPriceInput.value;
+
+                // Convert the formatted input back to an integer before submission
+                maxTenderPriceField.value = parseCurrency(maxTenderPriceInput.value);
 
                 const productNo = productNoField.value;
                 frm.setAttribute('action', `/auction/auctionregistmodify/${productNo}`);
@@ -67,12 +84,12 @@
             </div>
             <div class="form-group">
                 <label for="minTenderPrice">최소 입찰가</label>
-                <input type="number" id="minTenderPrice" th:attr="value=${minBid}" readonly placeholder="최소 입찰가 입력">
-                <p class="hint" th:text="${minBid} + '원 이상 입찰되어야 합니다.'"></p>
+                <input type="text" id="minTenderPrice" th:attr="value=${formattedMinBid}" readonly placeholder="최소 입찰가 입력">
+                <p class="hint" th:text="${formattedMinBid} + '원 이상 입찰되어야 합니다.'"></p>
             </div>
             <div class="form-group">
                 <label for="maxTenderPrice">최대 입찰가</label>
-                <input type="number" id="maxTenderPrice" name="maxTenderPrice" th:value="${maxBid}"  placeholder="최대 입찰가 입력" required>
+                <input type="text" id="maxTenderPrice" name="maxTenderPrice" th:value="${formattedMaxBid}"  placeholder="최대 입찰가 입력" required>
                 <p class="hint" id="error-message" style="color: red;"></p>
             </div>
             <!--<form id="frm">
@@ -88,9 +105,11 @@
                     <input type="hidden" name="productNo" id="productNoField" th:value="${product.productNo}"/>
                     <button type="submit" class="btn submit-btn">입찰 수정</button>
                 </form>
+                <a th:href="@{/detailAuction/{productNo}(productNo=${product.productNo})}" class="btn cancel-btn">취소</a>
             </div>
             </form>
-            <button type="button" class="btn cancel-btn" onclick="window.location.href='/'">취소</button>
+<!--            <button type="button" class="btn cancel-btn" onclick="window.location.href='/'">취소</button>-->
+
             <p class="disclaimer">입찰을 선택하면, 낙찰자가 될 경우 이 상품을 구매하기로 약정하는 것입니다.</p>
         </div>
     </div>
