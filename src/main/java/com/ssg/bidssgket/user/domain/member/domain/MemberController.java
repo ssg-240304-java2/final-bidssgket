@@ -7,18 +7,18 @@ import com.ssg.bidssgket.user.domain.member.application.MemberService;
 import com.ssg.bidssgket.user.domain.member.application.WishService;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.member.domain.repository.WishRepository;
-import com.ssg.bidssgket.user.domain.member.view.DTO.ProductDto;
-import com.ssg.bidssgket.user.domain.member.view.DTO.ReviewDto;
-import com.ssg.bidssgket.user.domain.member.view.DTO.WishDto;
+import com.ssg.bidssgket.user.domain.member.view.DTO.*;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -40,9 +40,53 @@ public class MemberController {
     private final ProductService productService;
     private final WishService wishService;
 
-    @GetMapping("/login")
+    @GetMapping("/login")  // 로그인 페이지
     public String loginPage() {
         return "user/member/login";
+    }
+
+    @GetMapping("/user/signup")
+    public String signupPage() {
+        return "user/member/login";
+    }
+
+    @PostMapping("/user/signup") //
+    public String signup(@RequestParam("name") String memberName,
+                         @RequestParam("nickname") String memberNickname,
+                         @RequestParam("id") String email,
+                         @RequestParam("password") String pwd,
+                         @RequestParam("phone") String phone,
+                         @RequestParam("postcode") String postcode,
+                         @RequestParam("address") String address,
+                         @RequestParam("detailAddress") String detailAddress,
+                         HttpServletRequest request) {
+
+        AddressDto addressDto = AddressDto.builder()
+                .postcode(postcode)
+                .address(address)
+                .detailAddress(detailAddress)
+                .build();
+
+        MemberDto memberDto = MemberDto.builder()
+                .memberName(memberName)
+                .memberNickname(memberNickname)
+                .email(email)
+                .pwd(pwd)
+                .phone(phone)
+                .address(addressDto)
+                .build();
+
+        // 회원가입 처리
+        memberService.signup(memberDto);
+
+        // 로그인 후 세션 처리
+        Member member = memberService.findByEmail(email);
+        SessionMember sessionMember = new SessionMember(member);
+
+        HttpSession session = request.getSession();
+        session.setAttribute("member", sessionMember);
+
+        return "redirect:/login";
     }
 
     @GetMapping("/info")

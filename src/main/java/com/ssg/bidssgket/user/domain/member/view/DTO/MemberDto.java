@@ -1,5 +1,7 @@
 package com.ssg.bidssgket.user.domain.member.view.DTO;
 
+import com.ssg.bidssgket.user.domain.member.domain.Member;
+import com.ssg.bidssgket.user.domain.member.domain.Role;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,5 +36,21 @@ public class MemberDto {
         this.isDeleted = isDeleted;
         this.isPenalty = isPenalty;
         this.address = address;
+    }
+
+    public Member toEntity() {
+        return Member.builder()
+                .memberName(this.memberName)
+                .memberId(this.memberId)
+                .pwd(this.pwd)
+                .phone(this.phone)
+                .memberNickname(this.memberNickname)
+                .email(this.email)
+                .biscuit(this.biscuit)
+                .address(this.address != null ? this.address.toEntity() : null)
+                .isDeleted(this.isDeleted != null ? this.isDeleted : false)
+                .isPenalty(this.isPenalty != null ? this.isPenalty : false)
+                .role(Role.MEMBER)
+                .build();
     }
 }

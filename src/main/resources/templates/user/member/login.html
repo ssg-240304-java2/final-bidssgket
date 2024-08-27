@@ -1,15 +1,52 @@
 <!DOCTYPE html>
 <html
         lang="en"
-        xmlns:th="http://www.thymeleaf.org">
+        xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <meta charset="UTF-8" />
   <title>Login</title>
   <style>
+    #member-id{
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    #id,
+    #nickname,
+    #password,
+    #name{
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #address,
+    #postcode{
+      margin-top: 0; /* 주소 입력칸과 위의 요소 간의 간격 없애기 */
+      margin-bottom: 0; /* 주소 입력칸과 아래의 요소 간의 간격 없애기 */
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #detailAddress{
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .phone-input {
+      margin-top: 20px; /* 간격을 늘리기 위해 추가한 코드 */
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .password-hint {
+      font-size: 12px; /* 글씨 크기를 작게 */
+      color: #888; /* 글씨 색상 */
+      display: block; /* 줄바꿈 */
+      margin-top:-0.5rem; /* 입력 필드와의 간격 조정 */
+      margin-left: -2rem;
+    }
+
     .postal-container {
       display: flex;
       align-items: center;
-      width: 270px; /* 원하는 너비 */
+      width: 265px; /* 원하는 너비 */
       margin: 10px 0;
     }
 
@@ -327,38 +364,38 @@
 
 <div class="container" id="container">
   <div class="form-container sign-up-container" style="overflow: scroll">
-    <form action="#" style="height: 700px">
+    <form action="/user/signup" style="height: 700px" method="post">
       <h1>Create Account</h1>
-      <br>
-      <input type="text" placeholder="이름" />
-      <input type="text" placeholder="닉네임"/>
-      <input type="email" placeholder="아이디" />
-      <input type="password" placeholder="비밀번호 영문,특수문자 " />
-      <input type="text" placeholder="전화번호('-'포함)" />
+      <input type="text" id="name" name="name" placeholder="이름" required/>
+      <input type="text" id="nickname" name="nickname" placeholder="닉네임" required/>
+      <input type="email" id="id" name="id" placeholder="이메일" required/>
+      <input type="password" id="password" name="password" placeholder="비밀번호" required/>
+      <span class="password-hint">영문, 숫자, 특수문자 모두 포함한 8 ~ 20자</span>
+      <input type="text" name="phone" placeholder="전화번호( '-' 포함)" class="phone-input"/>
       <div class="postal-container">
         <input type="text" id="postcode" name="postcode" placeholder="우편번호"/>
         <button type="button" onclick="sample6_execDaumPostcode()" id="search-address-button" class="search-address-button">주소 찾기</button>
       </div>
-      <input type="text"  id="address" name="address" placeholder="주소" />
-      <input type="text" id="detailAddress" name="detailAddress" placeholder="상세주소" />
+      <input type="text"  id="address" name="address" placeholder="주소"/>
+      <input type="text" id="detailAddress" name="detailAddress" placeholder="상세주소"/>
       <button type="submit" style="margin-top: 20px">sign up</button>
     </form>
   </div>
   <div class="form-container sign-in-container">
-    <form action="#">
+    <form action="/memberLogin" method="post">
       <h1>Sign In</h1>
 
         <a href="/oauth2/authorization/google">
           <img src="https://kr.object.ncloudstorage.com/bidssgket-file/google.png" alt="Google Login" style="width: 200px; height: 40px;">
         </a>
 
-      <input type="text" placeholder="아이디" />
+      <input type="email" id="member-id" name="email" placeholder="아이디" required/>
       <div class="form-check-container">
         <input class="form-check-input" type="checkbox" id="rememberMe" />
         <label class="form-check-label" for="rememberMe">ID 기억하기</label>
       </div>
       <div class="input-container">
-        <input type="password" id="password" placeholder="비밀번호" />
+        <input type="password" id="member-password" name="password" placeholder="비밀번호" required/>
         <span class="input-group-text" id="passwordShow">
               <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -369,32 +406,18 @@
                       class="bi bi-eye"
                       viewBox="0 0 16 16"
               >
-                <path
-                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"
-                />
-                <path
-                        d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"
-                />
+                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
               </svg>
             </span>
       </div>
-      <button id="tbt">sign in</button>
+      <button type="submit" id="tbt">sign in</button>
       <div class="cookie-container">
       <img src="https://kr.object.ncloudstorage.com/bidssgket-file/cookie.png" id="cookieImage" class="cookie-image" alt="Cookie Image">
       </div>
-
-      <script>
-        document.getElementById("tbt").addEventListener("mouseenter", foo);
-        document.getElementById("tbt").addEventListener("mouseout", bar);
-        function foo() {
-          document.getElementById("tbt").style.background = "#DFD3C3";
-        }
-        function bar() {
-          document.getElementById("tbt").style.background = "#D8D8D8";
-        }
-      </script>
     </form>
   </div>
+
   <div class="overlay-container">
     <div class="overlay">
       <div class="overlay-panel overlay-left">
@@ -426,7 +449,7 @@
   document
           .getElementById("passwordShow")
           .addEventListener("click", function () {
-            let passwordInput = document.getElementById("password");
+            let passwordInput = document.getElementById("member-password");
             let icon = document.getElementById("passwordShowIcon");
             if (passwordInput.type === "password") {
               passwordInput.type = "text";
@@ -439,7 +462,7 @@
 
   // Show/hide cookie image based on password input
   // Show cookie image based on password input
-  const passwordInput = document.getElementById("password");
+  const passwordInput = document.getElementById("member-password");
   const cookieImage = document.getElementById("cookieImage");
 
   passwordInput.addEventListener("input", function() {
@@ -455,29 +478,25 @@
     cookieImage.style.transform = `rotate(${rotation}deg)`;
   });
 
-  function sample6_execDaumPostcode() {
+  function sample6_execDaumPostcode() { // 주소찾기
     new daum.Postcode({
       oncomplete: function(data) {
-        var addr = ''; // 주소 변수
-        var extraAddr = ''; // 참고항목 변수
+        var addr = '';
+        var extraAddr = '';
 
-        if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+        if (data.userSelectedType === 'R') {
           addr = data.roadAddress;
-        } else { // 사용자가 지번 주소를 선택했을 경우(J)
+        } else {
           addr = data.jibunAddress;
         }
 
-        // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
         if (data.userSelectedType === 'R') {
-          // 법정동명이 있을 경우 추가한다. (법정리는 제외)
           if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
             extraAddr += data.bname;
           }
-          // 건물명이 있고, 공동주택일 경우 추가한다.
           if (data.buildingName !== '' && data.apartment === 'Y') {
             extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
           }
-          // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
           if (extraAddr !== '') {
             extraAddr = ' (' + extraAddr + ')';
           }
@@ -485,7 +504,6 @@
           extraAddr = '';
         }
 
-        // 우편번호와 주소 정보를 필드에 넣기
         document.getElementById('postcode').value = data.zonecode;
         document.getElementById('address').value = addr + extraAddr; // 주소와 참고항목을 결합하여 입력
         document.getElementById('detailAddress').focus();
