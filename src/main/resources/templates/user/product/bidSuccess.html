@@ -226,9 +226,9 @@
           postForm('/auction/abandonBid/' + [[${product.productNo}]]);
         });
 
-        confirmButton.addEventListener('click', function () {
-          postForm('/auction/confirmPurchase/' + [[${product.productNo}]]);
-        });
+        // confirmButton.addEventListener('click', function () {
+        //   postForm('/auction/confirmPurchase/' + [[${product.productNo}]]);
+        // });
 
         if (window.Notification) {
           Notification.requestPermission();
@@ -242,6 +242,10 @@
         document.body.appendChild(form);
         form.submit();
       }
+
+      document.getElementById('confirmPurchaseButton').addEventListener('click', function () {
+        window.location.href = '/user/payment/checkout/' + [[${product.productNo}]];
+      });
 
     </script>
   </main>
