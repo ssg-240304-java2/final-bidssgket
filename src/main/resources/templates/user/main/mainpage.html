@@ -18,13 +18,13 @@
     </div>
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img src="/user/main/images/kreambanner1.png" class="d-block w-100" alt="First slide">
+            <img src="/user/main/images/automn.jpg" class="test d-block w-100" alt="First slide">
         </div>
         <div class="carousel-item">
-            <img src="/user/main/images/kreambanner2.png" class="d-block w-100" alt="Second slide">
+            <img src="/user/main/images/kreambanner2.png" class="test d-block w-100" alt="Second slide">
         </div>
         <div class="carousel-item">
-            <img src="/user/main/images/kreambanner2.png" class="d-block w-100" alt="Second slide">
+            <img src="/user/main/images/kreambanner2.png" class="test d-block w-100" alt="Second slide">
         </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -116,7 +116,7 @@
                 <div th:each="product : ${products}" class="col">
                     <div class="card h-100">
                         <div th:id="'carouselExample' + ${product.productNo}" class="carousel slide carousel-product" data-bs-ride="carousel">
-                            <div class="carousel-inner">
+                            <div class="carousel-inner carousel-inners">
                                 <div th:each="productImage, iterStat : ${product.productImages}" class="carousel-item" th:classappend="${iterStat.index == 0} ? ' active'">
                                     <a th:href="@{/detail/{productNo}(productNo=${product.productNo})}">
                                         <img th:src="@{${productImage.productImg}}" class="d-block w-100 card-img-top" th:alt="'이미지 ' + ${iterStat.index + 1}">
@@ -213,7 +213,71 @@
                 element.textContent = price.toLocaleString();
             }
         });
+
+        const carouselItems = document.querySelectorAll('.carousel-item');
+
+        carouselItems.forEach(item => {
+            const img = item.querySelector('div .carousel-inner img.test');
+
+            if (img) {
+                // CORS 문제 방지
+                img.crossOrigin = "Anonymous";
+
+                img.addEventListener('load', function() {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+
+                        if (!context) {
+                            return;
+                        }
+
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        context.drawImage(img, 0, 0, img.width, img.height);
+
+                        const getPixelColor = (x, y) => {
+                            const pixelData = context.getImageData(x, y, 1, 1).data;
+                            return {
+                                r: pixelData[0],
+                                g: pixelData[1],
+                                b: pixelData[2]
+                            };
+                        };
+
+                        const edges = [
+                            getPixelColor(0, 0), // top-left corner
+                            getPixelColor(canvas.width - 1, 0), // top-right corner
+                            getPixelColor(0, canvas.height - 1), // bottom-left corner
+                            getPixelColor(canvas.width - 1, canvas.height - 1), // bottom-right corner
+                            getPixelColor(Math.floor(canvas.width / 2), 0), // top-center
+                            getPixelColor(Math.floor(canvas.width / 2), canvas.height - 1), // bottom-center
+                            getPixelColor(0, Math.floor(canvas.height / 2)), // middle-left
+                            getPixelColor(canvas.width - 1, Math.floor(canvas.height / 2)) // middle-right
+                        ];
+
+                        const averageColor = edges.reduce((acc, color) => {
+                            acc.r += color.r;
+                            acc.g += color.g;
+                            acc.b += color.b;
+                            return acc;
+                        }, { r: 0, g: 0, b: 0 });
+
+                        averageColor.r = Math.round(averageColor.r / edges.length);
+                        averageColor.g = Math.round(averageColor.g / edges.length);
+                        averageColor.b = Math.round(averageColor.b / edges.length);
+
+                        const rgb = `rgb(${averageColor.r}, ${averageColor.g}, ${averageColor.b})`;
+                        item.style.backgroundColor = rgb;
+                    } catch (error) {
+                        console.error("Error getting image data:", error);
+                    }
+                });
+            }
+        });
     });
+
+
 
     /** 알림기능 적용 시작 */
 
@@ -251,16 +315,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        // 모든 경매 종료 시간 요소를 선택
         const auctionEndTimes = document.querySelectorAll('[id^="auction-end-"]');
-
         auctionEndTimes.forEach(function (element) {
             let dateTime = element.textContent;
-
-            // T를 /로 대체
             let formattedDateTime = dateTime.replace('T', ' / ');
-
-            // 변경된 내용을 다시 요소에 할당
             element.textContent = formattedDateTime;
 
             document.querySelectorAll('.wishheartbtn').forEach(button => {
@@ -272,12 +330,10 @@
 
     function checkProductWishStatus(button, productNo) {
         if (!productNo) {
-            console.error('없는 상품 번호');
             return;
         }
         fetch(`/wish/status?productNo=${productNo}`)
             .then(response => {
-                console.log(response);
                 return response.json();
             })
             .then(isWished => {
