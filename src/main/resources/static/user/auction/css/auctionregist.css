@@ -106,6 +106,7 @@ input[readonly] {
     border-radius: 5px;
     font-size: 1rem;
     cursor: pointer;
+    text-underline: none;
 }
 
 .submit-btn {
@@ -116,6 +117,7 @@ input[readonly] {
 .cancel-btn {
     background-color: #f5f5f5;
     color: #333;
+
 }
 
 .disclaimer {

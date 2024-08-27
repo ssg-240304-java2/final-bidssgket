@@ -31,7 +31,6 @@
                 }
             });
 
-            // form 제출 전 필드 값을 설정
             submitButton.addEventListener('click', function (event) {
                 event.preventDefault();
                 maxTenderPriceField.value = maxTenderPriceInput.value;
@@ -88,9 +87,11 @@
                     <input type="hidden" name="productNo" id="productNoField" th:value="${product.productNo}"/>
                     <button type="submit" class="btn submit-btn">입찰 수정</button>
                 </form>
+                <a th:href="@{/detailAuction/{productNo}(productNo=${product.productNo})}" class="btn cancel-btn">취소</a>
             </div>
             </form>
-            <button type="button" class="btn cancel-btn" onclick="window.location.href='/'">취소</button>
+<!--            <button type="button" class="btn cancel-btn" onclick="window.location.href='/'">취소</button>-->
+
             <p class="disclaimer">입찰을 선택하면, 낙찰자가 될 경우 이 상품을 구매하기로 약정하는 것입니다.</p>
         </div>
     </div>
