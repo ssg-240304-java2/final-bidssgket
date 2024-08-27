@@ -166,9 +166,6 @@
       var auctionstarttime = new Date().getTime();
       var endTimeMs = new Date(auctionendtime).getTime();
       var duration = (endTimeMs - auctionstarttime) / 1000;
-      console.log(auctionendtime);
-      console.log('duration>>> ', duration)
-      console.log(endTimeMs);
       if (window.Notification) {
         Notification.requestPermission();
       }
