@@ -161,6 +161,10 @@ public class AuctionService {
         return auctionRepository.countByMemberNoAndProductNo(memberNo, productNo) > 0;
     }
 
+    public boolean isEventAuctionParticipant(Long memberNo, Long productNo) {
+        return auctionRepository.eventCountByMemberNoAndProductNo(memberNo, productNo) > 0;
+    }
+
     public boolean isSeller(Long memberNo, Long productNo) {
         return productRepository.existsByMemberAndProductNo(memberNo, productNo) > 0? true: false;
     }

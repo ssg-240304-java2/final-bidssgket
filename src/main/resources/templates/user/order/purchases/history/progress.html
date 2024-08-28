@@ -77,11 +77,11 @@
                             <tr th:each="item : ${purchaseTradingItems}" class="border-b">
                                 <!-- 상품 이미지 및 상품명 -->
                                 <td class="flex items-center space-x-2 px-4 py-2">
-                                    <div th:each="productImage : ${item.product.productImages}">
-                                        <img th:src="${productImage.productImg[0]}"
+                                    <div th:if="${item.product.productImages != null and !item.product.productImages.isEmpty()}">
+                                        <img th:src="${item.product.productImages[0].productImg}"
                                              th:alt="'Product image of ' + ${item.product.productName}"
                                              style="width: 100px; height: 100px"
-                                             data-product-image="${productImage.productImg}">
+                                             data-product-image="${item.product.productImages[0].productImg}">
                                     </div>
                                     <div class="bg-white p-6 mb-8">
                                         <a th:href="@{/user/order/purchases/shipping/{no}(no=${item.product.productNo})}"
