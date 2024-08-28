@@ -104,7 +104,7 @@ public class ChatController {
         // 기존 채팅방 조회
         ChatRoom existingChatRoom = chatRoomService.findByProductNo(productNo);
 
-        if (existingChatRoom != null) {
+        if (existingChatRoom != null && existingChatRoom.getChatRoomMembers().equals(currentUser.getChatRoomMembers())) {
             // 이미 존재하는 채팅방으로 리디렉션
             return "redirect:/chat/" + existingChatRoom.getChatRoomNo();
         }

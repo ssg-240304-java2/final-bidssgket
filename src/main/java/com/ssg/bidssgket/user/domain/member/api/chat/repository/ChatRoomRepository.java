@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
-    @Query("SELECT c FROM ChatRoom c WHERE c.product.productNo = :productNo")
+    @Query("SELECT c FROM ChatRoom c WHERE c.product.productNo = :productNo ")
     Optional<ChatRoom> findByProductNo(@Param("productNo") Long productNo);
 }
