@@ -86,3 +86,7 @@ textarea {
 .mt-3 {
     margin-top: 0.5rem;
 }
+
+.form-control{
+    width: 400px;
+}
