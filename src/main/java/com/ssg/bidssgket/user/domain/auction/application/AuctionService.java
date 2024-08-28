@@ -66,7 +66,7 @@ public class AuctionService {
             return (int) (auctions.get(0).getMinTenderPrice() * 1.01);
         }*/
         if (auctions.isEmpty()) {
-            return (int) (product.getAuctionStartPrice() * 0.8);
+            return (int) (product.getAuctionStartPrice() * 0.9);
         } else {
             return (int) (auctions.get(0).getMinTenderPrice() * 1.01);
         }
@@ -123,7 +123,8 @@ public class AuctionService {
     public void endAuction(Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
         product.setSalesStatus(SalesStatus.trading);
-        List<Auction> auction = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
+        List<Auction> auction = auctionRepository.findAuctionByProductNoOrderByMaxTenderPriceDesc(productNo);
+        List<Auction> auctions = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
 
         /*if (!auction.isEmpty()) {
             Auction firstBid = auction.get(0);
@@ -136,14 +137,15 @@ public class AuctionService {
             auctionRepository.deleteAll(auction);
         }*/
         if (!auction.isEmpty()) {
-            Auction firstBid = auction.get(0);
-            if (firstBid.getMinTenderPrice() < product.getAuctionStartPrice()) {
+            Auction minBid = auctions.get(0);
+            Auction maxBid = auction.get(0);
+            if (minBid.getMinTenderPrice() < product.getAuctionStartPrice()) {
                 product.setSalesStatus(SalesStatus.sale_pause);
                 auctionRepository.deleteAll(auction);
             } else {
-                Auction secondBid = auction.size() > 1 ? auction.get(1) : firstBid;
-                firstBid.updateBidSuccess(true);
-                product.setBidSuccessPrice(secondBid.getMinTenderPrice());
+                Auction successBid = auction.size() > 1 ? auction.get(0) : maxBid;
+                maxBid.updateBidSuccess(true);
+                product.setBidSuccessPrice(successBid.getMinTenderPrice());
                 product.setSalesStatus(SalesStatus.trading);
             }
         } else {
