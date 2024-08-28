@@ -64,7 +64,7 @@ public class ChatController {
         model.addAttribute("chatRoomMembers", chatRoomMembers);
         model.addAttribute("chatRooms", chatRooms);
         model.addAttribute("memberNo", member.getMemberNo());
-        return "/user/member/chat";
+        return "user/member/chat";
     }
 
     @GetMapping("/{chatRoomMemberNo}")
@@ -89,7 +89,7 @@ public class ChatController {
         model.addAttribute("chatRoomNo", chatRoomNo);
         model.addAttribute("messages", messages);
         model.addAttribute("memberNo", memberNo);
-        return "/user/member/chat";
+        return "user/member/chat";
     }
 
     @PostMapping("/start")

@@ -105,12 +105,12 @@ public class ProductViewController {
 
     @GetMapping(value = "/bidFailed", produces = "text/event-stream")
     public String bidFailedController() {
-        return "/user/product/bidFailed";
+        return "user/product/bidFailed";
     }
 
     @GetMapping(value = "/bidSuccess", produces = "text/event-stream")
     public String bidSuccessController() {
-        return "/user/product/bidSuccess";
+        return "user/product/bidSuccess";
     }
 
     @GetMapping("/detailAuction/{productNo}")
