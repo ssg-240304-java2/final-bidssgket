@@ -492,27 +492,31 @@
   </div>
 </div>
 <script>
+  let isNickNameChecked = false;
+  let isEmailChecked = false;
+
   function checkNickNameDuplicate() { // 닉네임 중복체크
     const value = document.getElementById('nickname').value;
 
-    fetch(`/check-nickname-duplicate`,{
+    fetch(`/check-nickname-duplicate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body : JSON.stringify({value: value})
+      body: JSON.stringify({value: value})
     }).then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok.');
       }
       return response.json();
     }).then(data => {
-      console.log('data ===>', data);
       if (data.nicknameError) {
         alert('닉네임이 이미 사용 중입니다. 다른 닉네임을 입력하세요.');
         document.getElementById('nickname').focus();
+        isNickNameChecked = false;
       } else {
         alert('사용 가능한 닉네임입니다.');
+        isNickNameChecked = true;
       }
     }).catch(error => {
       console.error('Error:', error);
@@ -522,24 +526,25 @@
   function checkEmailDuplicate() { // 이메일 중복체크
     const value = document.getElementById('email').value;
 
-    fetch(`/check-email-duplicate`,{
+    fetch(`/check-email-duplicate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body : JSON.stringify({value: value})
+      body: JSON.stringify({value: value})
     }).then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok.');
       }
       return response.json();
     }).then(data => {
-      console.log('data ===>', data);
       if (data.emailError) {
         alert('이메일이 이미 사용 중입니다. 다른 이메일을 입력하세요.');
         document.getElementById('email').focus();
+        isEmailChecked = false;
       } else {
         alert('사용 가능한 이메일입니다.');
+        isEmailChecked = true;
       }
     }).catch(error => {
       console.error('Error:', error);
@@ -547,8 +552,6 @@
   }
 
   document.addEventListener("DOMContentLoaded", function() {
-
-
     const signUpButton = document.getElementById("signUp");
     const signInButton = document.getElementById("signIn");
     const container = document.getElementById("container");
@@ -579,7 +582,7 @@
     const passwordInput = document.getElementById("member-password");
     passwordInput.addEventListener("input", function() {
       const length = passwordInput.value.length;
-      const percentage = Math.min(length * 10 , 100);
+      const percentage = Math.min(length * 10, 100);
       const rotation = (length * 36) % 360;
 
       cookieImage.style.clipPath = `polygon(
@@ -595,7 +598,10 @@
       const passwordHint = document.querySelector(".password-hint");
       const passwordPattern = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).{8,20}$/;
 
-      if (!passwordPattern.test(password)) {
+      if (!isNickNameChecked || !isEmailChecked) {
+        event.preventDefault(); // 폼 제출을 막음
+        alert("닉네임과 이메일 중복 체크를 완료해야 회원가입이 가능합니다.");
+      } else if (!passwordPattern.test(password)) {
         event.preventDefault(); // 폼 제출을 막음
         alert("비밀번호는 영문, 숫자, 특수문자 모두 포함한 8 ~ 20자여야 합니다. 다시 입력해주세요.");
         passwordHint.style.color = "red";
