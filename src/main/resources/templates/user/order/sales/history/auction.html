@@ -70,7 +70,7 @@
                                 <th class="px-4 py-2">제품명</th>
                                 <th class="px-4 py-2">최소 입찰 금액</th>
                                 <th class="px-4 py-2">최대 입찰 금액</th>
-                                <th class="px-4 py-2">경매 참가일자</th>
+                                <th class="px-4 py-2">등록 일자</th>
                                 <th class="px-4 py-2">상태</th>
                             </tr>
                             </thead>
@@ -78,15 +78,15 @@
                             <tr th:each="saleAuction : ${saleAuctionItems}" class="border-b">
                                 <!-- 상품 이미지 및 상품명 -->
                                 <td class="flex items-center space-x-2 px-4 py-2">
-                                    <div th:each="productImage : ${saleAuction.product.productImages}">
+                                    <div th:each="productImage : ${saleAuction.productImages}">
                                         <img th:src="${productImage.productImg}"
-                                             th:alt="'Product image of ' + ${saleAuction.product.productName}"
+                                             th:alt="'Product image of ' + ${saleAuction.productName}"
                                              style="width: 100px; height: 100px"
                                              data-product-image="${productImage.productImg}">
                                     </div>
                                     <div class="bg-white p-6 mb-8">
-                                        <a th:href="@{/detailAuction/{no}(no=${saleAuction.product.productNo})}"
-                                           th:text="${saleAuction.product.productName}"
+                                        <a th:href="@{/detailAuction/{no}(no=${saleAuction.productNo})}"
+                                           th:text="${saleAuction.productName}"
                                            class="block text-lg font-medium"
                                            data-product-name="${saleAuction.product.productName}">
                                             상품명
@@ -94,19 +94,19 @@
                                     </div>
                                 </td>
                                 <!-- 최소 입찰 금액 -->
-                                <td th:text="${saleAuction.minTenderPrice}" class="minTenderPrice px-4 py-2">
+                                <td th:text="${saleAuction.auctionStartPrice}" class="minTenderPrice px-4 py-2">
                                     최소 입찰 금액
                                 </td>
                                 <!-- 최대 입찰 금액 -->
-                                <td th:text="${saleAuction.maxTenderPrice}" class="maxTenderPrice px-4 py-2">
+                                <td th:text="${saleAuction.bidSuccessPrice}" class="maxTenderPrice px-4 py-2">
                                     최대 입찰 금액
                                 </td>
                                 <!-- 경매 참가일 -->
-                                <td th:text="${saleAuction.tenderDate}" class="tenderDate px-4 py-2">
-                                    경매 참가일
+                                <td th:text="${saleAuction.createdAt}" class="tenderDate px-4 py-2">
+                                    경매 등록일
                                 </td>
                                 <!-- 상태 -->
-                                <td th:text="${saleAuction.product.salesStatus}" class="salesStatus px-4 py-2">
+                                <td th:text="${saleAuction.salesStatus}" class="salesStatus px-4 py-2">
                                     상태
                                 </td>
                             </tr>

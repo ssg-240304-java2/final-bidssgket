@@ -57,13 +57,14 @@ public class SaleOrderService {
         return saleOrderRepository.save(saleOrder);
     }
 
-    public List<Auction> getSaleAuctionProducts(Long memberNo) {
+    public List<Product> getSaleAuctionProducts(Long memberNo) {
 
         // memberNo 값을 로그로 출력
         log.info("회원 정보 확인 : {}", memberNo);
 
         // 데이터베이스에서 경매중인 상품 목록 조회
-        List<Auction> auctionItems = auctionRepository.findAuctionSalesItemsByMember(memberNo);
+//        List<Auction> auctionItems = auctionRepository.findAuctionSalesItemsByMember(memberNo);
+        List<Product> auctionItems = productRepository.findAuctionSalesItemsByMember(memberNo);
 
         // 조회된 경매중인 상품 목록을 로그로 출력
         if (auctionItems == null || auctionItems.isEmpty()) {
@@ -84,6 +85,6 @@ public class SaleOrderService {
 
     public List<Product> getSaleCompletedProducts(Long memberNo) {
 
-        return  saleOrderRepository.getSaleCompletedProducts(memberNo);
+        return  productRepository.getSaleCompletedProducts(memberNo);
     }
 }

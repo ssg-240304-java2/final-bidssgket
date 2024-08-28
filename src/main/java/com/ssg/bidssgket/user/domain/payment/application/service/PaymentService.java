@@ -70,7 +70,7 @@ public class PaymentService {
             deliveryAddressEntity = DeliveryAddress.addDeliveryAddress(member, product, receiverName, contactNumber, postcode, deliveryAddress, detailAddress, deliveryRequest);
             deliveryAddressRepository.save(deliveryAddressEntity);
 
-            // 6. 상품 상태를 trading으로 변경
+            // 6. 상품 상태를 sale_completed 으로 변경
             updateProductStatusToSaleCompleted(product);
 
         }
@@ -145,7 +145,9 @@ public class PaymentService {
 
     private void updateProductStatusToSaleCompleted(Product product) {
 
-        product.setSalesStatus(SalesStatus.sale_completed); // 상품 상태를 sale_completed으로 변경
+        product.setSalesStatus(SalesStatus.sale_completed); // 상품 상태를 sale_completed로 변경
         productRepository.save(product); // 변경된 상태를 DB에 저장
+        System.out.println("product.getProductNo() = " + product.getProductNo());
+        System.out.println("product.ss() = " + product.getSalesStatus());
     }
 }
