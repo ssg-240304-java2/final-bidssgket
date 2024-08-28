@@ -70,7 +70,7 @@ public class SaleOrderViewController {
 
         addSaleHistoryAttributes(model, member);
 
-        return "/user/order/sales/history/auction";
+        return "user/order/sales/history/auction";
     }
 
     @GetMapping("/history/progress")
@@ -84,7 +84,7 @@ public class SaleOrderViewController {
 
         addSaleHistoryAttributes(model, member);
 
-        return "/user/order/sales/history/progress";
+        return "user/order/sales/history/progress";
     }
 
     @GetMapping("/history/completed")
@@ -98,23 +98,23 @@ public class SaleOrderViewController {
 
         addSaleHistoryAttributes(model, member);
 
-        return "/user/order/sales/history/completed";
+        return "user/order/sales/history/completed";
     }
 
     /* 판매 주문서 */
 
     @GetMapping("/pending")
-    public String salesPending() { return "/user/order/sales/pending"; }
+    public String salesPending() { return "user/order/sales/pending"; }
 
     @GetMapping("/shipping")
-    public String salesShipping() { return "/user/order/sales/shipping"; }
+    public String salesShipping() { return "user/order/sales/shipping"; }
 
     @GetMapping("/delivered")
-    public String salesDelivered() { return "/user/order/sales/delivered"; }
+    public String salesDelivered() { return "user/order/sales/delivered"; }
 
     @GetMapping("/completed")
-    public String salesCompleted() { return "/user/order/sales/completed"; }
+    public String salesCompleted() { return "user/order/sales/completed"; }
 
     @GetMapping("/cancelled")
-    public String salesCancelled() { return "/user/order/sales/cancelled"; }
+    public String salesCancelled() { return "user/order/sales/cancelled"; }
 }
