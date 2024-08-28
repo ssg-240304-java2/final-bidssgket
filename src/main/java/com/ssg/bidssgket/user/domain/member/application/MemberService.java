@@ -24,6 +24,13 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final AddressService addressService;
 
+    public boolean isEmailDuplicate(String email) {
+        return memberRepository.findByEmail(email).isPresent();
+    }
+
+    public boolean isNicknameDuplicate(String nickname) {
+        return memberRepository.findByMemberNickname(nickname).isPresent();
+    }
 
     public Member authenticate(String email, String rawPassword) {
         Member member = memberRepository.findByEmail(email)
@@ -37,6 +44,13 @@ public class MemberService {
     }
 
     public void signup(MemberDto memberDto) {
+        if (isEmailDuplicate(memberDto.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+        if (isNicknameDuplicate(memberDto.getMemberNickname())) {
+            throw new IllegalArgumentException("Nickname already exists");
+        }
+
         String encodedPassword = passwordEncoder.encode(memberDto.getPwd());  // 비밀번호 암호화
 
         Address address = addressService.convertToEntity(memberDto.getAddress());

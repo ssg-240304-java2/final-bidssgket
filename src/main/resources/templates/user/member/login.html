@@ -364,11 +364,13 @@
 
 <div class="container" id="container">
   <div class="form-container sign-up-container" style="overflow: scroll">
-    <form action="/user/signup" style="height: 700px" method="post">
+    <form id="signupForm" action="/user/signup" style="height: 700px" method="post">
       <h1>Create Account</h1>
       <input type="text" id="name" name="name" placeholder="이름" required/>
       <input type="text" id="nickname" name="nickname" placeholder="닉네임" required/>
+      <button type="button" onclick="checkDuplicate('nickname')">닉네임 중복 체크</button>
       <input type="email" id="id" name="id" placeholder="이메일" required/>
+      <button type="button" onclick="checkDuplicate('email')">이메일 중복 체크</button>
       <input type="password" id="password" name="password" placeholder="비밀번호" required/>
       <span class="password-hint">영문, 숫자, 특수문자 모두 포함한 8 ~ 20자</span>
       <input type="text" name="phone" placeholder="전화번호( '-' 포함)" class="phone-input"/>
@@ -433,52 +435,112 @@
   </div>
 </div>
 <script>
-  const signUpButton = document.getElementById("signUp");
-  const signInButton = document.getElementById("signIn");
-  const container = document.getElementById("container");
-  signUpButton.addEventListener("click", () => {
-    container.classList.add("right-panel-active");
-    // 쿠키 DISPLAY NONE
-    document.getElementById('cookieImage').style.display = 'none';
-  });
-  signInButton.addEventListener("click", () => {
-    container.classList.remove("right-panel-active");
-    document.getElementById('cookieImage').style.display = '';
-  });
-  /*비밀번호 아이콘*/
-  document
-          .getElementById("passwordShow")
-          .addEventListener("click", function () {
-            let passwordInput = document.getElementById("member-password");
-            let icon = document.getElementById("passwordShowIcon");
-            if (passwordInput.type === "password") {
-              passwordInput.type = "text";
-              icon.style.color = "black"; // 비밀번호 보이는 상태일 때 아이콘 색상
-            } else {
-              passwordInput.type = "password";
-              icon.style.color = "lightgrey"; // 비밀번호 숨기는 상태일 때 아이콘 색상
-            }
-          });
+  document.addEventListener("DOMContentLoaded", function() {
+    function checkDuplicate(field) {
+      const value = document.getElementById(field).value;
 
-  // Show/hide cookie image based on password input
-  // Show cookie image based on password input
-  const passwordInput = document.getElementById("member-password");
-  const cookieImage = document.getElementById("cookieImage");
+      if (value === '') {
+        alert(field === 'nickname' ? '닉네임을 입력하세요.' : '이메일을 입력하세요.');
+        return;
+      }
 
-  passwordInput.addEventListener("input", function() {
-    const length = passwordInput.value.length;
-    const percentage = Math.min(length * 10 , 100); // Limit to 100%
-    const rotation = (length * 36) % 360; // Rotation degree (360 degrees total)
+      const params = new URLSearchParams();
+      if (field === 'email') {
+        params.append('email', value);
+      } else if (field === 'nickname') {
+        params.append('nickname', value);
+      }
 
-    // Update clip-path to show image in a clock-wise manner
-    cookieImage.style.clipPath = `polygon(
+      fetch(`/check-duplicate?${params.toString()}`)
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok.');
+                }
+                return response.json();
+              })
+              .then(data => {
+                if (field === 'email') {
+                  if (data.emailExists) {
+                    alert('이메일이 이미 사용 중입니다. 다른 이메일을 입력하세요.');
+                    document.getElementById('id').focus();
+                  } else {
+                    alert('사용 가능한 이메일입니다.');
+                  }
+                } else if (field === 'nickname') {
+                  if (data.nicknameExists) {
+                    alert('닉네임이 이미 사용 중입니다. 다른 닉네임을 입력하세요.');
+                    document.getElementById('nickname').focus();
+                  } else {
+                    alert('사용 가능한 닉네임입니다.');
+                  }
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
+    }
+
+    const signUpButton = document.getElementById("signUp");
+    const signInButton = document.getElementById("signIn");
+    const container = document.getElementById("container");
+    const cookieImage = document.getElementById("cookieImage");
+
+    signUpButton.addEventListener("click", () => {
+      container.classList.add("right-panel-active");
+      cookieImage.style.display = 'none';
+    });
+
+    signInButton.addEventListener("click", () => {
+      container.classList.remove("right-panel-active");
+      cookieImage.style.display = '';
+    });
+
+    document.getElementById("passwordShow").addEventListener("click", function () {
+      let passwordInput = document.getElementById("member-password");
+      let icon = document.getElementById("passwordShowIcon");
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        icon.style.color = "black";
+      } else {
+        passwordInput.type = "password";
+        icon.style.color = "lightgrey";
+      }
+    });
+
+    const passwordInput = document.getElementById("member-password");
+    passwordInput.addEventListener("input", function() {
+      const length = passwordInput.value.length;
+      const percentage = Math.min(length * 10 , 100);
+      const rotation = (length * 36) % 360;
+
+      cookieImage.style.clipPath = `polygon(
         ${percentage}% 0%, 100% 0%, 100% ${percentage}%, ${percentage}% ${percentage}%,
         0% ${percentage}%, 0% 0%, 100% 0%, 100% ${percentage}%
       )`;
-    cookieImage.style.transform = `rotate(${rotation}deg)`;
+      cookieImage.style.transform = `rotate(${rotation}deg)`;
+    });
+
+    const signupForm = document.getElementById("signupForm");
+    signupForm.addEventListener("submit", function(event) {
+      const password = document.getElementById("password").value;
+      const passwordHint = document.querySelector(".password-hint");
+      const passwordPattern = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).{8,20}$/;
+
+      if (!passwordPattern.test(password)) {
+        event.preventDefault(); // 폼 제출을 막음
+        alert("비밀번호는 영문, 숫자, 특수문자 모두 포함한 8 ~ 20자여야 합니다. 다시 입력해주세요.");
+        passwordHint.style.color = "red";
+      } else {
+        passwordHint.style.color = "green";
+      }
+    });
+
+    document.getElementById("search-address-button").addEventListener("click", function() {
+      sample6_execDaumPostcode();
+    });
   });
 
-  function sample6_execDaumPostcode() { // 주소찾기
+  function sample6_execDaumPostcode() {
     new daum.Postcode({
       oncomplete: function(data) {
         var addr = '';
@@ -505,7 +567,7 @@
         }
 
         document.getElementById('postcode').value = data.zonecode;
-        document.getElementById('address').value = addr + extraAddr; // 주소와 참고항목을 결합하여 입력
+        document.getElementById('address').value = addr + extraAddr;
         document.getElementById('detailAddress').focus();
       }
     }).open();

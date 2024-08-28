@@ -18,15 +18,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -50,7 +50,7 @@ public class MemberController {
         return "user/member/login";
     }
 
-    @PostMapping("/user/signup") //
+    @PostMapping("/user/signup")
     public String signup(@RequestParam("name") String memberName,
                          @RequestParam("nickname") String memberNickname,
                          @RequestParam("id") String email,
@@ -61,6 +61,16 @@ public class MemberController {
                          @RequestParam("detailAddress") String detailAddress,
                          HttpServletRequest request) {
 
+        // 이메일과 닉네임 중복 체크
+        if (memberService.isEmailDuplicate(email)) {
+            return "redirect:/signup?error=email";
+        }
+
+        if (memberService.isNicknameDuplicate(memberNickname)) {
+            return "redirect:/signup?error=nickname";
+        }
+
+        // 주소 및 멤버 DTO 생성
         AddressDto addressDto = AddressDto.builder()
                 .postcode(postcode)
                 .address(address)
@@ -87,6 +97,17 @@ public class MemberController {
         session.setAttribute("member", sessionMember);
 
         return "redirect:/login";
+    }
+
+    @PostMapping("/check-duplicate")
+    @ResponseBody
+    public ResponseEntity<Map<String, Boolean>> checkDuplicate(@RequestParam(required = false) String email,
+                                                               @RequestParam(required = false) String nickname) {
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("emailError", email != null && memberService.isEmailDuplicate(email));
+        response.put("nicknameError", nickname != null && memberService.isNicknameDuplicate(nickname));
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/info")
