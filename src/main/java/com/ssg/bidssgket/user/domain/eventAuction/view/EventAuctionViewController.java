@@ -203,7 +203,7 @@ public class EventAuctionViewController {
 
         boolean isAuctionEnded = product.getAuctionEndTime().isBefore(LocalDateTime.now());
         boolean isSeller = auctionService.isSeller(memberNo, productNo);
-        boolean isAuctionParticipant = auctionService.isAuctionParticipant(memberNo, productNo);
+        boolean isAuctionParticipant = auctionService.isEventAuctionParticipant(memberNo, productNo);
         boolean hasBidders = auctionService.hasBidders(productNo);
 
         System.out.println("isAuctionEnded = " + isAuctionEnded);
