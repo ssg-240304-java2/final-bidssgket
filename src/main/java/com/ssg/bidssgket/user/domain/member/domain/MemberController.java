@@ -6,7 +6,6 @@ import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.application.MemberService;
 import com.ssg.bidssgket.user.domain.member.application.WishService;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
-import com.ssg.bidssgket.user.domain.member.domain.repository.WishRepository;
 import com.ssg.bidssgket.user.domain.member.view.DTO.*;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
@@ -53,7 +52,7 @@ public class MemberController {
     @PostMapping("/user/signup")
     public String signup(@RequestParam("name") String memberName,
                          @RequestParam("nickname") String memberNickname,
-                         @RequestParam("id") String email,
+                         @RequestParam("email") String email,
                          @RequestParam("password") String pwd,
                          @RequestParam("phone") String phone,
                          @RequestParam("postcode") String postcode,
@@ -70,7 +69,6 @@ public class MemberController {
             return "redirect:/signup?error=nickname";
         }
 
-        // 주소 및 멤버 DTO 생성
         AddressDto addressDto = AddressDto.builder()
                 .postcode(postcode)
                 .address(address)
@@ -89,8 +87,7 @@ public class MemberController {
         // 회원가입 처리
         memberService.signup(memberDto);
 
-        // 로그인 후 세션 처리
-        Member member = memberService.findByEmail(email);
+        Member member = memberService.findByEmail(email);  // 로그인 후 세션 처리
         SessionMember sessionMember = new SessionMember(member);
 
         HttpSession session = request.getSession();
@@ -99,13 +96,26 @@ public class MemberController {
         return "redirect:/login";
     }
 
-    @PostMapping("/check-duplicate")
+    @PostMapping("/check-nickname-duplicate")  //닉네임 중복체크
     @ResponseBody
-    public ResponseEntity<Map<String, Boolean>> checkDuplicate(@RequestParam(required = false) String email,
-                                                               @RequestParam(required = false) String nickname) {
+    public ResponseEntity<Map<String, Boolean>> checkNicknameDuplicate(@RequestBody Map<String, String> data) {
+
+        String nickname = data.get("value");
+        System.out.println("nickname =================> " + nickname);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("nicknameError", nickname != null && memberService.isNicknameDuplicate(nickname));
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/check-email-duplicate")  //이메일 중복체크
+    @ResponseBody
+    public ResponseEntity<Map<String, Boolean>> checkEmailDuplicate(@RequestBody Map<String, String> data) {
+
+        String email = data.get("value");
+        System.out.println("email =================> " + email);
         Map<String, Boolean> response = new HashMap<>();
         response.put("emailError", email != null && memberService.isEmailDuplicate(email));
-        response.put("nicknameError", nickname != null && memberService.isNicknameDuplicate(nickname));
 
         return ResponseEntity.ok(response);
     }

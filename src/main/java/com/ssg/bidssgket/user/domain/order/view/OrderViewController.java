@@ -85,8 +85,8 @@ public class OrderViewController {
         model.addAttribute("saleTradingItems", saleTradingItems);
         model.addAttribute("saleCompletedItems", saleCompletedItems);
 
-        return "/user/order/mypage"; }
+        return "user/order/mypage"; }
 
     @GetMapping("/order/checkout")
-    public String productCheckout() { return "/user/order/checkout"; }
+    public String productCheckout() { return "user/order/checkout"; }
 }

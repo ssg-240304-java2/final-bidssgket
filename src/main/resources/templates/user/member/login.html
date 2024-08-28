@@ -7,12 +7,65 @@
   <meta charset="UTF-8" />
   <title>Login</title>
   <style>
+    .input-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: -20rem;
+    }
+
+    .input-container input {
+      flex: 1;
+      padding: 12px 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-right: 4px; /* 입력칸과 버튼 사이의 간격 */
+    }
+
+    .input-container button {
+      border-radius: 5px;
+      background-color: #D8D8D8;
+      color: #FFFFFF;
+      border: none;
+      font-size: 12px;
+      padding: 8px 15px;
+      cursor: pointer;
+      height: 40px;
+    }
+
     #member-id{
       border-radius: 5px;
       border: 1px solid #ccc;
     }
 
-    #id,
+    .nicknameDuplicate{
+      border-radius: 5px;
+      background-color: #D8D8D8;
+      color: #FFFFFF;
+      border: none;
+      font-size: 12px;
+      padding: 8px 15px; /* 버튼 패딩 조정 */
+      cursor: pointer;
+      height: 40px; /* 버튼 높이 조정 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .emailDuplicate{
+      border-radius: 5px;
+      background-color: #D8D8D8;
+      color: #FFFFFF;
+      border: none;
+      font-size: 12px;
+      padding: 5px 10px; /* 버튼 패딩 조정 */
+      cursor: pointer;
+      height: 40px; /* 버튼 높이 조정 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #email,
     #nickname,
     #password,
     #name{
@@ -360,26 +413,30 @@
   </style>
 </head>
 
-<body layout:fragment="content">
+<body>
 
 <div class="container" id="container">
   <div class="form-container sign-up-container" style="overflow: scroll">
     <form id="signupForm" action="/user/signup" style="height: 700px" method="post">
       <h1>Create Account</h1>
-      <input type="text" id="name" name="name" placeholder="이름" required/>
-      <input type="text" id="nickname" name="nickname" placeholder="닉네임" required/>
-      <button type="button" onclick="checkDuplicate('nickname')">닉네임 중복 체크</button>
-      <input type="email" id="id" name="id" placeholder="이메일" required/>
-      <button type="button" onclick="checkDuplicate('email')">이메일 중복 체크</button>
-      <input type="password" id="password" name="password" placeholder="비밀번호" required/>
+      <input type="text" id="name" name="name" style="width: 280px" placeholder="이름" required/>
+      <div class="input-container" style="margin-bottom: -0.5rem">
+        <input type="text" id="nickname" name="nickname" placeholder="닉네임" required>
+        <button type="button" class="nicknameDuplicate" onclick="checkNickNameDuplicate()">중복 체크</button>
+      </div>
+      <div class="input-container">
+        <input type="email" id="email" name="email" placeholder="이메일" required>
+        <button type="button" class="emailDuplicate" onclick="checkEmailDuplicate()">중복 체크</button>
+      </div>
+      <input type="password" id="password" name="password" placeholder="비밀번호"  style="width: 280px" required/>
       <span class="password-hint">영문, 숫자, 특수문자 모두 포함한 8 ~ 20자</span>
-      <input type="text" name="phone" placeholder="전화번호( '-' 포함)" class="phone-input"/>
-      <div class="postal-container">
+      <input type="text" name="phone" placeholder="전화번호( '-' 포함)" class="phone-input"  style="width: 280px"/>
+      <div class="postal-container" style="width: 280px;">
         <input type="text" id="postcode" name="postcode" placeholder="우편번호"/>
         <button type="button" onclick="sample6_execDaumPostcode()" id="search-address-button" class="search-address-button">주소 찾기</button>
       </div>
-      <input type="text"  id="address" name="address" placeholder="주소"/>
-      <input type="text" id="detailAddress" name="detailAddress" placeholder="상세주소"/>
+      <input type="text"  id="address" name="address" placeholder="주소" style="width: 280px;"/>
+      <input type="text" id="detailAddress" name="detailAddress" placeholder="상세주소" style="width: 280px;"/>
       <button type="submit" style="margin-top: 20px">sign up</button>
     </form>
   </div>
@@ -391,7 +448,7 @@
           <img src="https://kr.object.ncloudstorage.com/bidssgket-file/google.png" alt="Google Login" style="width: 200px; height: 40px;">
         </a>
 
-      <input type="email" id="member-id" name="email" placeholder="아이디" required/>
+      <input type="email" id="member-id" name="email" placeholder="이메일" required/>
       <div class="form-check-container">
         <input class="form-check-input" type="checkbox" id="rememberMe" />
         <label class="form-check-label" for="rememberMe">ID 기억하기</label>
@@ -435,50 +492,62 @@
   </div>
 </div>
 <script>
+  function checkNickNameDuplicate() { // 닉네임 중복체크
+    const value = document.getElementById('nickname').value;
+
+    fetch(`/check-nickname-duplicate`,{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body : JSON.stringify({value: value})
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+      return response.json();
+    }).then(data => {
+      console.log('data ===>', data);
+      if (data.nicknameError) {
+        alert('닉네임이 이미 사용 중입니다. 다른 닉네임을 입력하세요.');
+        document.getElementById('nickname').focus();
+      } else {
+        alert('사용 가능한 닉네임입니다.');
+      }
+    }).catch(error => {
+      console.error('Error:', error);
+    });
+  }
+
+  function checkEmailDuplicate() { // 이메일 중복체크
+    const value = document.getElementById('email').value;
+
+    fetch(`/check-email-duplicate`,{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body : JSON.stringify({value: value})
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+      return response.json();
+    }).then(data => {
+      console.log('data ===>', data);
+      if (data.emailError) {
+        alert('이메일이 이미 사용 중입니다. 다른 이메일을 입력하세요.');
+        document.getElementById('email').focus();
+      } else {
+        alert('사용 가능한 이메일입니다.');
+      }
+    }).catch(error => {
+      console.error('Error:', error);
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function() {
-    function checkDuplicate(field) {
-      const value = document.getElementById(field).value;
 
-      if (value === '') {
-        alert(field === 'nickname' ? '닉네임을 입력하세요.' : '이메일을 입력하세요.');
-        return;
-      }
-
-      const params = new URLSearchParams();
-      if (field === 'email') {
-        params.append('email', value);
-      } else if (field === 'nickname') {
-        params.append('nickname', value);
-      }
-
-      fetch(`/check-duplicate?${params.toString()}`)
-              .then(response => {
-                if (!response.ok) {
-                  throw new Error('Network response was not ok.');
-                }
-                return response.json();
-              })
-              .then(data => {
-                if (field === 'email') {
-                  if (data.emailExists) {
-                    alert('이메일이 이미 사용 중입니다. 다른 이메일을 입력하세요.');
-                    document.getElementById('id').focus();
-                  } else {
-                    alert('사용 가능한 이메일입니다.');
-                  }
-                } else if (field === 'nickname') {
-                  if (data.nicknameExists) {
-                    alert('닉네임이 이미 사용 중입니다. 다른 닉네임을 입력하세요.');
-                    document.getElementById('nickname').focus();
-                  } else {
-                    alert('사용 가능한 닉네임입니다.');
-                  }
-                }
-              })
-              .catch(error => {
-                console.error('Error:', error);
-              });
-    }
 
     const signUpButton = document.getElementById("signUp");
     const signInButton = document.getElementById("signIn");
