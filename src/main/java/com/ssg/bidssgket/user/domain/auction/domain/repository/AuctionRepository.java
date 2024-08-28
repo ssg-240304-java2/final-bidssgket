@@ -16,13 +16,13 @@ import java.util.Optional;
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction, Long> {
 
-    @Query(value = "SELECT a.* FROM auction a WHERE a.product_no = :productNo ORDER BY a.min_tender_price DESC", nativeQuery = true)
+    @Query(value = "SELECT a.* FROM auction a WHERE a.product_no = :productNo AND a.tender_deleted = 'false' ORDER BY a.min_tender_price DESC", nativeQuery = true)
     List<Auction> findByProductNoOrderByMinTenderPriceDesc(Long productNo);
 
     @Query(value = "SELECT a.* FROM auction a WHERE a.member_no = :memberNo AND a.product_no = :productNo AND tender_deleted = false ORDER BY a.bid_no DESC LIMIT 1", nativeQuery = true)
     Auction findFirstByMemberAndProductNoOrderByBidNoDesc(Long memberNo, Long productNo);
 
-    @Query(value = "SELECT COUNT(*) FROM auction a WHERE a.member_no = :memberNo AND a.product_no = :productNo", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM auction a WHERE a.member_no = :memberNo AND a.tender_deleted = 'false' AND a.product_no = :productNo", nativeQuery = true)
     int countByMemberNoAndProductNo(Long memberNo, Long productNo);
 
     List<Auction> findAllByProduct(Product product);
@@ -44,4 +44,6 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
     @Query(value = "SELECT COUNT(*) FROM auction a WHERE a.product_no = :productNo AND a.member_no = :memberNo AND a.tender_deleted='false'", nativeQuery = true)
     int findAuctionMember(Long productNo, Long memberNo);
 
+    @Query(value = "SELECT a.* FROM auction a WHERE a.product_no = :productNo AND a.tender_deleted = 'false' ORDER BY a.max_tender_price DESC", nativeQuery = true)
+    List<Auction> findAuctionByProductNoOrderByMaxTenderPriceDesc(Long productNo);
 }
