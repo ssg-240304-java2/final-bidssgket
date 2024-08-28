@@ -15,6 +15,7 @@ import java.util.List;
 
 
 @Entity
+@Table(name = "product")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends BaseTimeEntity {
@@ -209,5 +210,7 @@ public class Product extends BaseTimeEntity {
         this.deliveryAddress = deliveryAddress;
     }
 
-
+    public String getSaleStatus(SalesStatus salesStatus) {
+        return salesStatus.name();
+    }
 }

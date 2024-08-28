@@ -41,13 +41,13 @@
                     <div class="flex justify-around text-center text-sm py-2 border-b">
                         <div class="flex-1">
                             <a href="/user/order/sales/history/auction" class="block">
-                                <div class="text-black">경매중</div>
+                                <div class="text-black">판매중</div>
                                 <div th:text="${saleAuctionItems.size()}" class="text-red-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
                             <a href="/user/order/sales/history/progress" class="block">
-                                <div>판매중</div>
+                                <div>거래중</div>
                                 <div th:text="${saleTradingItems.size()}" class="text-black-500">0</div>
                             </a>
                         </div>
@@ -69,8 +69,7 @@
                             <tr class="text-left border-b text-gray-500 text-sm">
                                 <th class="px-4 py-2">제품명</th>
                                 <th class="px-4 py-2">최소 입찰 금액</th>
-                                <th class="px-4 py-2">최대 입찰 금액</th>
-                                <th class="px-4 py-2">경매 참가일자</th>
+                                <th class="px-4 py-2">등록 일자</th>
                                 <th class="px-4 py-2">상태</th>
                             </tr>
                             </thead>
@@ -78,15 +77,15 @@
                             <tr th:each="saleAuction : ${saleAuctionItems}" class="border-b">
                                 <!-- 상품 이미지 및 상품명 -->
                                 <td class="flex items-center space-x-2 px-4 py-2">
-                                    <div th:each="productImage : ${saleAuction.product.productImages}">
-                                        <img th:src="${productImage.productImg}"
-                                             th:alt="'Product image of ' + ${saleAuction.product.productName}"
+                                    <div th:each="productImage : ${saleAuction.productImages}">
+                                        <img th:src="${productImage.productImg[0]}"
+                                             th:alt="'Product image of ' + ${saleAuction.productName}"
                                              style="width: 100px; height: 100px"
                                              data-product-image="${productImage.productImg}">
                                     </div>
                                     <div class="bg-white p-6 mb-8">
-                                        <a th:href="@{/detailAuction/{no}(no=${saleAuction.product.productNo})}"
-                                           th:text="${saleAuction.product.productName}"
+                                        <a th:href="@{/detailAuction/{no}(no=${saleAuction.productNo})}"
+                                           th:text="${saleAuction.productName}"
                                            class="block text-lg font-medium"
                                            data-product-name="${saleAuction.product.productName}">
                                             상품명
@@ -94,57 +93,20 @@
                                     </div>
                                 </td>
                                 <!-- 최소 입찰 금액 -->
-                                <td th:text="${saleAuction.minTenderPrice}" class="minTenderPrice px-4 py-2">
+                                <td th:text="${saleAuction.auctionStartPrice}" class="minTenderPrice px-4 py-2">
                                     최소 입찰 금액
                                 </td>
-                                <!-- 최대 입찰 금액 -->
-                                <td th:text="${saleAuction.maxTenderPrice}" class="maxTenderPrice px-4 py-2">
-                                    최대 입찰 금액
-                                </td>
                                 <!-- 경매 참가일 -->
-                                <td th:text="${saleAuction.tenderDate}" class="tenderDate px-4 py-2">
-                                    경매 참가일
+                                <td th:text="${saleAuction.createdAt}" class="tenderDate px-4 py-2">
+                                    경매 등록일
                                 </td>
                                 <!-- 상태 -->
-                                <td th:text="${saleAuction.product.salesStatus}" class="salesStatus px-4 py-2">
+                                <td th:text="${saleAuction.salesStatus}" class="salesStatus px-4 py-2">
                                     상태
                                 </td>
                             </tr>
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-            <div class="flex items-center justify-center min-h-18 bg-white">
-                <div class="flex flex-col items-center space-y-4 border border-gray-200 rounded-lg px-8 py-4">
-                    <div class="flex items-center space-x-4">
-                        <button class="flex items-center justify-center w-10 h-10 bg-gray-100 rounded text-gray-500">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <ul class="flex items-center space-x-3 text-gray-400 text-lg">
-                            <li class="text-black">1</li>
-                            <li>2</li>
-                            <li>3</li>
-                            <li>4</li>
-                            <li>5</li>
-                            <li>6</li>
-                            <li>7</li>
-                            <li>8</li>
-                            <li>9</li>
-                            <li>10</li>
-                        </ul>
-                        <button class="flex items-center justify-center w-10 h-10 bg-gray-100 rounded text-gray-500">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                    <div class="flex items-center space-x-4 text-gray-400 text-lg">
-                        <button class="text-gray-400 hover:text-gray-500">
-                            « 처음
-                        </button>
-                        <span class="border-l border-gray-300 h-full"></span>
-                        <button class="text-gray-400 hover:text-gray-500">
-                            마지막 »
-                        </button>
                     </div>
                 </div>
             </div>

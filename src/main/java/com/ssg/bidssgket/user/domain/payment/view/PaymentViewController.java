@@ -10,6 +10,7 @@ import com.ssg.bidssgket.user.domain.payment.application.dto.response.PayResDto;
 import com.ssg.bidssgket.user.domain.payment.application.service.PayService;
 import com.ssg.bidssgket.user.domain.payment.application.service.PaymentService;
 import com.ssg.bidssgket.user.domain.payment.domain.Pay;
+import com.ssg.bidssgket.user.domain.payment.domain.Payment;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
@@ -49,6 +50,7 @@ public class PaymentViewController {
     @GetMapping("/info")
     public String paymentInfo(Model model, HttpSession session) {
         Member member = getSessionMember(session);
+        Long memberNo = member.getMemberNo();
         if (member == null) {
             return "redirect:/login";
         }
@@ -56,7 +58,10 @@ public class PaymentViewController {
         Pay pay = payService.getOrCreatePay(member);
         log.info("(Member) Member pay = {}", pay);
 
+        List<Payment> payments = paymentService.findbyMemberNo(member);
+
         model.addAttribute("pay", new PayResDto(pay));
+        model.addAttribute("payments", payments);
         return "/user/payment/info";
     }
 

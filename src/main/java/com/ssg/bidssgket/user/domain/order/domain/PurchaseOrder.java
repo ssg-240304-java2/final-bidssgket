@@ -39,7 +39,7 @@ public class PurchaseOrder extends BaseTimeAndDeleteEntity {
     @JoinColumn(name = "productNo", nullable = false)
     private Product product; // 상품 번호 [FK]
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "paymentNo", nullable = false)
     private Payment payment; // 결제 정보 [FK]
 
