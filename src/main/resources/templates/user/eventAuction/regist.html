@@ -97,6 +97,13 @@
       // 입력된 값에서 숫자 이외의 문자를 모두 제거
       let value = input.value.replace(/[^0-9]/g, '');
 
+      // 가격이 0인 경우 경고 메시지 표시 및 초기화
+      if (value === '0') {
+        alert('경매 시작가는 0원이 될 수 없습니다. 다시 입력해주세요.');
+        input.value = ''; // 입력 필드 초기화
+        return;
+      }
+
       // 세 자리마다 콤마 추가
       value = new Intl.NumberFormat().format(value);
 
@@ -158,6 +165,7 @@
       const images = thumbnailContainer.getElementsByClassName('thumbnail-image');
       const productName = document.getElementById('productName');
       const productDesc = document.getElementById('productDesc');
+      const auctionStartPrice = document.getElementById('auctionStartPrice').value.replace(/,/g, '');
 
       if ( !productName.value.trim() || !productDesc.value.trim()) {
         alert('입력하지 않은 공간이 있습니다! 다시 확인해주세요!');
@@ -168,6 +176,13 @@
         alert('사진을 최소 한 장 업로드해야 합니다!');
         return false; // 폼 제출 막음
       }
+
+      // 경매 시작가가 0일 경우 경고 메시지 표시 및 폼 제출 막음
+      if (auctionStartPrice === '0') {
+        alert('경매 시작가는 0원이 될 수 없습니다. 다시 입력해주세요.');
+        return false;
+      }
+
 
       // 등록 전에 사용자에게 확인 메시지 띄우기
       const confirmSubmission = confirm('번개 경매는 상품을 삭제하거나 수정할 수 없습니다. 그래도 등록하시겠습니까?');

@@ -77,22 +77,26 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="imdPurchase" name="imdPurchase" th:field="${product.imdPurchase}">
-                                <label class="form-check-label" for="imdPurchase" >즉시 판매</label>
+                                <input class="form-check-input" type="checkbox" id="imdPurchase" name="imdPurchase" th:field="*{product.imdPurchase}">
+                                <label class="form-check-label" for="imdPurchase">즉시 판매</label>
                             </div>
                             <div class="mb-3">
                                 <label for="buyNowPrice" class="form-label">즉시 판매가</label>
-                                <input type="text" class="form-control" id="buyNowPrice" name="buyNowPrice" th:value="${product.buyNowPrice}" oninput="formatNumber(this)">
+                                <input type="text" class="form-control" id="buyNowPrice" name="buyNowPrice"
+                                       th:field="*{product.buyNowPrice}" placeholder="즉시 판매가격을 입력하세요."
+                                       oninput="formatPriceInput(this)">
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="auction" name="auctionStartPrice"  th:field="${product.auctionSelected}">
-                                <label class="form-check-label" for="auction">경매</label>
-                            </div>
-                            <div class="mb-3">
-                                <label for="auctionStartPrice" class="form-label">경매 시작가</label>
-                                <input type="text" class="form-control" id="auctionStartPrice" name="auctionStartPrice" th:value="${product.auctionStartPrice}" oninput="formatNumber(this)">
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="auctionSelected" name="auctionSelected" th:field="*{product.auctionSelected}">
+                                    <label class="form-check-label" for="auctionSelected">경매</label>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="auctionStartPrice" class="form-label">경매 시작가</label>
+                                    <input type="text" class="form-control" id="auctionStartPrice" name="auctionStartPrice"
+                                           th:field="*{product.auctionStartPrice}" placeholder="경매 시작 가격을 입력하세요."
+                                           oninput="formatPriceInput(this)">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -176,6 +180,44 @@
                 form.submit();
             }
 
+            // 페이지 로드 시 가격 필드를 포맷팅하는 함수
+            function formatPriceOnLoad(input) {
+                let value = input.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자를 제거
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // 세 자리마다 콤마 추가
+                input.value = value; // 포맷팅된 값을 다시 입력 필드에 설정
+            }
+
+            // 페이지 로드 시 buyNowPrice와 auctionStartPrice 필드 포맷팅
+            document.addEventListener('DOMContentLoaded', function() {
+                const buyNowPriceField = document.getElementById('buyNowPrice');
+                const auctionStartPriceField = document.getElementById('auctionStartPrice');
+
+                if (buyNowPriceField) {
+                    formatPriceOnLoad(buyNowPriceField); // 즉시 판매가 필드 포맷팅
+                }
+
+                if (auctionStartPriceField) {
+                    formatPriceOnLoad(auctionStartPriceField); // 경매 시작가 필드 포맷팅
+                }
+            });
+
+            function formatPriceInput(input) {
+                // 입력된 값에서 숫자 이외의 문자를 모두 제거
+                let value = input.value.replace(/[^0-9]/g, '');
+
+                // 가격이 0인 경우 경고 메시지 표시 및 초기화
+                if (value === '0') {
+                    alert('가격은 0원이 될 수 없습니다. 다시 입력해주세요.');
+                    input.value = ''; // 입력 필드 초기화
+                    return;
+                }
+
+                // 세 자리마다 콤마 추가
+                value = new Intl.NumberFormat().format(value);
+
+                // 포맷팅된 값을 다시 입력 필드에 설정
+                input.value = value;
+            }
 
             document.getElementById('uploadButton').addEventListener('click', function(event) {
                 event.preventDefault();
@@ -332,9 +374,16 @@
                 const salesStatus = document.getElementById('salesStatus');
                 const productDesc = document.getElementById('productDesc');
 
+
                 if ( !productName.value.trim() || !salesStatus.value.trim() || !productDesc.value.trim()) {
                     alert('입력하지 않은 공간이 있습니다! 다시 확인해주세요!');
                     return false;
+                }
+
+                // 가격이 0일 경우 경고 메시지 표시
+                if (buyNowPriceField === '0' || auctionStartPriceField === '0') {
+                    alert('가격은 0원이 될 수 없습니다. 다시 입력해주세요.');
+                    return false; // 폼 제출 막음
                 }
 
                 if (images.length === 0) {

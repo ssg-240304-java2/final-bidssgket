@@ -99,7 +99,7 @@ public class ProductViewController {
     public String updateProduct(@PathVariable("productNo") Long productNo,
                                 @ModelAttribute ProductReqDto productReqDto) {
         productService.updateProduct(productReqDto);
-        return "redirect:/detailBuyer/" + productNo;
+        return "redirect:/detailSeller/" + productNo;
     }
 
 

@@ -77,11 +77,11 @@
                             <tr th:each="saleCompletedItem : ${saleCompletedItems}" class="border-b">
                                 <!-- 상품 이미지 및 상품명 -->
                                 <td class="flex items-center space-x-2 px-4 py-2">
-                                    <div th:each="productImage : ${saleCompletedItem.productImages}">
-                                        <img th:src="${productImage.productImg[0]}"
+                                    <div th:if="${saleCompletedItem.productImages != null and !saleCompletedItem.productImages.isEmpty()}">
+                                        <img th:src="${saleCompletedItem.productImages[0].productImg}"
                                              th:alt="'Product image of ' + ${saleCompletedItem.productName}"
                                              style="width: 100px; height: 100px"
-                                             data-product-image="${productImage.productImg}">
+                                             data-product-image="${saleCompletedItem.productImages[0].productImg}">
                                     </div>
                                     <div class="bg-white p-6 mb-8">
                                         <a th:href="@{/detailAuction/{no}(no=${saleCompletedItem.productNo})}"
