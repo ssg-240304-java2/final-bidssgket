@@ -1,5 +1,7 @@
 package com.ssg.bidssgket.user.domain.payment.view;
 
+import com.ssg.bidssgket.user.domain.auction.application.AuctionService;
+import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.payment.api.service.MemberTestService;
@@ -8,7 +10,9 @@ import com.ssg.bidssgket.user.domain.payment.application.dto.response.PayResDto;
 import com.ssg.bidssgket.user.domain.payment.application.service.PayService;
 import com.ssg.bidssgket.user.domain.payment.application.service.PaymentService;
 import com.ssg.bidssgket.user.domain.payment.domain.Pay;
+import com.ssg.bidssgket.user.domain.payment.domain.Payment;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
+import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -31,18 +36,21 @@ public class PaymentViewController {
     private final MemberTestService memberTestService;
     private final PayService payService;
     private final PaymentService paymentService;
+    private final AuctionService auctionService;
 
     @Autowired
-    public PaymentViewController(ProductService productService, MemberTestService memberTestService, PayService payService, PaymentService paymentService) {
+    public PaymentViewController(ProductService productService, MemberTestService memberTestService, PayService payService, PaymentService paymentService, AuctionService auctionService) {
         this.productService = productService;
         this.memberTestService = memberTestService;
         this.payService = payService;
         this.paymentService = paymentService;
+        this.auctionService = auctionService;
     }
 
     @GetMapping("/info")
     public String paymentInfo(Model model, HttpSession session) {
         Member member = getSessionMember(session);
+        Long memberNo = member.getMemberNo();
         if (member == null) {
             return "redirect:/login";
         }
@@ -50,7 +58,10 @@ public class PaymentViewController {
         Pay pay = payService.getOrCreatePay(member);
         log.info("(Member) Member pay = {}", pay);
 
+        List<Payment> payments = paymentService.findbyMemberNo(member);
+
         model.addAttribute("pay", new PayResDto(pay));
+        model.addAttribute("payments", payments);
         return "/user/payment/info";
     }
 
@@ -85,18 +96,22 @@ public class PaymentViewController {
         ProductResDto product = productService.findProductByNo(productNo);
         log.info("[ProductService] (findProductByNo) product: {}", product);
 
-        if (!product.getSalesStatus().equals("selling")) {
+        if (!product.getSalesStatus().equals("selling") && !product.getSalesStatus().equals("trading")) {
             log.warn("상품 상태가 판매중이 아닙니다. (ProductName: {}, Status: {})", product.getProductName(), product.getSalesStatus());
             return "redirect:/";
         }
 
+
         Pay pay = payService.getOrCreatePay(member);
         log.info("[PayService] (getOrCreatePay) pay: {}", pay);
+
+        boolean isAuctionPay = auctionService.isWinningBidder(member.getMemberNo(), productNo);
 
         model.addAttribute("member", new SessionMember(member));
         model.addAttribute("product", product);
         model.addAttribute("pay", new PayResDto(pay));
         model.addAttribute("deliveryType", deliveryType);
+        model.addAttribute("isAuctionPay", isAuctionPay);
 
         return "/user/payment/checkout";
     }

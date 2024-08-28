@@ -10,21 +10,20 @@
     <title>메인페이지</title>
 </head>
 <body layout:fragment="content">
+<br>
 <div id="carouselExampleIndicators" class="carousel slide carousel-banner" data-bs-ride="carousel">
-    <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-    </div>
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img src="/user/main/images/kreambanner1.png" class="d-block w-100" alt="First slide">
+            <img src="/user/main/images/autumn.jpg" class="test d-block w-100" alt="First slide">
         </div>
         <div class="carousel-item">
-            <img src="/user/main/images/kreambanner2.png" class="d-block w-100" alt="Second slide">
+            <img src="/user/main/images/watchbanner.jpg" class="test d-block w-100" alt="Second slide">
         </div>
         <div class="carousel-item">
-            <img src="/user/main/images/kreambanner2.png" class="d-block w-100" alt="Second slide">
+            <img src="/user/main/images/sellingbanner.jpg" class="test d-block w-100" alt="Third slide">
+        </div>
+        <div class="carousel-item">
+            <img src="/user/main/images/adbanner.jpg" class="test d-block w-100" alt="Fourth slide">
         </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -40,55 +39,55 @@
 <section class="category-section container mt-5">
     <div class="category-card">
         <a href="/category/tradingCard">
-            <img src="/user/main/images/잡화.png" alt="트레이딩 카드">
+            <img src="/user/main/images/tradecard.png" alt="트레이딩 카드">
             <div class="card-category-title">트레이딩 카드</div>
         </a>
     </div>
     <div class="category-card">
         <a href="/category/uniform">
-            <img src="/user/main/images/잡화.png" alt="유니폼">
+            <img src="/user/main/images/unif.jpg" alt="유니폼">
             <div class="card-category-title">유니폼</div>
         </a>
     </div>
     <div class="category-card">
         <a href="/category/shoes">
-            <img src="/user/main/images/잡화.png" alt="신발">
+            <img src="/user/main/images/adidas.jpg" alt="신발">
             <div class="card-category-title">신발</div>
         </a>
     </div>
     <div class="category-card">
         <a href="/category/artToy">
-            <img src="/user/main/images/잡화.png" alt="아트토이">
+            <img src="/user/main/images/arttoy.jpg" alt="아트토이">
             <div class="card-category-title">아트토이</div>
         </a>
     </div>
     <div class="category-card">
         <a href="/category/watch">
-            <img src="/user/main/images/잡화.png" alt="시계">
+            <img src="/user/main/images/watch.jpg" alt="시계">
             <div class="card-category-title">시계</div>
         </a>
     </div>
     <div class="category-card">
         <a href="/category/bag">
-            <img src="/user/main/images/잡화.png" alt="가방">
+            <img src="/user/main/images/bag.jpg" alt="가방">
             <div class="card-category-title">가방</div>
         </a>
     </div>
     <div class="category-card">
         <a href="/category/camera">
-            <img src="/user/main/images/잡화.png" alt="카메라">
+            <img src="/user/main/images/cameracateg.jpg" alt="카메라">
             <div class="card-category-title">카메라</div>
         </a>
     </div>
     <div class="category-card">
         <a href="/category/interior">
-            <img src="/user/main/images/잡화.png" alt="인테리어">
+            <img src="/user/main/images/interior.jpg" alt="인테리어">
             <div class="card-category-title">인테리어</div>
         </a>
     </div>
     <div class="category-card">
         <a href="/auction/auctionMain">
-            <img src="/user/main/images/잡화.png" alt="경매">
+            <img src="/user/main/images/auction.jpg" alt="경매">
             <div class="card-category-title">경매</div>
         </a>
     </div>
@@ -99,6 +98,7 @@
         </a>
     </div>
 </section>
+<br>
 <main class="container mt-5">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
@@ -115,7 +115,7 @@
                 <div th:each="product : ${products}" class="col">
                     <div class="card h-100">
                         <div th:id="'carouselExample' + ${product.productNo}" class="carousel slide carousel-product" data-bs-ride="carousel">
-                            <div class="carousel-inner">
+                            <div class="carousel-inner carousel-inners">
                                 <div th:each="productImage, iterStat : ${product.productImages}" class="carousel-item" th:classappend="${iterStat.index == 0} ? ' active'">
                                     <a th:href="@{/detail/{productNo}(productNo=${product.productNo})}">
                                         <img th:src="@{${productImage.productImg}}" class="d-block w-100 card-img-top" th:alt="'이미지 ' + ${iterStat.index + 1}">
@@ -189,11 +189,94 @@
     <br>
 </main>
 
-<!-- Bootstrap JS (for tab functionality) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function toggleHeart(button) {
-        const productNo = button.getAttribute('data-product-no');
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // 모든 '즉시 구매 가격' 요소를 선택
+        const buyNowPriceElements = document.querySelectorAll('[id^="current-price-1"]');
+        const auctionStartPriceElements = document.querySelectorAll('[id^="starting-price-1"]');
+
+        // '즉시 구매 가격'에 콤마 추가
+        buyNowPriceElements.forEach(function(element) {
+            const price = parseInt(element.textContent);
+            if (!isNaN(price)) {
+                element.textContent = price.toLocaleString();
+            }
+        });
+
+        // '경매 시작가'에 콤마 추가
+        auctionStartPriceElements.forEach(function(element) {
+            const price = parseInt(element.textContent);
+            if (!isNaN(price)) {
+                element.textContent = price.toLocaleString();
+            }
+        });
+
+        const carouselItems = document.querySelectorAll('.carousel-item');
+
+        carouselItems.forEach(item => {
+            const img = item.querySelector('div .carousel-inner img.test');
+
+            if (img) {
+                // CORS 문제 방지
+                img.crossOrigin = "Anonymous";
+
+                img.addEventListener('load', function() {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+
+                        if (!context) {
+                            return;
+                        }
+
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        context.drawImage(img, 0, 0, img.width, img.height);
+
+                        const getPixelColor = (x, y) => {
+                            const pixelData = context.getImageData(x, y, 1, 1).data;
+                            return {
+                                r: pixelData[0],
+                                g: pixelData[1],
+                                b: pixelData[2]
+                            };
+                        };
+
+                        const edges = [
+                            getPixelColor(0, 0), // top-left corner
+                            getPixelColor(canvas.width - 1, 0), // top-right corner
+                            getPixelColor(0, canvas.height - 1), // bottom-left corner
+                            getPixelColor(canvas.width - 1, canvas.height - 1), // bottom-right corner
+                            getPixelColor(Math.floor(canvas.width / 2), 0), // top-center
+                            getPixelColor(Math.floor(canvas.width / 2), canvas.height - 1), // bottom-center
+                            getPixelColor(0, Math.floor(canvas.height / 2)), // middle-left
+                            getPixelColor(canvas.width - 1, Math.floor(canvas.height / 2)) // middle-right
+                        ];
+
+                        const averageColor = edges.reduce((acc, color) => {
+                            acc.r += color.r;
+                            acc.g += color.g;
+                            acc.b += color.b;
+                            return acc;
+                        }, { r: 0, g: 0, b: 0 });
+
+                        averageColor.r = Math.round(averageColor.r / edges.length);
+                        averageColor.g = Math.round(averageColor.g / edges.length);
+                        averageColor.b = Math.round(averageColor.b / edges.length);
+
+                        const rgb = `rgb(${averageColor.r}, ${averageColor.g}, ${averageColor.b})`;
+                        item.style.backgroundColor = rgb;
+                    } catch (error) {
+                        console.error("Error getting image data:", error);
+                    }
+                });
+            }
+        });
+    });
+
+
 
     /** 알림기능 적용 시작 */
 
@@ -204,8 +287,8 @@
     }
 
     /** 알림기능 적용 끝 */
-
-    function toggleHeart(button, productNo) {
+    function toggleHeart(button) {
+        const productNo = button.getAttribute('data-product-no');
         const imgElement = button.children[0];
 
         fetch(`/wish/toggle`, {
@@ -215,9 +298,11 @@
             },
             body: JSON.stringify({ "productNo": productNo })
         }).then((res) => {
+            console.log(res);
             return res.text();
         })
             .then(result => {
+                console.log('--->', result);
                 if (result === "fail") {
                     window.location.href = "/login";
                 } else {
@@ -228,58 +313,22 @@
             .catch(error => console.error('Error:', error));
     }
 
-
-        function toggleHeart(button) {
-            const emptyHeart = "/user/images/empty_heart2.png";
-            const filledHeart = "/user/images/heart.png";
-            const imgElement = button.querySelector('.wishheart');
-            const currentSrc = imgElement.getAttribute('src');
-
-            fetch(`/wish/toggle`, {
-                method: "POST",
-                headers: {
-                    "Content-type": 'application/json'
-                },
-                body: JSON.stringify({"productNo": productNo})
-            }).then((res) => {
-                console.log(res);
-                return res.text();
-            })
-                .then(result => {
-                    console.log('--->', result);
-                    if (result === "fail") {
-                        window.location.href = "/login";
-                    } else {
-                        const isWished = imgElement.src.includes('heart.png');
-                        imgElement.src = isWished ? '/user/main/images/empty_heart2.png' : '/user/main/images/heart.png';
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
     document.addEventListener('DOMContentLoaded', function () {
-        // 모든 경매 종료 시간 요소를 선택
         const auctionEndTimes = document.querySelectorAll('[id^="auction-end-"]');
-
         auctionEndTimes.forEach(function (element) {
             let dateTime = element.textContent;
+            let formattedDateTime = dateTime.replace('T', ' / ');
+            element.textContent = formattedDateTime;
 
-                // T를 /로 대체
-                let formattedDateTime = dateTime.replace('T', ' / ');
-
-                // 변경된 내용을 다시 요소에 할당
-                element.textContent = formattedDateTime;
-
-                document.querySelectorAll('.wishheartbtn').forEach(button => {
-                    const productNo = button.getAttribute('data-product-no');
-                    checkProductWishStatus(button, productNo);
-                });
+            document.querySelectorAll('.wishheartbtn').forEach(button => {
+                const productNo = button.getAttribute('data-product-no');
+                checkProductWishStatus(button, productNo);
             });
         });
+    });
 
     function checkProductWishStatus(button, productNo) {
         if (!productNo) {
-            console.error('없는 상품 번호');
             return;
         }
         fetch(`/wish/status?productNo=${productNo}`)

@@ -39,7 +39,7 @@
                     <a href="/user/payment/info" class="block text-left w-full font-bold text-black transform hover:scale-105 transition-transform duration-300">결제</a>
                 </li>
                 <li>
-                    <a href="#" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">채팅</a>
+                    <a href="/chat" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">채팅</a>
                 </li>
             </ul>
         </aside>
@@ -62,13 +62,9 @@
                                 <td class="text-lg font-semibold text-right">결제 금액</td>
                             </tr>
                             <tr>
-                                <td id="price" th:text="${product.buyNowPrice}" class="text-lg font-bold text-right"></td>
-                            </tr>
-                            <tr>
-                                <td class="text-sm text-red-500 text-right">결제 만료일</td>
-                            </tr>
-                            <tr>
-                                <td id="timer" class="text-sm text-red-500 text-right"></td>
+                                <td id="price" class="text-lg font-bold text-right"
+                                    th:text="${isAuctionPay ? product.bidSuccessPrice : product.buyNowPrice}">
+                                </td>
                             </tr>
                         </table>
                     </div>
@@ -286,7 +282,7 @@
                         paymentButton.textContent = '페이 충전하기';
                         paymentButton.classList.remove('bg-green-500', 'hover:bg-green-600');
                         paymentButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
-                        paymentButton.deisabled = false;
+                        paymentButton.disabled = false;
 
                         paymentButton.addEventListener('click', function () {
                             const insufficientAmount = paymentAmount - payBalance;
@@ -307,6 +303,12 @@
                             const detailAddress = detailAddressField.value.trim();
                             const deliveryRequest = deliveryRequestField.value;
 
+                            // isAuctionPay에 따른 deliveryType 설정
+                            let finalDeliveryType = deliveryType; // 기본적으로 기존 deliveryType 사용
+                            if ('[[${isAuctionPay}]]' === 'true') {
+                                finalDeliveryType = 'ESCROW'; // 경매 결제일 경우 ESCROW로 설정
+                            }
+
                             // 결제 처리 로직
                             const paymentData = {
                                 email: memberEmail,
@@ -314,7 +316,7 @@
                                 paymentAmount: paymentAmount,
                                 paymentType: 'BISCUIT_PAY',
                                 paymentTransactionType: 'WITHDRAWAL',
-                                deliveryType: deliveryType,
+                                deliveryType: finalDeliveryType,
                                 orderTransactionType: orderTransactionType,
                                 receiverName: receiverName,
                                 contactNumber: contactNumber,
@@ -342,7 +344,7 @@
                             .then(data => {
                                 // 결제가 성공적으로 처리된 경우
                                 alert(data.message);
-                                window.location.href = '/user/order/purchases/history/progress'; // 결제 완료 후 리다이렉션할 페이지
+                                window.location.href = '/user/order/purchases/history/completed'; // 결제 완료 후 리다이렉션할 페이지
                             })
                             .catch(error => {
                                 // 결제 처리 중 오류가 발생한 경우
@@ -351,35 +353,6 @@
                         });
                     }
                 });
-            </script>
-
-            <!-- 결제 타이머 -->
-            <script>
-                function startTimer(duration, display) {
-                    let timer = duration, hours, minutes, seconds;
-                    setInterval(function () {
-                        hours = parseInt(timer / 3600, 10);
-                        minutes = parseInt((timer % 3600) / 60, 10);
-                        seconds = parseInt(timer % 60, 10);
-
-                        hours = hours < 10 ? "0" + hours : hours;
-                        minutes = minutes < 10 ? "0" + minutes : minutes;
-                        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                        display.textContent = hours + "시간 " + minutes + "분 " + seconds + "초";
-
-                        if (--timer < 0) {
-                            timer = 0; // 타이머가 0이 되면 멈춤
-                            alert("결제 시간이 만료되었습니다.");
-                        }
-                    }, 1000); // 1초마다 업데이트
-                }
-
-                window.onload = function () {
-                    let twelveHours = 12 * 60 * 60; // 12시간을 초 단위로 변환
-                    let display = document.querySelector('#timer'); // 타이머를 표시할 요소 선택
-                    startTimer(twelveHours, display); // 타이머 시작
-                }
             </script>
 
             <!-- 보유 잔액 포맷팅 -->

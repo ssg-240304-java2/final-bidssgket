@@ -16,16 +16,19 @@
       if (message) {
         window.alert(message);
       }
+      if (window.Notification) {
+        Notification.requestPermission();
+      }
     }
 
 
     /** 알림기능 적용 시작 */
 
-    window.onload = function () {
+    /*window.onload = function () {
       if (window.Notification) {
         Notification.requestPermission();
       }
-    }
+    }*/
 
     /** 알림기능 적용 끝 */
 

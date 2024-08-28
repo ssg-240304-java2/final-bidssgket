@@ -46,7 +46,7 @@ public class AuctionService {
                 .memberNo(member.getMemberNo())
                 .memberName(member.getMemberName())
                 .pwd(member.getPwd())
-                .memberId(member.getMemberId())
+//                .memberId(member.getMemberId())
                 .phone(member.getPhone())
                 .email(member.getEmail())
                 .memberNickname(member.getMemberNickname())
@@ -59,9 +59,14 @@ public class AuctionService {
 
     public int getMinBid(Long productNo) {
         List<Auction> auctions = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
-        if (auctions.isEmpty()) {
-            Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productNo));
+        Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productNo));
+        /*if (auctions.isEmpty()) {
             return (int) (product.getAuctionStartPrice() * 1.01);
+        } else {
+            return (int) (auctions.get(0).getMinTenderPrice() * 1.01);
+        }*/
+        if (auctions.isEmpty()) {
+            return (int) (product.getAuctionStartPrice() * 0.9);
         } else {
             return (int) (auctions.get(0).getMinTenderPrice() * 1.01);
         }
@@ -116,17 +121,33 @@ public class AuctionService {
 
     @Transactional
     public void endAuction(Long productNo) {
-        System.out.println("productNo = " + productNo);
         Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
         product.setSalesStatus(SalesStatus.trading);
+        List<Auction> auction = auctionRepository.findAuctionByProductNoOrderByMaxTenderPriceDesc(productNo);
+        List<Auction> auctions = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
 
-        List<Auction> auction = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
-        if (!auction.isEmpty()) {
+        /*if (!auction.isEmpty()) {
             Auction firstBid = auction.get(0);
             Auction secondBid = auction.size() > 1 ? auction.get(1) : firstBid;
 
             firstBid.updateBidSuccess(true);
             product.setBidSuccessPrice(secondBid.getMinTenderPrice());
+        } else {
+            product.setSalesStatus(SalesStatus.sale_pause);
+            auctionRepository.deleteAll(auction);
+        }*/
+        if (!auction.isEmpty()) {
+            Auction minBid = auctions.get(0);
+            Auction maxBid = auction.get(0);
+            if (minBid.getMinTenderPrice() < product.getAuctionStartPrice()) {
+                product.setSalesStatus(SalesStatus.sale_pause);
+                auctionRepository.deleteAll(auction);
+            } else {
+                Auction successBid = auction.size() > 1 ? auction.get(0) : maxBid;
+                maxBid.updateBidSuccess(true);
+                product.setBidSuccessPrice(successBid.getMinTenderPrice());
+                product.setSalesStatus(SalesStatus.trading);
+            }
         } else {
             product.setSalesStatus(SalesStatus.sale_pause);
             auctionRepository.deleteAll(auction);
@@ -138,6 +159,10 @@ public class AuctionService {
 
     public boolean isAuctionParticipant(Long memberNo, Long productNo) {
         return auctionRepository.countByMemberNoAndProductNo(memberNo, productNo) > 0;
+    }
+
+    public boolean isEventAuctionParticipant(Long memberNo, Long productNo) {
+        return auctionRepository.eventCountByMemberNoAndProductNo(memberNo, productNo) > 0;
     }
 
     public boolean isSeller(Long memberNo, Long productNo) {
@@ -175,7 +200,7 @@ public class AuctionService {
         List<Auction> auctions = auctionRepository.findByProductNoOrderByMaxTenderPriceDesc(productNo);
         if (auctions.isEmpty()) {
             Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productNo));
-            return (int) (product.getAuctionStartPrice() * 1.01);
+            return (int) (product.getAuctionStartPrice() * 0.95);
         } else {
             return (int) (auctions.get(0).getMaxTenderPrice() * 1.01);
         }

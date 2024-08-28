@@ -99,7 +99,7 @@ public class ProductViewController {
     public String updateProduct(@PathVariable("productNo") Long productNo,
                                 @ModelAttribute ProductReqDto productReqDto) {
         productService.updateProduct(productReqDto);
-        return "redirect:/detailBuyer/" + productNo;
+        return "redirect:/detailSeller/" + productNo;
     }
 
 
@@ -162,6 +162,7 @@ public class ProductViewController {
     public String categoryController(Model model, @PathVariable("category") Category category, HttpSession httpSession) {
         log.info("category: {}", category);
         List<Product> products = productService.getProductsByCategory(category);
+        model.addAttribute("category", category.name());
         model.addAttribute("products", products);
         SessionMember sessionMember = (SessionMember) httpSession.getAttribute("member");
         List<Long> wishedProductIds = new ArrayList<>();

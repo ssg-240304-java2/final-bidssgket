@@ -2,6 +2,8 @@ package com.ssg.bidssgket.user.domain.member.domain;
 
 import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatRoomMember;
+import com.ssg.bidssgket.user.domain.member.view.DTO.MemberDto;
+import com.ssg.bidssgket.user.domain.order.domain.DeliveryAddress;
 import com.ssg.bidssgket.user.domain.order.domain.Parcel;
 import com.ssg.bidssgket.user.domain.order.domain.PurchaseOrder;
 import com.ssg.bidssgket.user.domain.order.domain.SaleOrder;
@@ -32,7 +34,7 @@ public class Member implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberNo; // 사용자 고유번호
     private String memberName; // 사용자 이름
-    private String memberId; // 사용자 아이디
+//    private String memberId; // 사용자 아이디
     private String pwd; // 사용자 비밀번호
     private String phone; // 핸드폰 번호
 
@@ -94,35 +96,39 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "reviewee", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE}, orphanRemoval = true)
+    private List<DeliveryAddress> deliveryAddress = new ArrayList<>(); // 배송지 정보 [FK]
+
     @Builder
-    private Member(String memberName, String memberId, String phone, String pwd,String memberNickname, String email, Role role, Integer biscuit, Address address, Boolean isDeleted, Boolean isPenalty) {
+    public Member(String memberName, String memberId, String phone, String pwd, String memberNickname,
+                  String email, Role role, Integer biscuit, Address address, Boolean isDeleted, Boolean isPenalty) {
         this.memberName = memberName;
-        this.memberId = memberId;
+//        this.memberId = memberId;
         this.pwd = pwd;
         this.phone = phone;
         this.memberNickname = memberNickname;
         this.email = email;
         this.role = role;
-//        this.provider = provider;
-//        this.providerId = providerId;
-        this.biscuit = biscuit == null? 50 :biscuit;
+        this.biscuit = biscuit == null ? 50 : biscuit;
         this.address = address;
-        this.isDeleted = isDeleted == null? false:isDeleted;
-        this.isPenalty = isPenalty == null? false:isPenalty;
+        this.isDeleted = isDeleted == null ? false : isDeleted;
+        this.isPenalty = isPenalty == null ? false : isPenalty;
     }
 
-//    public static Member createMember(MemberDto memberDto) {
-//        return Member.builder()
-//                .memberName(memberDto.getMemberName())
-//                .memberId(memberDto.getMemberId())
-//                .pwd(memberDto.getPwd())
-//                .memberNickname(memberDto.getMemberNickname())
-//                .biscuit(memberDto.getBiscuit())
-//                .address(memberDto.getAddress())
-//                .isDeleted(memberDto.getIsDeleted())
-//                .isPenalty(memberDto.getIsPenalty())
-//                .build();
-//    }
+    public static MemberDto toDto(Member member){
+
+        return MemberDto.builder()
+                .memberNo(member.getMemberNo())
+                .memberName(member.getMemberName())
+                .pwd(member.getPwd())
+                .memberId(member.getEmail())
+                .phone(member.getPhone())
+                .email(member.getEmail())
+                .memberNickname(member.getMemberNickname())
+                .biscuit(null)  // 나중에 체크
+                .isDeleted(null) // 나중에 체크
+                .address(null).build();
+    }
 
     public String getRoleKey() {
         return this.role.getKey();

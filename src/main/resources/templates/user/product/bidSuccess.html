@@ -18,11 +18,11 @@
 
     /** 알림기능 적용 시작 */
 
-    window.onload = function () {
+    /*window.onload = function () {
       if (window.Notification) {
         Notification.requestPermission();
       }
-    }
+    }*/
 
     /** 알림기능 적용 끝 */
 
@@ -161,9 +161,9 @@
         </div>
       </div>
       <div class="row mt-5">
-        <div class="col-md-6"> <!-- 표를 위한 넓은 열 -->
+        <div class="col-md-6">
           <h4>입찰 현황</h4>
-          <div class="table-responsive chart-table"> <!-- 표의 오른쪽 끝을 맞추도록 너비 설정 -->
+          <div class="table-responsive chart-table">
             <table class="table table-bordered">
               <thead>
               <tr>
@@ -226,9 +226,13 @@
           postForm('/auction/abandonBid/' + [[${product.productNo}]]);
         });
 
-        confirmButton.addEventListener('click', function () {
-          postForm('/auction/confirmPurchase/' + [[${product.productNo}]]);
-        });
+        // confirmButton.addEventListener('click', function () {
+        //   postForm('/auction/confirmPurchase/' + [[${product.productNo}]]);
+        // });
+
+        if (window.Notification) {
+          Notification.requestPermission();
+        }
       };
 
       function postForm(action) {
@@ -238,6 +242,10 @@
         document.body.appendChild(form);
         form.submit();
       }
+
+      document.getElementById('confirmPurchaseButton').addEventListener('click', function () {
+        window.location.href = '/user/payment/checkout/' + [[${product.productNo}]];
+      });
 
     </script>
   </main>

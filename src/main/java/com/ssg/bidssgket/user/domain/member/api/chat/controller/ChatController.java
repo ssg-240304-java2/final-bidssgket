@@ -1,5 +1,7 @@
 package com.ssg.bidssgket.user.domain.member.api.chat.controller;
 
+import com.ssg.bidssgket.global.util.ncps3.FileDto;
+import com.ssg.bidssgket.global.util.ncps3.FileService;
 import com.ssg.bidssgket.user.domain.member.api.chat.exception.ChatRoomNotFoundException;
 import com.ssg.bidssgket.user.domain.member.api.chat.exception.MemberNotFoundException;
 import com.ssg.bidssgket.user.domain.member.api.chat.model.ChatMessage;
@@ -18,6 +20,8 @@ import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.apache.bcel.generic.LineNumberGen;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -27,6 +31,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -45,6 +50,7 @@ public class ChatController {
     private final ChatRoomRepository chatRoomRepository;
     private final ProductRepository productRepository;
     private final ChatRoomService chatRoomService;
+    private final FileService fileService;
 
     @GetMapping
     public String getChatPage(Model model, HttpServletRequest request) {
@@ -98,7 +104,7 @@ public class ChatController {
         // 기존 채팅방 조회
         ChatRoom existingChatRoom = chatRoomService.findByProductNo(productNo);
 
-        if (existingChatRoom != null) {
+        if (existingChatRoom != null && existingChatRoom.getChatRoomMembers().equals(currentUser.getChatRoomMembers())) {
             // 이미 존재하는 채팅방으로 리디렉션
             return "redirect:/chat/" + existingChatRoom.getChatRoomNo();
         }
@@ -175,4 +181,38 @@ public class ChatController {
         // 동적으로 채팅방 경로를 생성하여 메시지 전송
         messagingTemplate.convertAndSend("/pro/chatRoom/" + chatRoom.getChatRoomNo(), ChatMessageResDto.fromEntity(chatMessage));
     }
+
+    @PostMapping("/upload")
+    public ResponseEntity<ChatMessageResDto> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam("chatRoomNo")Long chatRoomNo, HttpSession session) {
+        SessionMember sessionMember = (SessionMember) session.getAttribute("member");
+        Member member = memberRepository.findByEmail(sessionMember.getEmail()).orElseThrow();
+
+        // 파일 업로드 처리
+        List<MultipartFile> files = new ArrayList<>();
+        files.add(file);
+        List<FileDto> uploadedFiles = fileService.uploadFiles(files, "chat/images");
+
+        if (!uploadedFiles.isEmpty()) {
+            String imageUrl = uploadedFiles.get(0).getUploadFileUrl();
+
+            // ChatMessageDto 객체를 빌더 패턴으로 생성
+            ChatMessageDto chatMessageDto = ChatMessageDto.builder()
+                    .memberNo(member.getMemberNo())
+                    .chatRoomNo(chatRoomNo)
+                    .imageUrl(imageUrl) // 이미지 URL을 메시지로 설정
+                    .build();
+
+            // 메시지 저장
+            ChatMessage chatMessage = chatMessageService.createAndSaveChatMessage(chatMessageDto, member);
+            ChatMessageResDto responseDto = ChatMessageResDto.fromEntity(chatMessage);
+
+            // WebSocket을 통해 클라이언트에 메시지 전송
+            messagingTemplate.convertAndSend("/pro/chatRoom/" + chatMessage.getChatRoom().getChatRoomNo(), responseDto);
+
+            return ResponseEntity.ok(responseDto);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }

@@ -31,7 +31,7 @@
                     <a href="/user/payment/info" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">결제</a>
                 </li>
                 <li>
-                    <a href="#" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">채팅</a>
+                    <a href="/chat" class="block text-left w-full text-gray-400 transform hover:scale-105 transition-transform duration-300">채팅</a>
                 </li>
             </ul>
         </aside>
@@ -41,20 +41,20 @@
                     <div class="flex justify-around text-center text-sm py-2 border-b">
                         <div class="flex-1">
                             <a href="/user/order/sales/history/auction" class="block">
-                                <div>경매중</div>
-                                <div class="text-black-500">0</div>
+                                <div>판매중</div>
+                                <div th:text="${saleAuctionItems.size()}" class="text-black-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
                             <a href="/user/order/sales/history/progress" class="block">
-                                <div>판매중</div>
-                                <div class="text-black-500">0</div>
+                                <div>거래중</div>
+                                <div th:text="${saleTradingItems.size()}" class="text-black-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
                             <a href="/user/order/sales/history/completed" class="block">
                                 <div>판매 완료</div>
-                                <div class="text-green-500">0</div>
+                                <div th:text="${saleCompletedItems.size()}" class="text-green-500">0</div>
                             </a>
                         </div>
                     </div>
@@ -74,58 +74,112 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr class="border-b">
+                            <tr th:each="saleCompletedItem : ${saleCompletedItems}" class="border-b">
+                                <!-- 상품 이미지 및 상품명 -->
                                 <td class="flex items-center space-x-2 px-4 py-2">
-                                    <img src="https://placehold.co/100x100" alt="나이키 에어 줌 알파플라이 넥스트% 3 블루프린트 운동화" class="w-24 h-24 mr-4">
+                                    <div th:if="${saleCompletedItem.productImages != null and !saleCompletedItem.productImages.isEmpty()}">
+                                        <img th:src="${saleCompletedItem.productImages[0].productImg}"
+                                             th:alt="'Product image of ' + ${saleCompletedItem.productName}"
+                                             style="width: 100px; height: 100px"
+                                             data-product-image="${saleCompletedItem.productImages[0].productImg}">
+                                    </div>
                                     <div class="bg-white p-6 mb-8">
-                                        <a href="#" class="block text-lg font-medium">나이키 에어 줌 알파플라이 넥스트% 3 블루프린트</a>
-                                        <div class="text-gray-600">260</div>
+                                        <a th:href="@{/detailAuction/{no}(no=${saleCompletedItem.productNo})}"
+                                           th:text="${saleCompletedItem.productName}"
+                                           class="block text-lg font-medium"
+                                           data-product-name="${saleTradingItems.product.productName}">
+                                            상품명
+                                        </a>
                                     </div>
                                 </td>
-                                <td class="px-4 py-2">300,000원</td>
-                                <td class="px-4 py-2">24/07/31</td>
-                                <td class="px-4 py-2">판매 완료</td>
+                                <!-- 결제 금액 -->
+                                <td th:text="${saleCompletedItem.bidSuccessPrice}" class="maxTenderPrice px-4 py-2">
+                                    최대 입찰 금액
+                                </td>
+                                <!-- 결제 일자 -->
+                                <td th:text="${saleCompletedItem.createdAt}" class="tenderDate px-4 py-2">
+                                    경매 참가일
+                                </td>
+                                <!-- 상태 -->
+                                <td th:text="${saleCompletedItem.salesStatus}" class="salesStatus px-4 py-2">
+                                    상태
+                                </td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            <div class="flex items-center justify-center min-h-18 bg-white">
-                <div class="flex flex-col items-center space-y-4 border border-gray-200 rounded-lg px-8 py-4">
-                    <div class="flex items-center space-x-4">
-                        <button class="flex items-center justify-center w-10 h-10 bg-gray-100 rounded text-gray-500">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <ul class="flex items-center space-x-3 text-gray-400 text-lg">
-                            <li class="text-black">1</li>
-                            <li>2</li>
-                            <li>3</li>
-                            <li>4</li>
-                            <li>5</li>
-                            <li>6</li>
-                            <li>7</li>
-                            <li>8</li>
-                            <li>9</li>
-                            <li>10</li>
-                        </ul>
-                        <button class="flex items-center justify-center w-10 h-10 bg-gray-100 rounded text-gray-500">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                    <div class="flex items-center space-x-4 text-gray-400 text-lg">
-                        <button class="text-gray-400 hover:text-gray-500">
-                            « 처음
-                        </button>
-                        <span class="border-l border-gray-300 h-full"></span>
-                        <button class="text-gray-400 hover:text-gray-500">
-                            마지막 »
-                        </button>
-                    </div>
-                </div>
-            </div>
         </section>
     </div>
+
+    <!-- 날짜 포맷팅 -->
+    <script>
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) { // 유효한 날짜인지 확인
+                console.error('Invalid date string:', dateString);
+                return 'Invalid Date';
+            }
+            return date.toISOString().split('T')[0]; // YYYY-MM-DD
+        }
+    </script>
+
+    <!-- 상태 포맷팅 -->
+    <script>
+        function formatStatus(status) {
+            const statuses = {
+                // 판매 상태 매핑
+                'selling': '판매중',
+                'trading': '경매중',
+                'sale_completed': '판매완료',
+                'sale_pause': '판매정지',
+
+                // 결제 상태 매핑
+                'PENDING_PAYMENT': '결제대기',
+                'PAID': '결제완료',
+
+                // 배송 상태 매핑
+                'PENDING_SHIPMENT': '배송대기',
+                'IN_TRANSIT': '배송중',
+                'DELIVERED': '배송완료',
+
+                // 주문 상태 매핑
+                'COMPLETED': '주문완료',
+                'PAYMENT_CANCELLED': '결제취소',
+                'ORDER_CANCELLED': '주문취소'
+            };
+            return statuses[status] || '상태 불명';
+        }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 날짜 포맷팅
+            document.querySelectorAll('.tenderDate').forEach(function(elem) {
+                const tenderDateValue = elem.textContent.trim();
+                elem.textContent = formatDate(tenderDateValue);
+            });
+
+            // 상태 포맷팅
+            document.querySelectorAll('.salesStatus').forEach(function(elem) {
+                const salesStatusValue = elem.textContent.trim();
+                elem.textContent = formatStatus(salesStatusValue);
+            });
+
+            // 가격 포맷팅
+            document.querySelectorAll('.minTenderPrice').forEach(function(elem) {
+                const minTenderPriceValue = parseInt(elem.textContent.replace(/,/g, ''), 10);
+                elem.textContent = new Intl.NumberFormat('ko-KR').format(minTenderPriceValue) + '원';
+            });
+
+            document.querySelectorAll('.maxTenderPrice').forEach(function(elem) {
+                const maxTenderPriceValue = parseInt(elem.textContent.replace(/,/g, ''), 10);
+                elem.textContent = new Intl.NumberFormat('ko-KR').format(maxTenderPriceValue) + '원';
+            });
+        });
+    </script>
+
 </main>
 </body>
 </html>

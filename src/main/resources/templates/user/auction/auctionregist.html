@@ -16,31 +16,72 @@
             const productNoField = document.getElementById('productNoField');
             const errorMessage = document.getElementById('error-message');
             const submitButton = document.querySelector('#btnSubmit');
+            // const minBid = parseFloat(minTenderPriceInput.getAttribute('min'));
+            const minBid = parseInt(minTenderPriceInput.getAttribute('min').replace(/,/g, ''), 10);
 
-            console.log(minTenderPriceInput);
+            function formatCurrency(value) {
+                value = value.replace(/[^0-9]/g, '');
+                if (!value) return '';
+                // const formattedValue = parseInt(value).toLocaleString();
+                // return formattedValue + ' 원';
+                return parseInt(value, 10).toLocaleString();
+            }
 
-            // 최소 입찰가보다 큰 금액만 최대 입찰가로 입력 가능
-            maxTenderPriceInput.addEventListener('input', function () {
-                if (parseInt(maxTenderPriceInput.value) <= parseInt(minTenderPriceInput.value)) {
+            function validateInputs() {
+                const minTenderPriceValue = parseFloat(minTenderPriceInput.value.replace(/[^0-9]/g, ''));
+                const maxTenderPriceValue = parseFloat(maxTenderPriceInput.value.replace(/[^0-9]/g, ''));
+
+                if (isNaN(minTenderPriceValue) || minTenderPriceValue < minBid) {
+                    errorMessage.textContent = '최소 입찰가는 ' + minBid.toLocaleString() + ' 원 이상이어야 합니다.';
+                    submitButton.disabled = true;
+                    return;
+                }
+
+                if (isNaN(maxTenderPriceValue) || maxTenderPriceValue <= minTenderPriceValue) {
                     errorMessage.textContent = '최대 입찰가는 최소 입찰가보다 커야 합니다.';
                     submitButton.disabled = true;
-                } else {
-                    errorMessage.textContent = '';
-                    submitButton.disabled = false;
+                    return;
                 }
+
+                if (maxTenderPriceValue < minTenderPriceValue * 1.01) {
+                    errorMessage.textContent = '최대 입찰가는 최소 입찰가의 1% 이상이어야 합니다.';
+                    submitButton.disabled = true;
+                    return;
+                }
+                errorMessage.textContent = '';
+                submitButton.disabled = false;
+            }
+
+            minTenderPriceInput.addEventListener('input', function () {
+                this.value = formatCurrency(this.value);
+                validateInputs();
             });
 
-            //action="/auction/auctionregist" method="post"
-            const frm = document.getElementById("frm");
+            maxTenderPriceInput.addEventListener('input', function () {
+                this.value = formatCurrency(this.value);
+                validateInputs();
+            });
 
             submitButton.addEventListener('click', function (event) {
                 event.preventDefault();
-                minTenderPriceField.value = minTenderPriceInput.value;
-                maxTenderPriceField.value = maxTenderPriceInput.value;
+                const minTenderPriceValue = parseFloat(minTenderPriceInput.value.replace(/[^0-9]/g, ''));
+                const maxTenderPriceValue = parseFloat(maxTenderPriceInput.value.replace(/[^0-9]/g, ''));
+
+                if (isNaN(minTenderPriceValue) || minTenderPriceValue < minBid) {
+                    alert('최소 입찰가는 ' + minBid.toLocaleString() + ' 원 이상이어야 합니다.');
+                    return;
+                }
+
+                if (isNaN(maxTenderPriceValue) || maxTenderPriceValue <= minTenderPriceValue || maxTenderPriceValue < minTenderPriceValue * 1.01) {
+                    alert('최대 입찰가는 최소 입찰가보다 크고 최소 입찰가의 1% 이상이어야 합니다.');
+                    return;
+                }
+
+                minTenderPriceField.value = minTenderPriceValue;
+                maxTenderPriceField.value = maxTenderPriceValue;
 
                 const productNo = productNoField.value;
                 frm.setAttribute('action', `/auction/auctionregist/${productNo}`);
-                /*frm.setAttribute('action','/auction/auctionregist');*/
                 frm.setAttribute('method', 'post');
                 frm.submit();
             });
@@ -70,12 +111,12 @@
             </div>
             <div class="form-group">
                 <label for="minTenderPrice">최소 입찰가</label>
-                <input type="number" id="minTenderPrice" th:value="${minBid}" min="${minBid}" placeholder="최소 입찰가 입력">
-                <p class="hint" th:text="${minBid} + '원 이상 입찰되어야 합니다.'"></p>
+                <input type="text" id="minTenderPrice" th:value="${#numbers.formatInteger(minBid, 3, 'COMMA')}" th:min="${minBid}" placeholder="최소 입찰가 입력">
+                <p class="hint" th:text="${#numbers.formatInteger(minBid, 3, 'COMMA')} + '원 이상 입찰되어야 합니다.'"></p>
             </div>
             <div class="form-group">
                 <label for="maxTenderPrice">최대 입찰가</label>
-                <input type="number" id="maxTenderPrice" placeholder="최대 입찰가 입력">
+                <input type="text" id="maxTenderPrice" placeholder="최대 입찰가 입력">
                 <p class="hint" id="error-message" style="color: red;"></p>
             </div>
             <div class="form-actions">
@@ -85,7 +126,7 @@
                     <input type="hidden" name="productNo" id="productNoField" th:value="${product.productNo}"/>
                     <button type="submit" class="btn submit-btn" id="btnSubmit">입찰 등록</button>
                 </form>
-                <button type="button" class="btn cancel-btn">취소</button>
+                <a th:href="@{/detailBuyer/{productNo}(productNo=${product.productNo})}" class="btn cancel-btn">취소</a>
             </div>
             <p class="disclaimer">입찰을 선택하면, 낙찰자가 될 경우 이 상품을 구매하기로 약정하는 것입니다.</p>
         </div>

@@ -62,9 +62,10 @@
               </div>
               <div class="mb-3">
                 <label for="buyNowPrice" class="form-label">즉시 판매가</label>
-                <input type="text" class="form-control" id="buyNowPrice" name="buyNowPrice" th:field="*{buyNowPrice}" placeholder="즉시 판매가격을 입력하세요.">
+                <input type="text" class="form-control" id="buyNowPrice" name="buyNowPrice"
+                       th:field="*{buyNowPrice}" placeholder="즉시 판매가격을 입력하세요." disabled
+                       oninput="formatPriceInput(this)">
               </div>
-            </div>
             <div class="col-md-6">
               <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" id="auctionSelected" name="auctionSelected" th:field="*{auctionSelected}">
@@ -72,7 +73,9 @@
               </div>
               <div class="mb-3">
                 <label for="auctionStartPrice" class="form-label">경매 시작가</label>
-                <input type="text" class="form-control" id="auctionStartPrice" name="auctionStartPrice" th:field="*{auctionStartPrice}" placeholder="경매 시작 가격을 입력하세요.">
+                <input type="text" class="form-control" id="auctionStartPrice" name="auctionStartPrice"
+                       th:field="*{auctionStartPrice}" placeholder="경매 시작 가격을 입력하세요." disabled
+                       oninput="formatPriceInput(this)">
               </div>
             </div>
           </div>
@@ -88,10 +91,44 @@
           </div>
         </div>
       </div>
+      </div>
     </form>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+
+    function formatPriceInput(input) {
+      // 입력된 값에서 숫자 이외의 문자를 모두 제거
+      let value = input.value.replace(/[^0-9]/g, '');
+
+      // 가격이 0인 경우 경고 메시지 표시 및 초기화
+      if (value === '0') {
+        alert('가격은 0원이 될 수 없습니다. 다시 입력해주세요.');
+        input.value = ''; // 입력 필드 초기화
+        return;
+      }
+
+      // 세 자리마다 콤마 추가
+      value = new Intl.NumberFormat().format(value);
+
+      // 포맷팅된 값을 다시 입력 필드에 설정
+      input.value = value;
+    }
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+      const buyNowPriceField = document.getElementById('buyNowPrice');
+      const auctionStartPriceField = document.getElementById('auctionStartPrice');
+
+      // 콤마 제거 후 숫자만 남기고 전송되도록 처리
+      if (buyNowPriceField && buyNowPriceField.value) {
+        buyNowPriceField.value = buyNowPriceField.value.replace(/,/g, '');
+      }
+
+      if (auctionStartPriceField && auctionStartPriceField.value) {
+        auctionStartPriceField.value = auctionStartPriceField.value.replace(/,/g, '');
+      }
+    });
+
     document.getElementById('uploadButton').addEventListener('click', function() {
       document.getElementById('productImages').click();
     });
@@ -99,8 +136,28 @@
     document.getElementById('productImages').addEventListener('change', function(event) {
       const files = event.target.files;
       const thumbnailContainer = document.getElementById('thumbnailContainer');
+      const maxTotalFileSize = 24 * 1024 * 1024; // 24MB
+      let totalFileSize = 0;
+
       thumbnailContainer.innerHTML = ''; // Clear previous thumbnails
+
+      if (files.length > 6) {
+        alert('사진은 최대 6장까지만 업로드할 수 있습니다.');
+        event.target.value = ''; // 파일 선택 초기화
+        return;
+      }
+
       for (let i = 0; i < files.length; i++) {
+
+        totalFileSize += files[i].size; // 파일 크기를 총합에 더함
+
+        if (totalFileSize > maxTotalFileSize) {
+          alert('사진의 총 용량이 24MB를 초과했습니다. 다시 선택해주세요.');
+          event.target.value = ''; // 파일 선택 초기화
+          thumbnailContainer.innerHTML = ''; // 미리보기 이미지 삭제
+          return;
+        }
+
         const reader = new FileReader();
         reader.onload = function(e) {
           const img = document.createElement('img');
@@ -117,28 +174,51 @@
     function validateForm() {
       const auctionStartTime = document.getElementById('auctionStartTime').value;
       const auctionEndTime = document.getElementById('auctionEndTime').value;
-      // 사진이 없는 경우 경고 메시지 표시
       const thumbnailContainer = document.getElementById('thumbnailContainer');
-      const images = thumbnailContainer.getElementsByClassName('thumbnail-image');
-      const productName = document.getElementById('productName');
-      const salesStatus = document.getElementById('salesStatus');
-      const productDesc = document.getElementById('productDesc');
+      const images = thumbnailContainer.getElementsByTagName('img');
+      const productName = document.getElementById('productName').value.trim();
+      const category = document.getElementById('category').value;
+      const productDesc = document.getElementById('productDesc').value.trim();
+      const buyNowPriceField = document.getElementById('buyNowPrice').value.trim();
+      const auctionStartPriceField = document.getElementById('auctionStartPrice').value.trim();
 
-      if ( !productName.value.trim() || !salesStatus.value.trim() || !productDesc.value.trim()) {
-        alert('입력하지 않은 공간이 있습니다! 다시 확인해주세요!');
+      // 빈 칸 체크
+      if (!productName || !category || !productDesc) {
+        alert('입력하지 않은 항목이 있습니다! 다시 확인해주세요!');
         return false;
       }
 
+      // 사진이 없는 경우
       if (images.length === 0) {
         alert('사진을 최소 한 장 업로드해야 합니다!');
         return false; // 폼 제출 막음
       }
 
-      if (new Date(auctionStartTime) >= new Date(auctionEndTime)) {
+      // 가격이 0일 경우 경고 메시지 표시
+      if (buyNowPriceField === '0' || auctionStartPriceField === '0') {
+        alert('가격은 0원이 될 수 없습니다. 다시 입력해주세요.');
+        return false; // 폼 제출 막음
+      }
+
+      const start = new Date(auctionStartTime);
+      const end = new Date(auctionEndTime);
+
+      // 경매 시간 검증: 종료 시간이 시작 시간보다 뒤로 설정되어야 함
+      if (start >= end) {
         alert('경매 종료 시간이 경매 시작 시간보다 뒤로 설정되어야 합니다.');
         return false;
       }
 
+      // 경매 시간 검증: 종료 시간이 시작 시간보다 최소 1일(24시간) 이상 차이가 나야 함
+      const timeDifference = end - start; // 밀리초 단위 차이 계산
+      const oneDayInMilliseconds = 24 * 60 * 60 * 1000; // 1일 = 24시간 = 86400000 밀리초
+
+      if (timeDifference < oneDayInMilliseconds) {
+        alert('경매 종료 시간은 경매 시작 시간보다 최소 1일 이상 뒤로 설정되어야 합니다.');
+        return false;
+      }
+
+      alert('등록이 완료되었습니다!');
       return true;
     }
 
@@ -152,33 +232,24 @@
 
     // 즉시 판매 체크박스와 경매 체크박스의 상태 변경 이벤트 추가
     document.getElementById('imdPurchase').addEventListener('change', function() {
-      if (!this.checked) {
-        document.getElementById('buyNowPrice').value = ''; // 체크 해제 시 즉시 판매가를 null로 설정
+      const buyNowPriceField = document.getElementById('buyNowPrice');
+      if (this.checked) {
+        buyNowPriceField.disabled = false; // 체크 시 필드 활성화
+      } else {
+        buyNowPriceField.value = ''; // 체크 해제 시 필드 비우기
+        buyNowPriceField.disabled = true; // 체크 해제 시 필드 비활성화
       }
     });
 
-    document.getElementById('auction').addEventListener('change', function() {
-      if (!this.checked) {
-        document.getElementById('auctionStartPrice').value = ''; // 체크 해제 시 경매 시작가를 null로 설정
+    document.getElementById('auctionSelected').addEventListener('change', function() {
+      const auctionStartPriceField = document.getElementById('auctionStartPrice');
+      if (this.checked) {
+        auctionStartPriceField.disabled = false; // 체크 시 필드 활성화
+      } else {
+        auctionStartPriceField.value = ''; // 체크 해제 시 필드 비우기
+        auctionStartPriceField.disabled = true; // 체크 해제 시 필드 비활성화
       }
     });
-
-    function validateForm() {
-      const auctionStartTime = document.getElementById('auctionStartTime').value;
-      const auctionEndTime = document.getElementById('auctionEndTime').value;
-
-
-
-
-      if (new Date(auctionStartTime) >= new Date(auctionEndTime)) {
-        alert('경매 종료 시간을 다시 확인해주세요!');
-        return false;
-      }
-
-      alert('등록이 완료되었습니다!');
-      return true;
-    }
-
 
   </script>
 </main>
