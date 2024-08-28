@@ -44,7 +44,7 @@ public class SaleOrderViewController {
 
     private void addSaleHistoryAttributes(Model model, Member member) {
 
-        List<Auction> saleAuctionItems = saleOrderService.getSaleAuctionProducts(member.getMemberNo());
+        List<Product> saleAuctionItems = saleOrderService.getSaleAuctionProducts(member.getMemberNo());
         List<Product> saleTradingItems = saleOrderService.getSaleTradingProducts(member.getMemberNo());
         List<Product> saleCompletedItems = saleOrderService.getSaleCompletedProducts(member.getMemberNo());
 

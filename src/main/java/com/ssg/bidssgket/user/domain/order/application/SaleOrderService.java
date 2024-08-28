@@ -12,6 +12,8 @@ import com.ssg.bidssgket.user.domain.order.domain.enums.OrderTransactionType;
 import com.ssg.bidssgket.user.domain.order.domain.repository.SaleOrderRepository;
 import com.ssg.bidssgket.user.domain.payment.domain.Payment;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
+import com.ssg.bidssgket.user.domain.product.domain.repository.ProductReportRepository;
+import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,11 +26,15 @@ public class SaleOrderService {
 
     private final SaleOrderRepository saleOrderRepository;
     private final AuctionRepository auctionRepository;
+    private final ProductReportRepository productReportRepository;
+    private final ProductRepository productRepository;
 
 
-    public SaleOrderService(SaleOrderRepository saleOrderRepository, AuctionRepository auctionRepository) {
+    public SaleOrderService(SaleOrderRepository saleOrderRepository, AuctionRepository auctionRepository, ProductReportRepository productReportRepository, ProductRepository productRepository) {
         this.saleOrderRepository = saleOrderRepository;
         this.auctionRepository = auctionRepository;
+        this.productReportRepository = productReportRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -51,13 +57,14 @@ public class SaleOrderService {
         return saleOrderRepository.save(saleOrder);
     }
 
-    public List<Auction> getSaleAuctionProducts(Long memberNo) {
+    public List<Product> getSaleAuctionProducts(Long memberNo) {
 
         // memberNo 값을 로그로 출력
         log.info("회원 정보 확인 : {}", memberNo);
 
         // 데이터베이스에서 경매중인 상품 목록 조회
-        List<Auction> auctionItems = auctionRepository.findAuctionItemsByMember(memberNo);
+//        List<Auction> auctionItems = auctionRepository.findAuctionSalesItemsByMember(memberNo);
+        List<Product> auctionItems = productRepository.findAuctionSalesItemsByMember(memberNo);
 
         // 조회된 경매중인 상품 목록을 로그로 출력
         if (auctionItems == null || auctionItems.isEmpty()) {
@@ -78,6 +85,6 @@ public class SaleOrderService {
 
     public List<Product> getSaleCompletedProducts(Long memberNo) {
 
-        return  saleOrderRepository.getSaleCompletedProducts(memberNo);
+        return  productRepository.getSaleCompletedProducts(memberNo);
     }
 }

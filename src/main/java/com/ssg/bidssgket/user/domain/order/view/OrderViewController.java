@@ -12,6 +12,7 @@ import com.ssg.bidssgket.user.domain.payment.domain.Pay;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,7 +73,7 @@ public class OrderViewController {
         model.addAttribute("purchaseCompletedItems", purchaseCompletedItems);
 
         // 판매 상품 조회
-        List<Auction> saleAuctionItems = saleOrderService.getSaleAuctionProducts(member.getMemberNo());
+        List<Product> saleAuctionItems = saleOrderService.getSaleAuctionProducts(member.getMemberNo());
         List<Product> saleTradingItems = saleOrderService.getSaleTradingProducts(member.getMemberNo());
         List<Product> saleCompletedItems = saleOrderService.getSaleCompletedProducts(member.getMemberNo());
 
