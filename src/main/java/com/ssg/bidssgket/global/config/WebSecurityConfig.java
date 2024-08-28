@@ -46,7 +46,7 @@ public class WebSecurityConfig {
                 .headers(headerConfig -> headerConfig.frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()))
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/", "/main", "/login", "/oauth2/**", "/chat", "/ws/**").permitAll()
+                                .requestMatchers("/", "/main", "/login", "/oauth2/**", "/chat", "/ws/**","/check-nickname-duplicate","/check-email-duplicate").permitAll()
                                 .requestMatchers("/auction/**").permitAll()
                                 .requestMatchers("/user/**").permitAll()
                                 .requestMatchers("/wish/**").permitAll()

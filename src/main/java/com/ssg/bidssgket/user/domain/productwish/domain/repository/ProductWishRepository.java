@@ -7,6 +7,7 @@ import com.ssg.bidssgket.user.domain.productwish.domain.dto.WishDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,8 +28,8 @@ public interface ProductWishRepository extends JpaRepository<Wish, Long> {
     Optional<Wish> findByMemberAndProduct(Member member, Product product);
 
     @Query(value="SELECT w.* FROM wish w WHERE w.member_no = :memberNo AND w.product_no = :productNo", nativeQuery = true)
-    Wish findByMemberNoAndProductNo(Long memberNo, Long productNo);
+    Wish findByMemberNoAndProductNo(@Param("memberNo") Long memberNo, @Param("productNo") Long productNo);
 
     @Query(value="SELECT w.product_no FROM wish w WHERE w.member_no = :memberNo", nativeQuery = true)
-    List<Long> findProductNoByMemberNo(Long memberNo);
+    List<Long> findProductNoByMemberNo(@Param("memberNo") Long memberNo);
 }
