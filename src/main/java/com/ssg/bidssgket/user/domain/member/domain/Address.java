@@ -1,6 +1,7 @@
 package com.ssg.bidssgket.user.domain.member.domain;
 
 import jakarta.persistence.Embeddable;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ public class Address {
     private String address;
     private String detailAddress;
 
+    @Builder
     public Address(String postcode, String address, String detailAddress) {
         this.addrUUID = UUID.randomUUID().toString();
         this.postcode = postcode;

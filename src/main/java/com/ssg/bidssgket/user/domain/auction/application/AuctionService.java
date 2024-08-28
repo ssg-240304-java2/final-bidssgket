@@ -46,7 +46,7 @@ public class AuctionService {
                 .memberNo(member.getMemberNo())
                 .memberName(member.getMemberName())
                 .pwd(member.getPwd())
-                .memberId(member.getMemberId())
+//                .memberId(member.getMemberId())
                 .phone(member.getPhone())
                 .email(member.getEmail())
                 .memberNickname(member.getMemberNickname())
