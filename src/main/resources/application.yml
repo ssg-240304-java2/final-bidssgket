@@ -4,8 +4,8 @@ server:
 spring:
   profiles:
     include:
-      #      - dev
-      #      - oauth
+#            - dev
+#            - oauth
       - local
       - local-oauth
 

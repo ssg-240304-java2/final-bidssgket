@@ -71,7 +71,7 @@ public class PurchaseOrderViewController {
 
         addPurchaseHistoryAttributes(model, member);
 
-        return "/user/order/purchases/history/auction";
+        return "user/order/purchases/history/auction";
     }
 
     @GetMapping("/history/progress")
@@ -81,7 +81,7 @@ public class PurchaseOrderViewController {
             return "redirect:/login";
         }
         addPurchaseHistoryAttributes(model, member);
-        return "/user/order/purchases/history/progress";
+        return "user/order/purchases/history/progress";
     }
 
     @GetMapping("/history/completed")
@@ -91,31 +91,31 @@ public class PurchaseOrderViewController {
             return "redirect:/login";
         }
         addPurchaseHistoryAttributes(model, member);
-        return "/user/order/purchases/history/completed";
+        return "user/order/purchases/history/completed";
     }
 
     @GetMapping("/pending")
     public String purchasesPending() {
-        return "/user/order/purchases/pending";
+        return "user/order/purchases/pending";
     }
 
     @GetMapping("/shipping/{productNo}")
     public String purchasesShipping() {
-        return "/user/order/purchases/shipping";
+        return "user/order/purchases/shipping";
     }
 
     @GetMapping("/delivered")
     public String purchasesDelivered() {
-        return "/user/order/purchases/delivered";
+        return "user/order/purchases/delivered";
     }
 
     @GetMapping("/completed")
     public String purchasesCompleted() {
-        return "/user/order/purchases/completed";
+        return "user/order/purchases/completed";
     }
 
     @GetMapping("/cancelled")
     public String purchasesCancelled() {
-        return "/user/order/purchases/cancelled";
+        return "user/order/purchases/cancelled";
     }
 }

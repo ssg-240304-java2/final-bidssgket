@@ -62,7 +62,7 @@ public class PaymentViewController {
 
         model.addAttribute("pay", new PayResDto(pay));
         model.addAttribute("payments", payments);
-        return "/user/payment/info";
+        return "user/payment/info";
     }
 
     @GetMapping("/deposit")
@@ -76,12 +76,12 @@ public class PaymentViewController {
         log.info("(Member) Member pay = {}", pay);
 
         model.addAttribute("pay", new PayResDto(pay));
-        return "/user/payment/deposit";
+        return "user/payment/deposit";
     }
 
     @GetMapping("/withdrawal")
     public String paymentWithdrawal() {
-        return "/user/payment/withdrawal";
+        return "user/payment/withdrawal";
     }
 
     @GetMapping("/checkout/{productNo}")
@@ -113,7 +113,7 @@ public class PaymentViewController {
         model.addAttribute("deliveryType", deliveryType);
         model.addAttribute("isAuctionPay", isAuctionPay);
 
-        return "/user/payment/checkout";
+        return "user/payment/checkout";
     }
 
     @PostMapping("/process")
