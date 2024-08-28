@@ -58,19 +58,17 @@
                         <thead>
                         <tr class="bg-gray-100 border-b border-gray-300">
                             <th class="px-4 py-2 text-left">결제 유형</th>
-                            <th class="px-4 py-2 text-left">결제 내용</th>
                             <th class="px-4 py-2 text-left">결제 금액</th>
                             <th class="px-4 py-2 text-left">결제 일자</th>
                             <th class="px-4 py-2 text-left">상태</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr class="border-b border-gray-300">
-                            <td class="px-4 py-2">비스킷 페이</td>
-                            <td class="px-4 py-2">나이키 에어 줌 알파플라이 넥스트% 3 블루프린트</td>
-                            <td class="px-4 py-2">300,000원</td>
-                            <td class="px-4 py-2">24/07/31</td>
-                            <td class="px-4 py-2">결제취소</td>
+                        <tr th:each="payment : ${payments}" class="border-b border-gray-300">
+                            <td th:text="${payment.paymentType}" class="paymentType px-4 py-2">비스킷 페이</td>
+                            <td th:text="${payment.amount}" class="amount px-4 py-2">300,000원</td>
+                            <td th:text="${payment.createdAt}" class="tenderDate px-4 py-2">24/07/31</td>
+                            <td th:text="${payment.paymentStatus}" class="paymentStatus px-4 py-2">결제취소</td>
                         </tr>
                         </tbody>
                     </table>
@@ -87,6 +85,64 @@
             payBalanceElement.textContent = new Intl.NumberFormat('ko-KR').format(payBalanceValue) + '원';
         });
     </script>
+
+    <!-- 날짜 포맷팅 -->
+    <script>
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) { // 유효한 날짜인지 확인
+                console.error('Invalid date string:', dateString);
+                return 'Invalid Date';
+            }
+            return date.toISOString().split('T')[0]; // YYYY-MM-DD
+        }
+    </script>
+
+    <!-- 상태 포맷팅 -->
+    <script>
+        function formatStatus(status) {
+            const statuses = {
+                'BISCUIT_PAY': '비스킷페이',
+                'KAKAO_PAY': '카카오페이',
+
+                // 결제 상태 매핑
+                'PENDING_PAYMENT': '결제대기',
+                'PAID': '결제완료',
+                'PAYMENT_CANCELLED': '결제취소'
+            };
+            return statuses[status] || '상태 불명';
+        }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 날짜 포맷팅
+            document.querySelectorAll('.tenderDate').forEach(function(elem) {
+                const tenderDateValue = elem.textContent.trim();
+                elem.textContent = formatDate(tenderDateValue);
+            });
+
+            // 상태 포맷팅
+            document.querySelectorAll('.paymentType').forEach(function(elem) {
+                const salesStatusValue = elem.textContent.trim();
+                elem.textContent = formatStatus(salesStatusValue);
+            });
+
+            // 상태 포맷팅
+            document.querySelectorAll('.paymentStatus').forEach(function(elem) {
+                const salesStatusValue = elem.textContent.trim();
+                elem.textContent = formatStatus(salesStatusValue);
+            });
+
+            // 가격 포맷팅
+            document.querySelectorAll('.amount').forEach(function(elem) {
+                const minTenderPriceValue = parseInt(elem.textContent.replace(/,/g, ''), 10);
+                elem.textContent = new Intl.NumberFormat('ko-KR').format(minTenderPriceValue) + '원';
+            });
+            
+        });
+    </script>
+
 </main>
 </body>
 </html>

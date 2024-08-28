@@ -62,4 +62,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE p.auctionEndTime > :now AND p.eventAuction = true AND p.salesStatus = 'selling' AND p.productNo = :productNo ORDER BY p.auctionEndTime ASC")
     List<Product> findByEventAuctionProducts(@Param("productNo") Long productNo, @Param("now") LocalDateTime now);
+
+    @Query("SELECT p FROM Product p WHERE p.member.memberNo = :memberNo AND p.salesStatus = 'selling' ORDER BY p.createdAt DESC ")
+    List<Product> findAuctionSalesItemsByMember(@Param("memberNo") Long memberNo);
+
+    @Query("SELECT p FROM Product p WHERE p.member.memberNo = :memberNo AND p.salesStatus = 'sale_completed' ORDER BY p.createdAt DESC ")
+    List<Product> getSaleCompletedProducts(Long memberNo);
 }
