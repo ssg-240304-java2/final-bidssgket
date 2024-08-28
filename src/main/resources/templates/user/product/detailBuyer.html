@@ -14,6 +14,16 @@
     .table-responsive {
       width: 100%;
     }
+    .chat{
+      background-color: #21b15b;
+      color: white;
+      border: none;
+      padding: 11px 24px;
+      font-size: 13px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
   </style>
   <script>
     let message = `[[${message}]]`;
@@ -55,7 +65,7 @@
           <div class="d-flex align-items-center">
             <form th:action="@{/chat/start}" method="post" class="mr-2">
               <input type="hidden" name="productNo" th:value="${product.productNo}" />
-              <button type="submit" class="btn btn-success">채팅하기</button>
+              <button type="submit" class="chat">채팅하기</button>
             </form>
             <button class="btn btn-danger" data-toggle="modal" data-target="#reportModal">신고하기</button>
           </div>
