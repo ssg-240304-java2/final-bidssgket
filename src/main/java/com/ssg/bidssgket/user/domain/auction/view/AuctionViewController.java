@@ -58,17 +58,13 @@ public class AuctionViewController {
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
         MemberDTO member = auctionService.getMemberByEmail(email);
         ProductResDto product = auctionService.getProductById(productNo);
-        int minBidValue = auctionService.getMinBid(productNo);
-
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-        String formattedMinBid = numberFormat.format(minBidValue);
+        int minBid = auctionService.getMinBid(productNo);
 
         AuctionResponseDto auction = auctionService.getAuctionByMemberAndProduct(member.getMemberNo(), productNo);
 
         model.addAttribute("member", member);
         model.addAttribute("product", product);
-//        model.addAttribute("minBid", minBidValue);
-        model.addAttribute("formattedMinBid", formattedMinBid);
+        model.addAttribute("minBid", minBid);
         model.addAttribute("auction", auction);
         return "user/auction/auctionregist";
     }
