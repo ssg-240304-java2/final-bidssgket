@@ -45,7 +45,7 @@ public class Member implements UserDetails {
     @NotNull
     private Role role;
 
-    @Column(name = "memberNickname", unique = true)
+    @Column(name = "memberNickname",unique = true)
     private String memberNickname;
 
     @ColumnDefault("50")
@@ -140,6 +140,10 @@ public class Member implements UserDetails {
     }
     public void setMemberName(String memberName) {
         this.memberName = memberName;
+    }
+
+    public void setMemberNickname(String memberNickname){
+        this.memberNickname = memberNickname;
     }
 
     public void setPhone(String phone) {
