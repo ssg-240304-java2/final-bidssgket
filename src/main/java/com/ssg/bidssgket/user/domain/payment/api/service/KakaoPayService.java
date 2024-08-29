@@ -49,7 +49,6 @@ public class KakaoPayService {
 //        parameters.put("fail_url", "http://localhost:8080/user/payment/fail");          // 결제 실패 시 URL
         parameters.put("fail_url", "https://www.bidssgket.store/user/payment/fail");          // 결제 실패 시 URL
 
-        log.info("[kakaoPayReady] parameters: " + parameters);
 
 
         // 파라미터, 헤더
