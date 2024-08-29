@@ -42,9 +42,12 @@ public class KakaoPayService {
         parameters.put("total_amount", String.valueOf(totalPrice));                                         // 상품 총액
         parameters.put("tax_free_amount", "0");                          // 상품 비과세 금액
         parameters.put("vat_amount", "0");                               // 상품 부가세 금액
-        parameters.put("approval_url", "http://localhost:8080/user/payment/success");   // 결제 성공 시 URL
-        parameters.put("cancel_url", "http://localhost:8080/user/payment/cancel");      // 결제 취소 시 URL
-        parameters.put("fail_url", "http://localhost:8080/user/payment/fail");          // 결제 실패 시 URL
+//        parameters.put("approval_url", "http://localhost:8080/user/payment/success");   // 결제 성공 시 URL
+        parameters.put("approval_url", "https://www.bidssgket.store/user/payment/success");   // 결제 성공 시 URL
+//        parameters.put("cancel_url", "http://localhost:8080/user/payment/cancel");      // 결제 취소 시 URL
+        parameters.put("cancel_url", "https://www.bidssgket.store/user/payment/cancel");      // 결제 취소 시 URL
+//        parameters.put("fail_url", "http://localhost:8080/user/payment/fail");          // 결제 실패 시 URL
+        parameters.put("fail_url", "https://www.bidssgket.store/user/payment/fail");          // 결제 실패 시 URL
 
         log.info("[kakaoPayReady] parameters: " + parameters);
 
