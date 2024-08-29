@@ -85,7 +85,8 @@ public class PaymentViewController {
     }
 
     @GetMapping("/checkout/{productNo}")
-    public String showPaymentPage(@PathVariable("productNo") Long productNo,
+    public String
+    showPaymentPage(@PathVariable("productNo") Long productNo,
                                   @RequestParam(value = "deliveryType", required = false) String deliveryType,
                                   HttpSession session, Model model) {
         Member member = getSessionMember(session);

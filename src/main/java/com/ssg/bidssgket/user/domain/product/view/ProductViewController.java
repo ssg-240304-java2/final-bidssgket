@@ -124,9 +124,9 @@ public class ProductViewController {
         System.out.println("memberNo = " + memberNo);
         model.addAttribute("product", product);
         List<Auction> auctions = productService.findAuctionByProductNo(productNo);
-        if(product.getSalesStatus().equals(SalesStatus.trading.toString())){
+        /*if(product.getSalesStatus().equals(SalesStatus.trading.toString())){
             return "redirect:/";
-        }
+        }*/
         model.addAttribute("auctions", auctions);
         return "user/product/detailAuction";
     }

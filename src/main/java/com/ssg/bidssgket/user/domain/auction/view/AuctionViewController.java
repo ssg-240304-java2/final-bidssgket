@@ -217,23 +217,33 @@ public class AuctionViewController {
             }
         }
         if (isAuctionParticipant && isAuctionEnded) {
-            boolean isWinningBidder = auctionService.isWinningBidder(memberNo, productNo);
             auctionService.endAuction(productNo);
-            if (isWinningBidder) {
+            product = productService.findProductByNo(productNo);
+            boolean isWinningBidder = auctionService.isWinningBidder(memberNo, productNo);
+            System.out.println("isWinningBidder = " + isWinningBidder);
+            System.out.println("product.getSalesStatus().equals(SalesStatus.trading) = " + 
+                    product.getSalesStatus().equals(SalesStatus.trading));
+            System.out.println("product = " + product.getSalesStatus());
+            System.out.println("SalesStatus.trading = " + SalesStatus.trading);
+            System.out.println(product.getSalesStatus().equals("trading"));
+            if (isWinningBidder && product.getSalesStatus().equals("trading")) {
                 redirectAttributes.addFlashAttribute("message", "경매에 낙찰되었습니다.");
+                System.out.println("|>>>>1");
                 return "redirect:/auction/bidSuccess/" + productNo;
             } else {
                 redirectAttributes.addFlashAttribute("message", "경매에 낙찰되지 않았습니다.");
-                return "redirect:/detailAuction/"+productNo;
+                System.out.println("|>>>>2");
+                return "redirect:/detailAuction/" + productNo;
             }
         }
 
         if (isAuctionEnded) {
+            System.out.println("|>>>>3");
             auctionService.endAuction(productNo);
             redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
             return "redirect:/";
         }
-
+        System.out.println("|>>>>4");
         return "redirect:/";
     }
 

@@ -207,9 +207,9 @@
 
           if (--timer < 0) {
             clearInterval(interval);
+            abandonButton.click();
             confirmButton.disabled = true;
             abandonButton.disabled = true;
-            abandonButton.click();
           }
         }, 1000);
       }

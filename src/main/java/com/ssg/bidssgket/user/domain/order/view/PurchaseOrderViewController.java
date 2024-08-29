@@ -45,18 +45,23 @@ public class PurchaseOrderViewController {
     }
 
     private void addPurchaseHistoryAttributes(Model model, Member member) {
+        log.info("구매 멤버 정보 >>>> {}", member.getMemberNo());
 
+        /* 입찰 중*/
         List<Auction> purchaseAuctionItems = purchaseOrderService.getPurchaseAuctionProducts(member.getMemberNo());
-        List<ProductWithOrderDto> purchaseTradingItemWithOrder = purchaseOrderService.getPurchaseTradingItemsWithOrder(member.getMemberNo());
+        /*낙찰 시 12시간 대기*/
+        List<Auction> bidSuccessPurchaseTrading = purchaseOrderService.bidSuccessPurchaseTrading(member.getMemberNo());
+        /*구매 완료*/
         List<Product> purchaseCompletedItems = purchaseOrderService.getPurchaseCompletedProducts(member.getMemberNo());
 
 
         log.info("[PurchaseOrderView] purchaseAuctionItems.size: {}", purchaseAuctionItems.size());
-        log.info("[PurchaseOrderView] purchaseTradingItems.size: {}", purchaseTradingItemWithOrder.size());
+        log.info("[PurchaseOrderView] bidSuccessPurchaseTrading.size: {}", bidSuccessPurchaseTrading.size());
         log.info("[PurchaseOrderView] purchaseCompletedItems.size: {}", purchaseCompletedItems.size());
 
+
         model.addAttribute("purchaseAuctionItems", purchaseAuctionItems);
-        model.addAttribute("purchaseTradingItems", purchaseTradingItemWithOrder);
+        model.addAttribute("bidSuccessPurchaseTrading", bidSuccessPurchaseTrading);
         model.addAttribute("purchaseCompletedItems", purchaseCompletedItems);
     }
 

@@ -148,7 +148,7 @@ public class AuctionService {
             if (minBid.getMinTenderPrice() < product.getAuctionStartPrice()) {
                 log.info("입찰 최소가는 일정 금액 이상 {}",minBid.getMinTenderPrice());
                 product.setSalesStatus(SalesStatus.sale_pause);
-                auctionRepository.deleteAll(auction);
+//                auctionRepository.deleteAll(auction);
             } else {
                 Auction successBid = auction.size() > 1 ? auction.get(0) : maxBid;
                 maxBid.updateBidSuccess(true);
@@ -179,7 +179,7 @@ public class AuctionService {
     }
 
     @Transactional
-    public void abandonBid(Long productNo) {
+    public void  abandonBid(Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
         product.setSalesStatus(SalesStatus.sale_pause);
 
@@ -195,7 +195,11 @@ public class AuctionService {
         List<Auction> auction = auctionRepository.findAuctionByProductNoOrderByMaxTenderPriceDesc(productNo);
         if (!auction.isEmpty()) {
             Auction topAuction = auction.get(0);
-            return topAuction.getMember().getMemberNo().equals(memberNo) && !topAuction.getTenderDeleted();
+            Product product = topAuction.getProduct();
+//            return topAuction.getMember().getMemberNo().equals(memberNo) && !topAuction.getTenderDeleted();
+            if (topAuction.getMinTenderPrice() >= product.getAuctionStartPrice()) {
+                return topAuction.getMember().getMemberNo().equals(memberNo) && !topAuction.getTenderDeleted();
+            }
         }
         return false;
     }
