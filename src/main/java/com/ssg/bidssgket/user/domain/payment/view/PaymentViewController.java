@@ -85,7 +85,8 @@ public class PaymentViewController {
     }
 
     @GetMapping("/checkout/{productNo}")
-    public String showPaymentPage(@PathVariable("productNo") Long productNo,
+    public String
+    showPaymentPage(@PathVariable("productNo") Long productNo,
                                   @RequestParam(value = "deliveryType", required = false) String deliveryType,
                                   HttpSession session, Model model) {
         Member member = getSessionMember(session);
@@ -105,7 +106,7 @@ public class PaymentViewController {
         Pay pay = payService.getOrCreatePay(member);
         log.info("[PayService] (getOrCreatePay) pay: {}", pay);
 
-        boolean isAuctionPay = auctionService.isWinningBidder(member.getMemberNo(), productNo);
+        Boolean isAuctionPay = auctionService.isWinningBidder(member.getMemberNo(), productNo);
 
         model.addAttribute("member", new SessionMember(member));
         model.addAttribute("product", product);
@@ -117,7 +118,7 @@ public class PaymentViewController {
     }
 
     @PostMapping("/process")
-    public ResponseEntity<?> processPayment(@RequestBody PaymentReqDto paymentReq) {
+    public ResponseEntity<?>  processPayment(@RequestBody PaymentReqDto paymentReq) {
         if (paymentReq.getEmail() == null) {
             throw new IllegalArgumentException("회원의 이메일 정보가 없습니다.");
         }

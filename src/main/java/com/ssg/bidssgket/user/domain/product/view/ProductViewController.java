@@ -57,7 +57,6 @@ public class ProductViewController {
             model.addAttribute("registProductReqDto",RegistProductReqDto.builder()
                     .memberNo(memberNo)
                     .build());
-            System.out.println("memberNo = " + memberNo);;
         } else {
             throw new IllegalArgumentException("Member not found for email: " + member);
         }
@@ -76,7 +75,6 @@ public class ProductViewController {
         Long memberNo = null;
         if (httpSession.getAttribute("member") != null) {
             email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-            System.out.println("email = " + email);
             memberNo = memberRepository.findByEmail(email).get().getMemberNo();
         }
 
@@ -89,7 +87,6 @@ public class ProductViewController {
 
     @GetMapping(value = "/update/{productNo}", produces = "text/event-stream")
     public String updatePageController(Model model, @PathVariable("productNo") Long productNo) {
-        log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
         model.addAttribute("product", product);
         return "user/product/update";
@@ -124,9 +121,9 @@ public class ProductViewController {
         System.out.println("memberNo = " + memberNo);
         model.addAttribute("product", product);
         List<Auction> auctions = productService.findAuctionByProductNo(productNo);
-        if(product.getSalesStatus().equals(SalesStatus.trading.toString())){
+        /*if(product.getSalesStatus().equals(SalesStatus.trading.toString())){
             return "redirect:/";
-        }
+        }*/
         model.addAttribute("auctions", auctions);
         return "user/product/detailAuction";
     }
@@ -143,13 +140,11 @@ public class ProductViewController {
 
     @GetMapping(value = "/detailSeller/{productNo}", produces = "text/event-stream")
     public String detailSellerController(Model model, @PathVariable("productNo") Long productNo) {
-        log.info("productNo: {}", productNo);
         ProductResDto product = productService.findProductByNo(productNo);
         List<Auction> auctions = productService.findAuctionByProductNo(productNo);
 
         model.addAttribute("auctions", auctions);
         model.addAttribute("product", product);
-        log.info("상품 상태 확인 {}", product.getSalesStatus());
         if (product.getSalesStatus().equals(SalesStatus.sale_pause.toString())) {
             System.out.println("product.getSalesStatus() = " + product.getSalesStatus());
             System.out.println("유찰된 상품 처리");
@@ -160,7 +155,6 @@ public class ProductViewController {
 
     @GetMapping("/category/{category}")
     public String categoryController(Model model, @PathVariable("category") Category category, HttpSession httpSession) {
-        log.info("category: {}", category);
         List<Product> products = productService.getProductsByCategory(category);
         model.addAttribute("category", category.name());
         model.addAttribute("products", products);
@@ -186,7 +180,6 @@ public class ProductViewController {
         if (sessionMember != null) {
             MemberDTO member = auctionService.getMemberByEmail(sessionMember.getEmail());
             wishedProductIds = productWishService.findProductNoByMemberNo(member.getMemberNo());
-            System.out.println("wishedProductIds = " + wishedProductIds);
         }
         model.addAttribute("wishedProductIds", wishedProductIds);
         return "user/product/list";
@@ -203,7 +196,6 @@ public class ProductViewController {
         List<Auction> onAuctions = productService.findDeleteAuction(memberNo);
         List<Product> eventProducts = eventAuctionService.getEventAuctionProducts(productNo);
         model.addAttribute("memberNo", memberNo);
-        System.out.println("memberNo = " + memberNo);
         model.addAttribute("member", member);
         boolean isSeller = products.stream()
                 .anyMatch(product -> product.getProductNo().equals(productNo));
@@ -215,7 +207,6 @@ public class ProductViewController {
         boolean eventAuction = eventProducts.stream()
                 .anyMatch(product -> product.getProductNo().equals(productNo));
 
-        System.out.println("isAuction = " + isAuction);
         if (eventAuction) {
                 return "redirect:/eventAuction/detail/" + productNo;
         } else {

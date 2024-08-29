@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "auction")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@ToString
 public class Auction{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -217,7 +217,7 @@ public class EventAuctionViewController {
                     redirectAttributes.addFlashAttribute("message", "경매가 종료되었으나 입찰자가 없어 판매 중지 상태로 변경되었습니다.");
                     return "redirect:/auction/bidFailed/" + productNo;
                 } else {
-                    auctionService.endAuction(productNo);
+                    auctionService.endEventAuction(productNo);
                     redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
                     return "redirect:/detailSeller/" + productNo;
                 }
