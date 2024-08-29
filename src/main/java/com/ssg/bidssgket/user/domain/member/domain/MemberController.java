@@ -178,6 +178,7 @@ public class MemberController {
 
     @PostMapping("/user/info/update")
     public String updateMemberInfo(@RequestParam("memberName") String memberName,
+                                   @RequestParam("nickname") String nickname,
                                    @RequestParam("phone") String phone,
                                    @RequestParam("postcode") String postcode,
                                    @RequestParam("address") String address,
@@ -188,6 +189,7 @@ public class MemberController {
         if (sessionMember != null) {
             Member member = memberRepository.findByEmail(sessionMember.getEmail()).orElseThrow();
             member.setMemberName(memberName);
+            member.setMemberNickname(nickname);
             member.setPhone(phone);
 
             Address newAddress = new Address(postcode, address, detailAddress);
