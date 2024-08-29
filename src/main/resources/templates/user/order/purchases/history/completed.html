@@ -42,7 +42,7 @@
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/auction" class="block">
                                 <div>입찰중</div>
-                                <div th:text="${purchaseAuctionItems.size()}" class="text-red-500">0</div>
+                                <div th:text="${purchaseAuctionItems.size()}" class="text-black-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
@@ -54,7 +54,7 @@
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/completed" class="block">
                                 <div>구매 완료</div>
-                                <div th:text="${purchaseCompletedItems.size()}" class="text-black-500">0</div>
+                                <div th:text="${purchaseCompletedItems.size()}" class="text-red-500">0</div>
                             </a>
                         </div>
                     </div>

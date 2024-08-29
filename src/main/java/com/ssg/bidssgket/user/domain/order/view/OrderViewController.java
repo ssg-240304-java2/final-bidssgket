@@ -61,15 +61,15 @@ public class OrderViewController {
 
         // 구매 상품 조회
         List<Auction> purchaseAuctionItems = purchaseOrderService.getPurchaseAuctionProducts(member.getMemberNo());
-        List<Product> purchaseTradingItems = purchaseOrderService.getPurchaseTradingProducts(member.getMemberNo());
+        List<Auction> bidSuccessTrading = purchaseOrderService.bidSuccessPurchaseTrading(member.getMemberNo());
         List<Product> purchaseCompletedItems = purchaseOrderService.getPurchaseCompletedProducts(member.getMemberNo());
 
         log.info("[PurchaseOrderView] purchaseAuctionItems.size: {}", purchaseAuctionItems.size());
-        log.info("[PurchaseOrderView] purchaseTradingItems.size: {}", purchaseTradingItems.size());
+        log.info("[PurchaseOrderView] bidSuccessTrading.size: {}", bidSuccessTrading.size());
         log.info("[PurchaseOrderView] purchaseCompletedItems.size: {}", purchaseCompletedItems.size());
 
         model.addAttribute("purchaseAuctionItems", purchaseAuctionItems);
-        model.addAttribute("purchaseTradingItems", purchaseTradingItems);
+        model.addAttribute("bidSuccessTrading", bidSuccessTrading);
         model.addAttribute("purchaseCompletedItems", purchaseCompletedItems);
 
         // 판매 상품 조회
