@@ -105,7 +105,12 @@ public class PaymentViewController {
         Pay pay = payService.getOrCreatePay(member);
         log.info("[PayService] (getOrCreatePay) pay: {}", pay);
 
-        boolean isAuctionPay = auctionService.isWinningBidder(member.getMemberNo(), productNo);
+        boolean isAuctionPay;
+        if (!product.getEventAuction()){
+            isAuctionPay = auctionService.isWinningBidder(member.getMemberNo(), productNo);
+        } else {
+            isAuctionPay = auctionService.isWinningEventBidder(member.getMemberNo(), productNo);
+        }
 
         model.addAttribute("member", new SessionMember(member));
         model.addAttribute("product", product);
@@ -117,7 +122,7 @@ public class PaymentViewController {
     }
 
     @PostMapping("/process")
-    public ResponseEntity<?> processPayment(@RequestBody PaymentReqDto paymentReq) {
+    public ResponseEntity<?>  processPayment(@RequestBody PaymentReqDto paymentReq) {
         if (paymentReq.getEmail() == null) {
             throw new IllegalArgumentException("회원의 이메일 정보가 없습니다.");
         }

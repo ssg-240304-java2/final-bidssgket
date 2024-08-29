@@ -106,7 +106,9 @@ public class ChatController {
 
         if (existingChatRoom != null && existingChatRoom.getChatRoomMembers().equals(currentUser.getChatRoomMembers())) {
             // 이미 존재하는 채팅방으로 리디렉션
-            return "redirect:/chat/" + existingChatRoom.getChatRoomNo();
+            return "redirect:/chat/"
+//                    + existingChatRoom.getChatRoomNo()
+                    ;
         }
 
         // 채팅방 생성
@@ -120,7 +122,9 @@ public class ChatController {
         chatRoomService.addMember(newChatRoom.getChatRoomNo(), currentUserId);
 
         // 새로 생성된 채팅방으로 리디렉션
-        return "redirect:/chat/" + newChatRoom.getChatRoomNo();
+        return "redirect:/chat/"
+//                + newChatRoom.getChatRoomNo()
+                ;
     }
 
     @GetMapping("/messages")
