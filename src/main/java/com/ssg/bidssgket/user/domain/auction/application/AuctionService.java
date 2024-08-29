@@ -134,7 +134,6 @@ public class AuctionService {
                 maxBid.updateBidSuccess(true);
                 /*일반 경매 -> 최소 입찰가가 낙찰가*/
                 product.setBidSuccessPrice(successBid.getMinTenderPrice());
-//                product.setSalesStatus(SalesStatus.trading);
             }
         } else {
             product.setSalesStatus(SalesStatus.sale_pause);
