@@ -77,13 +77,9 @@ public class ProductService {
     public ProductResDto findProductByNo(Long productNo) {
        // ProductImage productImage = productImageRepository.findByProductImage_ProductNo(productNo);
         Product product = productRepository.findById(productNo).get();
-        log.info("ProductByNo:{}", productNo);
-        log.info("product:{}", productNo);
         ProductResDto productResDto = ProductResDto.builder()
                 .product(product)
                 .build();
-        log.info("productResDto:{}", productResDto.getProductName());
-        log.info("productResDto:{}", productResDto.getProductImages());
         return productResDto;
     }
 
@@ -112,7 +108,6 @@ public class ProductService {
         ProductImage productImage = productImageRepository.findById(deleteImageId)
                 .orElseThrow(() -> new IllegalArgumentException("ProductImage not found with id: " + deleteImageId));
 
-        System.out.println("deleteImageId = " + deleteImageId);
         productImageRepository.deleteById(deleteImageId);
         productImageRepository.flush();
     }

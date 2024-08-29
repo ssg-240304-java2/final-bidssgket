@@ -53,7 +53,6 @@ public class OrderViewController {
 
         // 회원의 페이 조회
         Pay pay = payService.getOrCreatePay(member);
-        log.info("(Member) member Pay : {}", pay);
 
         model.addAttribute("biscuit", member.getBiscuit());
         model.addAttribute("memberNickname", member.getMemberNickname());
@@ -64,9 +63,6 @@ public class OrderViewController {
         List<Auction> bidSuccessTrading = purchaseOrderService.bidSuccessPurchaseTrading(member.getMemberNo());
         List<Product> purchaseCompletedItems = purchaseOrderService.getPurchaseCompletedProducts(member.getMemberNo());
 
-        log.info("[PurchaseOrderView] purchaseAuctionItems.size: {}", purchaseAuctionItems.size());
-        log.info("[PurchaseOrderView] bidSuccessTrading.size: {}", bidSuccessTrading.size());
-        log.info("[PurchaseOrderView] purchaseCompletedItems.size: {}", purchaseCompletedItems.size());
 
         model.addAttribute("purchaseAuctionItems", purchaseAuctionItems);
         model.addAttribute("bidSuccessTrading", bidSuccessTrading);

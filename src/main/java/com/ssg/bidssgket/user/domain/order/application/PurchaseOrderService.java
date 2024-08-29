@@ -72,7 +72,6 @@ public class PurchaseOrderService {
                 })
                 .collect(Collectors.toList());
 
-        log.info("판매 상태가 'selling'인 경매 상품 개수 : {}", filteredAuctionItems.size());
         filteredAuctionItems.forEach(auction -> log.info("Filtered Auction Item: {}", auction));
 
         return filteredAuctionItems;
@@ -80,7 +79,7 @@ public class PurchaseOrderService {
 
     // 해당 회원이 낙찰되었을 경우에만 (product테이블의 sales_status = 'trading'이며 auction 테이블에서 해당 회원이 bid_success = 'true'인 경우만
     public List<Auction> bidSuccessPurchaseTrading(Long memberNo) {
-        List<Auction> auctionItems = auctionRepository.findByMember_memberNoAndBidSuccessIsTrue(memberNo);
+        List<Auction> auctionItems = auctionRepository.findByMember_memberNoAndBidSuccessIsTrueOrderByTenderDateDesc(memberNo);
 
         List<Auction> filteredAuctionTradingItems = auctionItems.stream()
                 .filter(auction -> {
@@ -89,8 +88,6 @@ public class PurchaseOrderService {
                 })
                 .collect(Collectors.toList());
 
-        log.info("판매 상태가 'trading'인 경매 상품 개수 : {}", filteredAuctionTradingItems.size());
-        log.info("경매 상품 {}", filteredAuctionTradingItems);
         return filteredAuctionTradingItems;
     }
 

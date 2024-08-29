@@ -72,4 +72,6 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
     List<Auction> findByMemberNoAndBidSuccessTrue(@Param("memberNo") Long memberNo);
 
     List<Auction> findByMember_memberNoAndBidSuccessIsTrue(Long memberNo);
+
+    List<Auction> findByMember_memberNoAndBidSuccessIsTrueOrderByTenderDateDesc(Long memberNo);
 }

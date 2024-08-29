@@ -62,11 +62,6 @@ public class AuctionService {
     public int getMinBid(Long productNo) {
         List<Auction> auctions = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
         Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productNo));
-        /*if (auctions.isEmpty()) {
-            return (int) (product.getAuctionStartPrice() * 1.01);
-        } else {
-            return (int) (auctions.get(0).getMinTenderPrice() * 1.01);
-        }*/
         if (auctions.isEmpty()) {
             return (int) (product.getAuctionStartPrice() * 0.98);
         } else {
@@ -128,32 +123,16 @@ public class AuctionService {
         List<Auction> auction = auctionRepository.findAuctionByProductNoOrderByMaxTenderPriceDesc(productNo);
         List<Auction> auctions = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
 
-        log.info("auction 최대값 기준>>> {}", auction);
-        log.info("auctions 최소값 기준 >>> {}", auctions);
-
-        /*if (!auction.isEmpty()) {
-            Auction firstBid = auction.get(0);
-            Auction secondBid = auction.size() > 1 ? auction.get(1) : firstBid;
-
-            firstBid.updateBidSuccess(true);
-            product.setBidSuccessPrice(secondBid.getMinTenderPrice());
-        } else {
-            product.setSalesStatus(SalesStatus.sale_pause);
-            auctionRepository.deleteAll(auction);
-        }*/
         if (!auction.isEmpty()) {
             Auction minBid = auctions.get(0);
-            log.info("minBid >>>>>> {}", minBid);
             Auction maxBid = auction.get(0);
             if (minBid.getMinTenderPrice() < product.getAuctionStartPrice()) {
-                log.info("입찰 최소가는 일정 금액 이상 {}",minBid.getMinTenderPrice());
                 product.setSalesStatus(SalesStatus.sale_pause);
 //                auctionRepository.deleteAll(auction);
             } else {
                 Auction successBid = auction.size() > 1 ? auction.get(0) : maxBid;
                 maxBid.updateBidSuccess(true);
                 /*일반 경매 -> 최소 입찰가가 낙찰가*/
-                log.info("successBid >>>>>> {}", successBid);
                 product.setBidSuccessPrice(successBid.getMinTenderPrice());
 //                product.setSalesStatus(SalesStatus.trading);
             }

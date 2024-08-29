@@ -54,12 +54,7 @@ public class PurchaseOrderViewController {
         /*구매 완료*/
         List<Product> purchaseCompletedItems = purchaseOrderService.getPurchaseCompletedProducts(member.getMemberNo());
 
-
-        log.info("[PurchaseOrderView] purchaseAuctionItems.size: {}", purchaseAuctionItems.size());
-        log.info("[PurchaseOrderView] bidSuccessPurchaseTrading.size: {}", bidSuccessPurchaseTrading.size());
-        log.info("[PurchaseOrderView] purchaseCompletedItems.size: {}", purchaseCompletedItems.size());
-
-
+        
         model.addAttribute("purchaseAuctionItems", purchaseAuctionItems);
         model.addAttribute("bidSuccessPurchaseTrading", bidSuccessPurchaseTrading);
         model.addAttribute("purchaseCompletedItems", purchaseCompletedItems);

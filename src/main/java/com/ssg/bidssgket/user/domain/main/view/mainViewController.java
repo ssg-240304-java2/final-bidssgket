@@ -46,7 +46,6 @@ public class mainViewController {
         if (sessionMember != null) {
             MemberDTO member = auctionService.getMemberByEmail(sessionMember.getEmail());
             wishedProductIds = productWishService.findProductNoByMemberNo(member.getMemberNo());
-            System.out.println("wishedProductIds = " + wishedProductIds);
         }
         model.addAttribute("wishedProductIds", wishedProductIds);
 
@@ -64,7 +63,6 @@ public class mainViewController {
         if (sessionMember != null) {
             MemberDTO member = auctionService.getMemberByEmail(sessionMember.getEmail());
             wishedProductIds = productWishService.findProductNoByMemberNo(member.getMemberNo());
-            System.out.println("wishedProductIds = " + wishedProductIds);
         }
         model.addAttribute("wishedProductIds", wishedProductIds);
         return "user/auction/auctionMain";
@@ -85,7 +83,6 @@ public class mainViewController {
         if (sessionMember != null) {
             MemberDTO member = auctionService.getMemberByEmail(sessionMember.getEmail());
             wishedProductIds = productWishService.findProductNoByMemberNo(member.getMemberNo());
-            System.out.println("wishedProductIds = " + wishedProductIds);
         }
         model.addAttribute("wishedProductIds", wishedProductIds);
         return "user/product/list";

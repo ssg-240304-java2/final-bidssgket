@@ -102,15 +102,12 @@ public class ProductApiController {
             String member = ((SessionMember) httpSession.getAttribute("member")).getEmail();
             Optional<Member> memberInfo = memberRepository.findByEmail(member);
             Long reportMember = memberInfo.get().getMemberNo();
-            System.out.println("reportMember = " + reportMember);
             reportReqDto.setMemberNo(reportMember);
             Optional<Product> product = productRepository.findById(reportReqDto.getProductNo());
             Long reportProduct = product.get().getProductNo();
-            System.out.println("reportProduct = " + reportProduct);
             reportReqDto.setProductNo(reportProduct);
             reportReqDto.setComplainDate(LocalDateTime.now());
             productReportService.submitProductReport(reportReqDto);
-            System.out.println("reportReqDto = " + reportReqDto.toString());
             return ResponseEntity.ok("Report submitted");
         } catch (Exception e) {
             e.printStackTrace();

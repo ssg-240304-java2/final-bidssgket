@@ -71,9 +71,7 @@ public class AuctionViewController {
     public String registerAuction(@PathVariable("productNo") Long productNo, @RequestParam(required = false) int minTenderPrice, @RequestParam(required = false) int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-            log.info("회원 정보 >>> {}", email);
             int auctionCount = auctionService.countAuctionsByMemberAndProduct(email, productNo);
-            log.info("입찰횟수>>>> {}",auctionCount);
             if (auctionCount >= 2) {
                 redirectAttributes.addFlashAttribute("message", "입찰은 최대 2번까지 가능합니다.");
                 return "redirect:/detailBuyer/" + productNo;
@@ -141,7 +139,6 @@ public class AuctionViewController {
      */
     @PostMapping("/auctionregistmodify/{productNo}")
     public String modifyAuction(@PathVariable("productNo") Long productNo, @RequestParam int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
-//        log.info("productNo >>>>> {}", productNo);
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
             auctionService.modifyAuction(email, productNo, maxTenderPrice);
@@ -182,7 +179,6 @@ public class AuctionViewController {
      */
     @GetMapping("/endAuction/{productNo}")
     public String endAuction(@PathVariable("productNo") Long productNo, HttpSession httpSession, RedirectAttributes redirectAttributes) {
-        log.info("productNo =====> {}", productNo);
         String email = null;
         Long memberNo = null;
         if (httpSession.getAttribute("member") != null) {
@@ -198,11 +194,6 @@ public class AuctionViewController {
         boolean isSeller = auctionService.isSeller(memberNo, productNo);
         boolean isAuctionParticipant = auctionService.isAuctionParticipant(memberNo, productNo);
         boolean hasBidders = auctionService.hasBidders(productNo);
-
-        System.out.println("isAuctionEnded = " + isAuctionEnded);
-        System.out.println("isSeller = " + isSeller);
-        System.out.println("isAuctionParticipant = " + isAuctionParticipant);
-        System.out.println("hasBidders = " + hasBidders);
 
         if (isSeller) {
             if (isAuctionEnded) {
@@ -220,30 +211,20 @@ public class AuctionViewController {
             auctionService.endAuction(productNo);
             product = productService.findProductByNo(productNo);
             boolean isWinningBidder = auctionService.isWinningBidder(memberNo, productNo);
-            System.out.println("isWinningBidder = " + isWinningBidder);
-            System.out.println("product.getSalesStatus().equals(SalesStatus.trading) = " + 
-                    product.getSalesStatus().equals(SalesStatus.trading));
-            System.out.println("product = " + product.getSalesStatus());
-            System.out.println("SalesStatus.trading = " + SalesStatus.trading);
-            System.out.println(product.getSalesStatus().equals("trading"));
             if (isWinningBidder && product.getSalesStatus().equals("trading")) {
                 redirectAttributes.addFlashAttribute("message", "경매에 낙찰되었습니다.");
-                System.out.println("|>>>>1");
                 return "redirect:/auction/bidSuccess/" + productNo;
             } else {
                 redirectAttributes.addFlashAttribute("message", "경매에 낙찰되지 않았습니다.");
-                System.out.println("|>>>>2");
                 return "redirect:/detailAuction/" + productNo;
             }
         }
 
         if (isAuctionEnded) {
-            System.out.println("|>>>>3");
             auctionService.endAuction(productNo);
             redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
             return "redirect:/";
         }
-        System.out.println("|>>>>4");
         return "redirect:/";
     }
 
@@ -268,14 +249,12 @@ public class AuctionViewController {
         Optional<Member> memberInfo = memberRepository.findByEmail(email);
         Long memberNo = memberInfo.get().getMemberNo();
         boolean isEventAuctionExists= auctionService.isEventAuctionExists(productNo);
-        log.info("isEventAuctionExists >> {}", isEventAuctionExists);
+
         List<Integer> tenderPrices;
         if (isEventAuctionExists) {
             tenderPrices = auction.stream().map(AuctionResponseDto::getMaxTenderPrice).collect(Collectors.toList());
-            log.info("실시간 경매일때 값 >>> {}", tenderPrices);
         } else {
             tenderPrices = auction.stream().map(AuctionResponseDto::getMinTenderPrice).collect(Collectors.toList());
-            log.info("실시간 경매아닐 때 값 >>> {}", tenderPrices);
         }
 
         model.addAttribute("TenderPrices", tenderPrices);

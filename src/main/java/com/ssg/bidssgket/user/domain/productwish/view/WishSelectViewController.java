@@ -32,10 +32,7 @@ public class WishSelectViewController {
     public String toggleWish(@RequestBody Map<String, Long> data, HttpSession httpSession) {
         /*값을 여러 개 받을 때 dto 사용할수도 있음 -> 지금은 하나라서 Map함수 => json이 key value*/
         SessionMember sessionMember = (SessionMember) httpSession.getAttribute("member");
-        System.out.println("sessionMember = " + sessionMember);
-        log.info("data >>>>. {}", data);
         Long productNo = data.get("productNo");
-        log.info("productNo>>> {}", productNo);
         if (sessionMember == null) {
             return "fail";
         }
