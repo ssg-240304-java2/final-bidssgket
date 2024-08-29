@@ -136,15 +136,15 @@
                 <div class="flex justify-between mt-4">
                     <div class="text-center w-1/4">
                         <p>전체</p>
-                        <p th:text="${purchaseAuctionItems.size() + purchaseTradingItems.size() + purchaseCompletedItems.size()}" class="text-red-500 text-2xl">0</p>
+                        <p th:text="${purchaseAuctionItems.size() + bidSuccessTrading.size() + purchaseCompletedItems.size()}" class="text-red-500 text-2xl">0</p>
                     </div>
                     <div class="text-center w-1/4">
-                        <p>경매중</p>
+                        <p>입찰중</p>
                         <p th:text="${purchaseAuctionItems.size()}" class="text-black text-2xl">0</p>
                     </div>
                     <div class="text-center w-1/4">
                         <p>구매 중</p>
-                        <p th:text="${purchaseTradingItems.size()}" class="text-black text-2xl">0</p>
+                        <p th:text="${bidSuccessTrading.size()}" class="text-black text-2xl">0</p>
                     </div>
                     <div class="text-center w-1/4">
                         <p>구매 완료</p>

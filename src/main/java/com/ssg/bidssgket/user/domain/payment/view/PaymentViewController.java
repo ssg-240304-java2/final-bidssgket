@@ -85,7 +85,8 @@ public class PaymentViewController {
     }
 
     @GetMapping("/checkout/{productNo}")
-    public String showPaymentPage(@PathVariable("productNo") Long productNo,
+    public String
+    showPaymentPage(@PathVariable("productNo") Long productNo,
                                   @RequestParam(value = "deliveryType", required = false) String deliveryType,
                                   HttpSession session, Model model) {
         Member member = getSessionMember(session);
@@ -105,12 +106,7 @@ public class PaymentViewController {
         Pay pay = payService.getOrCreatePay(member);
         log.info("[PayService] (getOrCreatePay) pay: {}", pay);
 
-        boolean isAuctionPay;
-        if (!product.getEventAuction()){
-            isAuctionPay = auctionService.isWinningBidder(member.getMemberNo(), productNo);
-        } else {
-            isAuctionPay = auctionService.isWinningEventBidder(member.getMemberNo(), productNo);
-        }
+        Boolean isAuctionPay = auctionService.isWinningBidder(member.getMemberNo(), productNo);
 
         model.addAttribute("member", new SessionMember(member));
         model.addAttribute("product", product);

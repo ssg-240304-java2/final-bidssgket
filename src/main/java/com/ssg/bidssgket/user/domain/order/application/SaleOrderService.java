@@ -59,8 +59,6 @@ public class SaleOrderService {
 
     public List<Product> getSaleAuctionProducts(Long memberNo) {
 
-        // memberNo 값을 로그로 출력
-        log.info("회원 정보 확인 : {}", memberNo);
 
         // 데이터베이스에서 경매중인 상품 목록 조회
 //        List<Auction> auctionItems = auctionRepository.findAuctionSalesItemsByMember(memberNo);
@@ -68,9 +66,7 @@ public class SaleOrderService {
 
         // 조회된 경매중인 상품 목록을 로그로 출력
         if (auctionItems == null || auctionItems.isEmpty()) {
-            log.info("회원의 경매중인 상품 정보가 없습니다.: {}", memberNo);
         } else {
-            log.info("회원의 경매중인 상품 개수 : {}, 회원 : {}", auctionItems.size(), memberNo);
             auctionItems.forEach(auction -> log.info("Auction Item: {}", auction));
         }
 

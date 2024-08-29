@@ -2,39 +2,30 @@ package com.ssg.bidssgket.user.domain.auction.view;
 
 import com.ssg.bidssgket.admin.notification.NotificationService;
 import com.ssg.bidssgket.user.domain.auction.application.AuctionService;
-import com.ssg.bidssgket.user.domain.auction.domain.Auction;
 import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionReqDto;
 import com.ssg.bidssgket.user.domain.auction.domain.dto.AuctionResponseDto;
 import com.ssg.bidssgket.user.domain.auction.view.dto.FailedProductReqDto;
 import com.ssg.bidssgket.user.domain.member.api.googleLogin.SessionMember;
-import com.ssg.bidssgket.user.domain.member.application.MemberService;
 import com.ssg.bidssgket.user.domain.member.domain.Member;
 import com.ssg.bidssgket.user.domain.member.domain.repository.MemberRepository;
 import com.ssg.bidssgket.user.domain.product.application.ProductService;
-import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
-import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import com.ssg.bidssgket.user.domain.productwish.domain.dto.MemberDTO;
-import com.sun.tools.jconsole.JConsoleContext;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.NumberFormat;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -80,9 +71,7 @@ public class AuctionViewController {
     public String registerAuction(@PathVariable("productNo") Long productNo, @RequestParam(required = false) int minTenderPrice, @RequestParam(required = false) int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-            log.info("회원 정보 >>> {}", email);
             int auctionCount = auctionService.countAuctionsByMemberAndProduct(email, productNo);
-            log.info("입찰횟수>>>> {}",auctionCount);
             if (auctionCount >= 2) {
                 redirectAttributes.addFlashAttribute("message", "입찰은 최대 2번까지 가능합니다.");
                 return "redirect:/detailBuyer/" + productNo;
@@ -150,7 +139,6 @@ public class AuctionViewController {
      */
     @PostMapping("/auctionregistmodify/{productNo}")
     public String modifyAuction(@PathVariable("productNo") Long productNo, @RequestParam int maxTenderPrice, RedirectAttributes redirectAttributes, HttpSession httpSession) {
-//        log.info("productNo >>>>> {}", productNo);
         try {
             String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
             auctionService.modifyAuction(email, productNo, maxTenderPrice);
@@ -191,7 +179,6 @@ public class AuctionViewController {
      */
     @GetMapping("/endAuction/{productNo}")
     public String endAuction(@PathVariable("productNo") Long productNo, HttpSession httpSession, RedirectAttributes redirectAttributes) {
-        log.info("productNo =====> {}", productNo);
         String email = null;
         Long memberNo = null;
         if (httpSession.getAttribute("member") != null) {
@@ -202,15 +189,11 @@ public class AuctionViewController {
 
         ProductResDto product = productService.findProductByNo(productNo);
 
+
         boolean isAuctionEnded = product.getAuctionEndTime().isBefore(LocalDateTime.now());
         boolean isSeller = auctionService.isSeller(memberNo, productNo);
         boolean isAuctionParticipant = auctionService.isAuctionParticipant(memberNo, productNo);
         boolean hasBidders = auctionService.hasBidders(productNo);
-
-        System.out.println("isAuctionEnded = " + isAuctionEnded);
-        System.out.println("isSeller = " + isSeller);
-        System.out.println("isAuctionParticipant = " + isAuctionParticipant);
-        System.out.println("hasBidders = " + hasBidders);
 
         if (isSeller) {
             if (isAuctionEnded) {
@@ -225,14 +208,15 @@ public class AuctionViewController {
             }
         }
         if (isAuctionParticipant && isAuctionEnded) {
-            boolean isWinningBidder = auctionService.isWinningBidder(memberNo, productNo);
             auctionService.endAuction(productNo);
-            if (isWinningBidder) {
+            product = productService.findProductByNo(productNo);
+            boolean isWinningBidder = auctionService.isWinningBidder(memberNo, productNo);
+            if (isWinningBidder && product.getSalesStatus().equals("trading")) {
                 redirectAttributes.addFlashAttribute("message", "경매에 낙찰되었습니다.");
                 return "redirect:/auction/bidSuccess/" + productNo;
             } else {
                 redirectAttributes.addFlashAttribute("message", "경매에 낙찰되지 않았습니다.");
-                return "redirect:/detailAuction/"+productNo;
+                return "redirect:/detailAuction/" + productNo;
             }
         }
 
@@ -241,7 +225,6 @@ public class AuctionViewController {
             redirectAttributes.addFlashAttribute("message", "경매가 종료되었습니다.");
             return "redirect:/";
         }
-
         return "redirect:/";
     }
 
@@ -261,14 +244,24 @@ public class AuctionViewController {
     @GetMapping("/bidSuccess/{productNo}")
     public String bidSuccess(@PathVariable("productNo") Long productNo, Model model, HttpSession httpSession){
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-        ProductResDto product = productService.findProductByNo(productNo);
+        ProductResDto product = auctionService.getProductById(productNo);
         List<AuctionResponseDto> auction = auctionService.findByProductNo(productNo);
         Optional<Member> memberInfo = memberRepository.findByEmail(email);
         Long memberNo = memberInfo.get().getMemberNo();
+        boolean isEventAuctionExists= auctionService.isEventAuctionExists(productNo);
 
+        List<Integer> tenderPrices;
+        if (isEventAuctionExists) {
+            tenderPrices = auction.stream().map(AuctionResponseDto::getMaxTenderPrice).collect(Collectors.toList());
+        } else {
+            tenderPrices = auction.stream().map(AuctionResponseDto::getMinTenderPrice).collect(Collectors.toList());
+        }
+
+        model.addAttribute("TenderPrices", tenderPrices);
         model.addAttribute("memberNo", memberNo);
         model.addAttribute("product", product);
         model.addAttribute("auction", auction);
+
         return "user/product/bidSuccess";
     }
 

@@ -174,14 +174,9 @@
               </tr>
               </thead>
               <tbody>
-              <tr th:each="auction : ${auction}">
+              <tr th:each="auction, iterStat : ${auction}">
                 <td th:text="${auction.member.email.split('@')[0].length() > 4 ? auction.member.email.split('@')[0].substring(0, auction.member.email.split('@')[0].length() - 4) + '****' + '@' + auction.member.email.split('@')[1] : '****' + '@' + auction.member.email.split('@')[1]}"></td>
-                <td th:if="${product.eventAuction}"
-                    th:text="${#numbers.formatInteger(auction.maxTenderPrice, 0)} + ' 원'">
-                </td>
-                <td th:if="${!product.eventAuction}"
-                    th:text="${#numbers.formatInteger(auction.minTenderPrice, 0)} + ' 원'">
-                </td>
+                <td th:text="${#numbers.formatInteger(TenderPrices[iterStat.index], 0)} + ' 원'"></td>
                 <td th:text="${#temporals.format(auction.tenderDate, 'yyyy.MM.dd HH:mm:ss')}"></td>
               </tr>
               </tbody>
@@ -212,9 +207,9 @@
 
           if (--timer < 0) {
             clearInterval(interval);
+            abandonButton.click();
             confirmButton.disabled = true;
             abandonButton.disabled = true;
-            abandonButton.click();
           }
         }, 1000);
       }

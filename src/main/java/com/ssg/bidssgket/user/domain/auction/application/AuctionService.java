@@ -13,6 +13,7 @@ import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
 import com.ssg.bidssgket.user.domain.productwish.domain.dto.MemberDTO;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuctionService {
 
     private final AuctionRepository auctionRepository;
@@ -60,13 +62,8 @@ public class AuctionService {
     public int getMinBid(Long productNo) {
         List<Auction> auctions = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
         Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productNo));
-        /*if (auctions.isEmpty()) {
-            return (int) (product.getAuctionStartPrice() * 1.01);
-        } else {
-            return (int) (auctions.get(0).getMinTenderPrice() * 1.01);
-        }*/
         if (auctions.isEmpty()) {
-            return (int) (product.getAuctionStartPrice() * 0.9);
+            return (int) (product.getAuctionStartPrice() * 0.98);
         } else {
             return (int) (auctions.get(0).getMinTenderPrice() * 1.01);
         }
@@ -126,27 +123,17 @@ public class AuctionService {
         List<Auction> auction = auctionRepository.findAuctionByProductNoOrderByMaxTenderPriceDesc(productNo);
         List<Auction> auctions = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
 
-        /*if (!auction.isEmpty()) {
-            Auction firstBid = auction.get(0);
-            Auction secondBid = auction.size() > 1 ? auction.get(1) : firstBid;
-
-            firstBid.updateBidSuccess(true);
-            product.setBidSuccessPrice(secondBid.getMinTenderPrice());
-        } else {
-            product.setSalesStatus(SalesStatus.sale_pause);
-            auctionRepository.deleteAll(auction);
-        }*/
         if (!auction.isEmpty()) {
             Auction minBid = auctions.get(0);
             Auction maxBid = auction.get(0);
             if (minBid.getMinTenderPrice() < product.getAuctionStartPrice()) {
                 product.setSalesStatus(SalesStatus.sale_pause);
-                auctionRepository.deleteAll(auction);
+//                auctionRepository.deleteAll(auction);
             } else {
                 Auction successBid = auction.size() > 1 ? auction.get(0) : maxBid;
                 maxBid.updateBidSuccess(true);
+                /*일반 경매 -> 최소 입찰가가 낙찰가*/
                 product.setBidSuccessPrice(successBid.getMinTenderPrice());
-                product.setSalesStatus(SalesStatus.trading);
             }
         } else {
             product.setSalesStatus(SalesStatus.sale_pause);
@@ -170,7 +157,7 @@ public class AuctionService {
     }
 
     @Transactional
-    public void abandonBid(Long productNo) {
+    public void  abandonBid(Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
         product.setSalesStatus(SalesStatus.sale_pause);
 
@@ -182,11 +169,15 @@ public class AuctionService {
         productRepository.save(product);
     }
 
-    public boolean isWinningBidder(Long memberNo, Long productNo) {
-        List<Auction> auction = auctionRepository.findByProductNoOrderByMinTenderPriceDesc(productNo);
+    public Boolean isWinningBidder(Long memberNo, Long productNo) {
+        List<Auction> auction = auctionRepository.findAuctionByProductNoOrderByMaxTenderPriceDesc(productNo);
         if (!auction.isEmpty()) {
             Auction topAuction = auction.get(0);
-            return topAuction.getMember().getMemberNo().equals(memberNo) && !topAuction.getTenderDeleted();
+            Product product = topAuction.getProduct();
+//            return topAuction.getMember().getMemberNo().equals(memberNo) && !topAuction.getTenderDeleted();
+            if (topAuction.getMinTenderPrice() >= product.getAuctionStartPrice()) {
+                return topAuction.getMember().getMemberNo().equals(memberNo) && !topAuction.getTenderDeleted();
+            }
         }
         return false;
     }
@@ -220,7 +211,7 @@ public class AuctionService {
         )).collect(Collectors.toList());
     }
 
-    public boolean isWinningEventBidder(Long memberNo, Long productNo) {
+    public Boolean isWinningEventBidder(Long memberNo, Long productNo) {
         List<Auction> auction = auctionRepository.findByProductNoOrderByMaxTenderPriceDesc(productNo);
         if (!auction.isEmpty()) {
             Auction topAuction = auction.get(0);
@@ -242,9 +233,10 @@ public class AuctionService {
 
         if (!auction.isEmpty()) {
             Auction firstBid = auction.get(0);
-
+            Auction successBid = auction.size() > 1 ? auction.get(0) : firstBid;
             firstBid.updateBidSuccess(true);
-            product.setBidSuccessPrice(firstBid.getMaxTenderPrice());
+            product.setBidSuccessPrice(successBid.getMaxTenderPrice());
+
         } else {
             product.setSalesStatus(SalesStatus.sale_pause);
             auctionRepository.deleteAll(auction);
@@ -266,4 +258,9 @@ public class AuctionService {
         }
     }
 
+    public boolean isEventAuctionExists(Long productNo) {
+        Product product = productRepository.findById(productNo).orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+        Boolean eventAuction = product.getEventAuction();
+        return eventAuction != null && eventAuction;
+    }
 }

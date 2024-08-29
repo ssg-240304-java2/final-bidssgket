@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface SaleOrderRepository extends JpaRepository<SaleOrder, Long> {
 
-    @Query("SELECT p.product From SaleOrder AS p WHERE p.member.memberNo = :memberNo AND p.orderStatus NOT IN ('PAYMENT_CANCELLED', 'ORDER_CANCELLED','PAID') ORDER BY p.createdAt DESC ")
+    @Query("SELECT p.product From SaleOrder AS p WHERE p.member.memberNo = :memberNo AND p.product.salesStatus = 'trading' AND p.orderStatus NOT IN ('PAYMENT_CANCELLED', 'ORDER_CANCELLED','PAID') ORDER BY p.createdAt DESC ")
     List<Product> getSaleTradingProducts(Long memberNo);
 
     @Query("SELECT p.product From SaleOrder AS p WHERE p.member.memberNo = :memberNo AND p.orderStatus IN('COMPLETED','PAID') ORDER BY p.createdAt DESC ")

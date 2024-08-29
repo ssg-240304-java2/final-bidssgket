@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -36,6 +37,7 @@ public class EventAuctionService {
     private final AuctionRepository auctionRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public Product registEventProduct(RegistProductReqDto registProductReqDto, List<MultipartFile> productImages,int auctionDuration) {
         Long memberNo = registProductReqDto.getMemberNo();
         Member member = memberRepository.findById(memberNo).orElseThrow(EntityNotFoundException::new);
@@ -96,6 +98,7 @@ public class EventAuctionService {
         return productRepository.findByEventAuctionProducts(productNo,now);
     }
 
+    @Transactional
     public Auction saveBid(AuctionReqDto auctionReqDto, Long memberNo) {
         // Member와 Product 객체를 가져옴
         Member member = memberRepository.findById(memberNo)
