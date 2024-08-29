@@ -16,7 +16,7 @@ import java.util.Optional;
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction, Long> {
 
-    @Query(value = "SELECT a.* FROM auction a WHERE a.product_no = :productNo AND a.tender_deleted = 'false' ORDER BY a.min_tender_price DESC", nativeQuery = true)
+    @Query(value = "SELECT a.* FROM auction a WHERE a.product_no = :productNo AND a.tender_deleted = 'false' ORDER BY a.max_tender_price DESC", nativeQuery = true)
     List<Auction> findByProductNoOrderByMinTenderPriceDesc(Long productNo);
 
     @Query(value = "SELECT a.* FROM auction a WHERE a.member_no = :memberNo AND a.product_no = :productNo AND tender_deleted = false ORDER BY a.bid_no DESC LIMIT 1", nativeQuery = true)

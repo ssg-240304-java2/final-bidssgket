@@ -15,6 +15,7 @@ import com.ssg.bidssgket.user.domain.product.domain.Product;
 import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
 import com.ssg.bidssgket.user.domain.product.view.dto.request.ProductReqDto;
 import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResDto;
+import com.ssg.bidssgket.user.domain.product.view.dto.response.ProductResponseDto;
 import com.ssg.bidssgket.user.domain.productwish.domain.dto.MemberDTO;
 import com.sun.tools.jconsole.JConsoleContext;
 import jakarta.servlet.http.HttpSession;
@@ -35,6 +36,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -202,6 +204,7 @@ public class AuctionViewController {
 
         ProductResDto product = productService.findProductByNo(productNo);
 
+
         boolean isAuctionEnded = product.getAuctionEndTime().isBefore(LocalDateTime.now());
         boolean isSeller = auctionService.isSeller(memberNo, productNo);
         boolean isAuctionParticipant = auctionService.isAuctionParticipant(memberNo, productNo);
@@ -261,14 +264,26 @@ public class AuctionViewController {
     @GetMapping("/bidSuccess/{productNo}")
     public String bidSuccess(@PathVariable("productNo") Long productNo, Model model, HttpSession httpSession){
         String email = ((SessionMember) httpSession.getAttribute("member")).getEmail();
-        ProductResDto product = productService.findProductByNo(productNo);
+        ProductResDto product = auctionService.getProductById(productNo);
         List<AuctionResponseDto> auction = auctionService.findByProductNo(productNo);
         Optional<Member> memberInfo = memberRepository.findByEmail(email);
         Long memberNo = memberInfo.get().getMemberNo();
+        boolean isEventAuctionExists= auctionService.isEventAuctionExists(productNo);
+        log.info("isEventAuctionExists >> {}", isEventAuctionExists);
+        List<Integer> tenderPrices;
+        if (isEventAuctionExists) {
+            tenderPrices = auction.stream().map(AuctionResponseDto::getMaxTenderPrice).collect(Collectors.toList());
+            log.info("실시간 경매일때 값 >>> {}", tenderPrices);
+        } else {
+            tenderPrices = auction.stream().map(AuctionResponseDto::getMinTenderPrice).collect(Collectors.toList());
+            log.info("실시간 경매아닐 때 값 >>> {}", tenderPrices);
+        }
 
+        model.addAttribute("TenderPrices", tenderPrices);
         model.addAttribute("memberNo", memberNo);
         model.addAttribute("product", product);
         model.addAttribute("auction", auction);
+
         return "user/product/bidSuccess";
     }
 

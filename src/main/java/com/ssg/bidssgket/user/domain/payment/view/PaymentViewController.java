@@ -105,12 +105,7 @@ public class PaymentViewController {
         Pay pay = payService.getOrCreatePay(member);
         log.info("[PayService] (getOrCreatePay) pay: {}", pay);
 
-        boolean isAuctionPay;
-        if (!product.getEventAuction()){
-            isAuctionPay = auctionService.isWinningBidder(member.getMemberNo(), productNo);
-        } else {
-            isAuctionPay = auctionService.isWinningEventBidder(member.getMemberNo(), productNo);
-        }
+        Boolean isAuctionPay = auctionService.isWinningBidder(member.getMemberNo(), productNo);
 
         model.addAttribute("member", new SessionMember(member));
         model.addAttribute("product", product);
