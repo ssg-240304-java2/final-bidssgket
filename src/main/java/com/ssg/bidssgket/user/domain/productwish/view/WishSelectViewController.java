@@ -23,9 +23,6 @@ import java.util.Map;
 public class WishSelectViewController {
 
     private final ProductWishService productWishService;
-    private final AuctionService auctionService;
-    private final MemberService memberService;
-    private final ProductService productService;
 
     @ResponseBody
     @PostMapping("/toggle")
