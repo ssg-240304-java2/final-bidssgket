@@ -107,7 +107,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
   <script>
 
@@ -216,7 +216,7 @@
 
 
     function connectAndSubscribe() {
-      var socket = new SockJS('/ws-stomp');
+      var socket = new SockJS('https://bidssgket.store/ws-stomp');
       stompClient = Stomp.over(socket);
 
       stompClient.connect({}, function (frame) {
