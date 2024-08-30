@@ -10,7 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <link rel="stylesheet" href="/user/member/chat.css">
     <style>
     .container {
@@ -173,7 +173,7 @@
         var chatRoomNo = null; // 현재 선택된 채팅방 번호를 저장
 
         function connectAndSubscribe() {
-            var socket = new SockJS('/ws-stomp');
+            var socket = new SockJS('https://bidssgket.store/ws-stomp');
             stompClient = Stomp.over(socket);
 
             stompClient.connect({}, function (frame) {
