@@ -48,10 +48,6 @@ public class SaleOrderViewController {
         List<Product> saleTradingItems = saleOrderService.getSaleTradingProducts(member.getMemberNo());
         List<Product> saleCompletedItems = saleOrderService.getSaleCompletedProducts(member.getMemberNo());
 
-        log.info("[SaleOrderView] saleAuctionItems.size: {}", saleAuctionItems.size());
-        log.info("[SaleOrderView] saleTradingItems.size: {}", saleTradingItems.size());
-        log.info("[SaleOrderView] saleCompletedItems.size: {}", saleCompletedItems.size());
-
         model.addAttribute("saleAuctionItems", saleAuctionItems);
         model.addAttribute("saleTradingItems", saleTradingItems);
         model.addAttribute("saleCompletedItems", saleCompletedItems);

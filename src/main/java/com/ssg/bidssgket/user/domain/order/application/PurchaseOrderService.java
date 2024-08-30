@@ -13,12 +13,17 @@ import com.ssg.bidssgket.user.domain.order.domain.enums.OrderTransactionType;
 import com.ssg.bidssgket.user.domain.order.domain.repository.PurchaseOrderRepository;
 import com.ssg.bidssgket.user.domain.payment.domain.Payment;
 import com.ssg.bidssgket.user.domain.product.domain.Product;
+import com.ssg.bidssgket.user.domain.product.domain.SalesStatus;
+import com.ssg.bidssgket.user.domain.product.domain.repository.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -26,10 +31,12 @@ public class PurchaseOrderService {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final AuctionRepository auctionRepository;
+    private final ProductRepository productRepository;
 
-    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, AuctionRepository auctionRepository) {
+    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, AuctionRepository auctionRepository, ProductRepository productRepository) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.auctionRepository = auctionRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -53,21 +60,35 @@ public class PurchaseOrderService {
     }
 
     public List<Auction> getPurchaseAuctionProducts(Long memberNo) {
-        // memberNo 값을 로그로 출력
         log.info("회원 정보 확인 : {}", memberNo);
 
-        // 데이터베이스에서 경매중인 상품 목록 조회
-        List<Auction> auctionItems = auctionRepository.findAuctionItemsByMember(memberNo);
+        List<Auction> auctionItems = auctionRepository.findByMemberNo(memberNo);
 
-        // 조회된 경매중인 상품 목록을 로그로 출력
-        if (auctionItems == null || auctionItems.isEmpty()) {
-            log.info("회원의 경매중인 상품 정보가 없습니다.: {}", memberNo);
-        } else {
-            log.info("회원의 경매중인 상품 개수 : {}, 회원 : {}", auctionItems.size(), memberNo);
-            auctionItems.forEach(auction -> log.info("Auction Item: {}", auction));
-        }
+        /*상품 상태가 selling인 경우만 갖고 오기*/
+        List<Auction> filteredAuctionItems = auctionItems.stream()
+                .filter(auction -> {
+                    Product product = auction.getProduct();
+                    return product != null && product.getSalesStatus() == SalesStatus.selling;
+                })
+                .collect(Collectors.toList());
 
-        return auctionItems;
+        filteredAuctionItems.forEach(auction -> log.info("Filtered Auction Item: {}", auction));
+
+        return filteredAuctionItems;
+    }
+
+    // 해당 회원이 낙찰되었을 경우에만 (product테이블의 sales_status = 'trading'이며 auction 테이블에서 해당 회원이 bid_success = 'true'인 경우만
+    public List<Auction> bidSuccessPurchaseTrading(Long memberNo) {
+        List<Auction> auctionItems = auctionRepository.findByMember_memberNoAndBidSuccessIsTrueOrderByTenderDateDesc(memberNo);
+
+        List<Auction> filteredAuctionTradingItems = auctionItems.stream()
+                .filter(auction -> {
+                    Product product = auction.getProduct();
+                    return product != null && product.getSalesStatus() == SalesStatus.trading;
+                })
+                .collect(Collectors.toList());
+
+        return filteredAuctionTradingItems;
     }
 
     public List<Product> getPurchaseTradingProducts(Long memberNo) {
@@ -80,16 +101,4 @@ public class PurchaseOrderService {
         return purchaseOrderRepository.getPurchaseCompletedProducts(memberNo);
     }
 
-    // 멤버의 구매 거래 상품과 그 주문 정보를 조회
-    public List<ProductWithOrderDto> getPurchaseTradingItemsWithOrder(Long memberNo) {
-        List<Product> products = getPurchaseTradingProducts(memberNo); // 제품 조회
-        List<ProductWithOrderDto> productWithOrders = new ArrayList<>();
-
-        for (Product product : products) {
-            PurchaseOrder purchaseOrder = product.getPurchaseOrder(); // 구매 주문 조회
-            productWithOrders.add(new ProductWithOrderDto(product, purchaseOrder));
-        }
-
-        return productWithOrders;
-    }
 }

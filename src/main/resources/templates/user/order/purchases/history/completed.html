@@ -41,20 +41,20 @@
                     <div class="flex justify-around text-center text-sm py-2 border-b">
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/auction" class="block">
-                                <div>판매중</div>
-                                <div th:text="${purchaseAuctionItems.size()}" class="text-red-500">0</div>
+                                <div>입찰중</div>
+                                <div th:text="${purchaseAuctionItems.size()}" class="text-black-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/progress" class="block">
-                                <div>거래중</div>
-                                <div th:text="${purchaseTradingItems.size()}" class="text-black-500">0</div>
+                                <div>낙찰</div>
+                                <div th:text="${bidSuccessPurchaseTrading.size()}" class="text-black-500">0</div>
                             </a>
                         </div>
                         <div class="flex-1">
                             <a href="/user/order/purchases/history/completed" class="block">
                                 <div>구매 완료</div>
-                                <div th:text="${purchaseCompletedItems.size()}" class="text-black-500">0</div>
+                                <div th:text="${purchaseCompletedItems.size()}" class="text-red-500">0</div>
                             </a>
                         </div>
                     </div>
