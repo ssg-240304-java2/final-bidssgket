@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class AuctionService {
-
     private final AuctionRepository auctionRepository;
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
