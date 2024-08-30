@@ -4,10 +4,10 @@ server:
 spring:
   profiles:
     include:
-#            - dev
-#            - oauth
-      - local
-      - local-oauth
+            - dev
+            - oauth
+#      - local
+#      - local-oauth
 
   servlet:
     multipart:

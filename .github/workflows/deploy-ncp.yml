@@ -63,6 +63,6 @@ jobs:
             sudo docker stop $(sudo docker ps -a -q)
             sudo docker rm -f $(sudo docker ps -a -q)
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
-            sudo docker run -d --name ${{ vars.APP_NAME }} -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
+            sudo docker run -e TZ=Asia/Seoul -d --name ${{ vars.APP_NAME }} -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
             sudo docker image prune -f
 
