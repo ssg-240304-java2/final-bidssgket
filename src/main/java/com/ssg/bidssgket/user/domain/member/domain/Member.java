@@ -232,8 +232,9 @@ public class Member implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("member"));
+        return List.of(new SimpleGrantedAuthority(role.getKey()));
     }
+
 
     @Override
     public String getUsername() {

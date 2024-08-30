@@ -54,15 +54,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private Member saveOrUpdate(OAuthAttributes attributes) {
         Member member = memberRepository.findByEmail(attributes.getEmail())
-                // 이미 존재하는 사용자인 경우, 정보 업데이트
+                // 구글 사용자 정보 업데이트(이미 가입된 사용자) => 업데이트
                 .map(entity -> entity.update(attributes.getName()))
-                // 신규 사용자인 경우, Member 엔티티 생성
+                // 가입되지 않은 사용자 => Member 엔티티 생성
                 .orElse(attributes.toEntity());
 
-        // 닉네임 중복 체크
-        if (memberRepository.findByMemberNickname(attributes.getName()).isPresent()) {
-            member.setMemberNickname(null); // 중복되면 닉네임을 null로 설정
-        }
         return memberRepository.save(member);
     }
 }

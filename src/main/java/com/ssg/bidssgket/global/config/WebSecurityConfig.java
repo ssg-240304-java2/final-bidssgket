@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -50,6 +51,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/auction/**").permitAll()
                                 .requestMatchers("/user/**").permitAll()
                                 .requestMatchers("/wish/**").permitAll()
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .logout(logout ->
@@ -62,6 +64,7 @@ public class WebSecurityConfig {
                                 .userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
                                 .loginPage("/login")
                                 .defaultSuccessUrl("/",true)
+                                .successHandler(authenticationSuccessHandler())
                 ) .formLogin(formLogin ->
                         formLogin
                                 .loginPage("/login")
@@ -71,6 +74,7 @@ public class WebSecurityConfig {
                                 .defaultSuccessUrl("/", true)
                                 .failureUrl("/login?error=true")
                                 .failureHandler(new CustomAuthenticationFailureHandler())
+                                .successHandler(authenticationSuccessHandler())
 //                                .failureHandler((request,response,excption) -> {
 //                                    excption.printStackTrace(); //콘솔에 예외 출력가능한 코드
 //                                    response.sendRedirect("/login?error=true");
@@ -89,6 +93,17 @@ public class WebSecurityConfig {
         return authProvider;
     }
 
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() { // 사용자의 권한에 따라 리디렉션 URL 설정
+        return (request, response, authentication) -> {
+            var authorities = authentication.getAuthorities();
+            if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                response.sendRedirect("/admin");
+            } else {
+                response.sendRedirect("/");
+            }
+        };
+    }
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
