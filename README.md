@@ -85,8 +85,7 @@
 ## 2. 개발 기간 및 작업 관리
 - 2024-07-19 ~ 2024-08-30
 
-## 3. ERD 
-![erd](https://github.com/user-attachments/assets/cb0ca8e7-0b0d-45b4-9b31-9c03c4c0bbd3)
+## 3. 
 ## 4. 아키텍쳐
 ![image](https://github.com/user-attachments/assets/aedcf4a7-80fd-4df8-9ed0-648de18a4145)
 ## 5. 역할 분담
