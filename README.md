@@ -1,10 +1,11 @@
 # 🍪:Bidssgket:🍪
 # 프로젝트 소개
-- 중고 거래 경매 플랫폼입니다.
-- 판매자와 구매자는 중고 물품 경매를 이용해 물품 판매 또는 구매를 통한 직거래 및 안전거래가 가능합니다.
+- 중고 거래 경매 플랫폼입니다. <br><br>
+- 판매자와 구매자는 중고 물품 경매를 이용해 물품 판매 또는 구매를 통한 직거래 및 안전거래가 가능합니다.<br><br>
 - 중고거래 시장이 급성장하면서, 더욱 다양하고 재미있는 거래 경험을 원하는 사용자들이 증가함에 따라 경매 방식을 채택해 이러한 니즈를 충족시키고, 
-  중고거래에 대한 흥미를 유발시키고자 프로젝트를 시작했습니다.
-- 발표영상 url : https://www.youtube.com/watch?v=iA8XMXnLVLk&t=1098s
+  중고거래에 대한 흥미를 유발시키고자 프로젝트를 시작했습니다.<br><br>
+- 발표영상 url : https://www.youtube.com/watch?v=iA8XMXnLVLk&t=1098s <br><br>
+- 시연영상 : https://drive.google.com/file/d/173JmS22anXW3zAul16A5fiStc58jfLBu/view?usp=sharing <br><br>
 
    ° Spring Boot를 사용한 안정적인 웹 구현, MySQL로 데이터 관리
 
