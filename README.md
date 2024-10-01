@@ -114,7 +114,10 @@
 - **비스킷온도** <br>
 ![image](https://github.com/user-attachments/assets/31df667e-aec0-4f61-91b9-7cfb9f1cbdce)
 
-## 7. 역할 분담
+## 7. 트러블슈팅
+![image](https://github.com/user-attachments/assets/438a0c81-7066-424f-b3ee-d7c4126774c3)
+
+## 8. 역할 분담
 - 김성호 : 관리자
 - 고유진 : 경매 시스템 설계, 위시 리스트
 - 김민규 : 실시간 경매, 채팅, 상품CRUD
